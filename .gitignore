@@ -1,11 +1,17 @@
+# Node.js
+node_modules/
+**/node_modules/
 
+# Env
 .env
-HELP.md
+
+# Maven
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# IDEs
 ### STS ###
 .apt_generated
 .classpath
@@ -23,13 +29,14 @@ target/
 
 ### NetBeans ###
 /nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+nbbuild/
+dist/
+.nbdist/
+.nb-gradle/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+HELP.md
