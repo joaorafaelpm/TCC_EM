@@ -1,0 +1,20 @@
+.btn {
+    background: #009246;
+    color: #fff;
+    padding: 0.7em 1.2em;
+    text-decoration: none;
+    transition: .5s;
+    cursor: pointer;
+    border: none;
+    width: 30%;
+}
+
+.btn:hover {
+    color: #ffbb33;
+}
+
+.container_btn_middle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

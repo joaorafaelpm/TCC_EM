@@ -1,0 +1,22 @@
+.container {
+    width: 100%;
+    display: flex;
+    margin: 0 auto;
+    justify-content: space-between;
+    flex-wrap: wrap ;
+    /** 'flex-wrap' isso basicamente define que quando os elementos-filhos (elementos dentro deste elemento) ultrapassarem o limite de espaço -- neste caso 1200px -- eles devem pular para a linha de baixo */
+}
+
+.min-height {
+    min-height: 75%;
+}
+
+.start {
+    justify-content: flex-start;
+    /** fixa os conteúdos no inicio */
+}
+
+.column {
+    flex-direction: column;
+    justify-content: flex-start;
+}

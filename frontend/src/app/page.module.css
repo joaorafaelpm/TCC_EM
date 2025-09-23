@@ -1,0 +1,18 @@
+.page {
+  background: #ccc5ac;
+  width: 100%;
+  height: 100%;
+  font-family: Arial, Helvetica, sans-serif , var(--font-geist-sans);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  color: #000;
+}
+
+.container_content {
+  height: 1200px;
+}
+
+
+
