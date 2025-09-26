@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.UUID;
+
 
 @Entity
 @Data
@@ -14,9 +16,9 @@ import java.math.BigDecimal;
 public class Produto {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id ;
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id = UUID.randomUUID() ;
 
     private String nome ;
     private String descricao ;

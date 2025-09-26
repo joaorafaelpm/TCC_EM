@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.UUID;
+
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -19,9 +22,9 @@ import java.util.List;
 public class Restaurante {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
-    private Long id;
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id = UUID.randomUUID() ;
 
     private String nome ;
 
