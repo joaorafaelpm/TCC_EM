@@ -37,12 +37,12 @@ public class RestauranteService {
         }
         catch (EmptyResultDataAccessException e) {
             throw new NotFoundException(
-                    String.format("Restaurante de código %d não foi encontrada!" , id)
+                String.format("Restaurante de código %d não foi encontrada!" , id)
             );
         }
         catch (DataIntegrityViolationException e) {
             throw new UsedEntityException(
-                    String.format("Restaurante de código %d tem produtos ativos, logo, não pode ser removida!" , id)
+                String.format("Restaurante de código %d tem produtos ativos, logo, não pode ser removida!" , id)
             ) ;
         }
     }

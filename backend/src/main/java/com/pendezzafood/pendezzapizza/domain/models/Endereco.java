@@ -2,7 +2,6 @@ package com.pendezzafood.pendezzapizza.domain.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
 
 @Embeddable
 @Data

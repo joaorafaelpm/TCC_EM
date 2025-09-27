@@ -32,7 +32,7 @@ public class UsuarioController {
     // POST: cria um novo usuário
     @PostMapping
     public ResponseEntity<Usuario> criarUsuario(@RequestBody Usuario usuario) {
-        Usuario novoUsuario = usuarioService.add(usuario);
+        Usuario novoUsuario = usuarioService.save(usuario);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoUsuario);
     }
 
@@ -40,7 +40,7 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(@PathVariable UUID id,
                                                     @RequestBody Usuario usuario) {
-        Usuario atualizado = usuarioService.update(id, usuario);
+        Usuario atualizado = usuarioService.save(id, usuario);
         return ResponseEntity.ok(atualizado);
     }
 

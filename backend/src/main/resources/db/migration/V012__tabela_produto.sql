@@ -3,7 +3,8 @@ CREATE TABLE produto (
     nome VARCHAR(255) NOT NULL ,
     descricao VARCHAR(255) NOT NULL ,
     preco DECIMAL(9,2) NOT NULL ,
-    restaurante_id BINARY(16)
+    restaurante_id BINARY(16),
+    ativo tinyint(1) not null
 );
 
 ALTER TABLE produto

@@ -21,9 +21,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Repository
-public class RestauranteRepositoryImpl implements RestauranteRepoQueries {
+public class RestauranteRepoImpl implements RestauranteRepoQueries{
 
     @PersistenceContext
     private EntityManager manager;

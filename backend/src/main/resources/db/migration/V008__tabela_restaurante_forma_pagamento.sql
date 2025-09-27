@@ -1,6 +1,6 @@
 CREATE TABLE restaurante_forma_pagamento (
     restaurante_id BINARY(16) NOT NULL,
-    forma_pagamento_id BIGINT NOT NULL,
+    forma_pagamento_id BINARY(16) NOT NULL,
     PRIMARY KEY (restaurante_id, forma_pagamento_id),
     CONSTRAINT fk_restaurante FOREIGN KEY (restaurante_id)
         REFERENCES restaurante(id)

@@ -30,14 +30,14 @@ public class UsuarioService {
             ));
     }
 
-    public Usuario add(Usuario usuario) {
+    public Usuario save(Usuario usuario) {
         if (usuarioRepo.existsByEmail(usuario.getEmail())) {
             throw new NotFoundException("Email já está em uso!");
         }
         return usuarioRepo.save(usuario);
     }
 
-    public Usuario update(UUID id, Usuario usuario) {
+    public Usuario save(UUID id, Usuario usuario) {
         Usuario existente = findById(id);
 
         if (usuario.getNome() != null) {
@@ -62,7 +62,7 @@ public class UsuarioService {
 
     // Grupos:
     
-    public Usuario addGrupoToUsuario(UUID usuarioId, Long grupoId) {
+    public Usuario addGrupoToUsuario(UUID usuarioId, UUID grupoId) {
         Usuario usuario = findById(usuarioId);
         Grupo grupo = grupoRepo.findById(grupoId)
                 .orElseThrow(() -> new NotFoundException(
@@ -76,7 +76,7 @@ public class UsuarioService {
         return usuarioRepo.save(usuario);
     }
 
-    public Usuario removeGrupoFromUsuario(UUID usuarioId, Long grupoId) {
+    public Usuario removeGrupoFromUsuario(UUID usuarioId, UUID grupoId) {
         Usuario usuario = findById(usuarioId);
         Grupo grupo = grupoRepo.findById(grupoId)
                 .orElseThrow(() -> new NotFoundException(

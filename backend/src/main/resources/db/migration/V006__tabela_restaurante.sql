@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS restaurante (
     nome VARCHAR(200) NOT NULL ,
     taxa_frete DECIMAL(9,2) NOT NULL,
     data_cadastro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    data_atualizacao  DATETIME NOT NULL
+    data_atualizacao DATETIME 
 );
 
 

@@ -19,7 +19,7 @@ public class UsuarioGrupoController {
     @PutMapping("/adicionar")
     public ResponseEntity<Usuario> adicionarGrupo(
             @PathVariable UUID usuarioId,
-            @RequestParam Long grupoId) {
+            @RequestParam UUID grupoId) {
 
         Usuario usuarioAtualizado = usuarioService.addGrupoToUsuario(usuarioId, grupoId);
         return ResponseEntity.ok(usuarioAtualizado);
@@ -29,7 +29,7 @@ public class UsuarioGrupoController {
     @PutMapping("/remover")
     public ResponseEntity<Usuario> removerGrupo(
             @PathVariable UUID usuarioId,
-            @RequestParam Long grupoId) {
+            @RequestParam UUID grupoId) {
 
         Usuario usuarioAtualizado = usuarioService.removeGrupoFromUsuario(usuarioId, grupoId);
         return ResponseEntity.ok(usuarioAtualizado);

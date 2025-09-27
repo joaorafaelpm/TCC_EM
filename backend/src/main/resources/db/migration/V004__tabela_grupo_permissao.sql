@@ -1,6 +1,6 @@
 CREATE TABLE grupo_permissao (
-    grupo_id BIGINT NOT NULL,
-    permissao_id BIGINT NOT NULL,
+    grupo_id BINARY(16) NOT NULL,
+    permissao_id BINARY(16) NOT NULL,
 
     PRIMARY KEY (grupo_id, permissao_id),
 

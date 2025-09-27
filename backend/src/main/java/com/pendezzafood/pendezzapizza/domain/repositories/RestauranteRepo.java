@@ -1,6 +1,5 @@
 package com.pendezzafood.pendezzapizza.domain.repositories;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
@@ -13,9 +12,8 @@ import java.util.UUID;
 
 @Repository
 public interface RestauranteRepo
-        extends RestauranteRepoQueries ,
-        JpaSpecificationExecutor<Restaurante> ,
-        JpaRepository<Restaurante, UUID> {
+        extends CustomJPARepository<Restaurante , UUID> , RestauranteRepoQueries ,
+        JpaSpecificationExecutor<Restaurante> {
 
     List<Restaurante> findByTaxaFreteBetween (BigDecimal taxaFreteMenor , BigDecimal taxaFreteMaior);
 

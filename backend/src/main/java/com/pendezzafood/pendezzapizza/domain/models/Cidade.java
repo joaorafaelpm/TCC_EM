@@ -1,5 +1,7 @@
 package com.pendezzafood.pendezzapizza.domain.models;
 
+import java.util.UUID;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,8 +17,8 @@ public class Cidade {
 
         @Id
         @EqualsAndHashCode.Include
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id ;
+        @Column(columnDefinition = "BINARY(16)")
+        private UUID id = UUID.randomUUID() ;
 
         private String nome ;
 

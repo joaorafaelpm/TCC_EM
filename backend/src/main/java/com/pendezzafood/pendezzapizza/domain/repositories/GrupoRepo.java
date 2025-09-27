@@ -1,12 +1,14 @@
 package com.pendezzafood.pendezzapizza.domain.repositories;
 
 
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.pendezzafood.pendezzapizza.domain.models.Grupo;
 
 @Repository
-public interface GrupoRepo extends JpaRepository<Grupo, Long> {
+public interface GrupoRepo extends JpaRepository<Grupo, UUID> {
     
 }
