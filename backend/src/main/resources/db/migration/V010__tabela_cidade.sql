@@ -1,9 +1,0 @@
-CREATE TABLE IF NOT EXISTS cidade (
-    id BINARY(16) DEFAULT (UUID_TO_BIN(UUID())) PRIMARY KEY,
-    nome VARCHAR(200) NOT NULL,
-    estado_id BINARY(16) NOT NULL
-);
-
-ALTER TABLE cidade ADD FOREIGN KEY (estado_id) REFERENCES estado (id) ;
-
-

@@ -1,4 +1,0 @@
-CREATE TABLE IF NOT EXISTS forma_pagamento (
-    id BINARY(16) DEFAULT (UUID_TO_BIN(UUID())) PRIMARY KEY,
-    descricao VARCHAR(100) NOT NULL
-);

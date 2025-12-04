@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedido Cancelado</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f4f4f4; font-family: Arial, Helvetica, sans-serif; color:#333;">
+
+<div style="max-width:600px; background-color:#ffffff; border-radius:8px; margin:30px auto; box-shadow:0 2px 6px rgba(0,0,0,0.08); overflow:hidden;">
+
+    <!-- Cabeçalho -->
+    <div style="text-align:center; padding:25px 15px; background-color:#c8102e; color:#fff;">
+        <h1 style="margin:0; font-size:24px;">❌ Pedido Cancelado</h1>
+        <p style="margin:8px 0 0 0; font-size:14px;">Sentimos muito, mas seu pedido não pôde ser concluído.</p>
+    </div>
+
+    <!-- Saudação -->
+    <div style="padding:25px;">
+        <p style="font-size:16px;">Olá <strong>${pedido.cliente.nome}</strong>,</p>
+        <p style="font-size:15px; line-height:1.5;">
+            Seu pedido foi <strong>cancelado com sucesso</strong>.
+            Se o pagamento já foi realizado, o estorno será processado conforme a política do ${pedido.restaurante.nome}.
+        </p>
+    </div>
+
+    <!-- Detalhes do Pedido -->
+    <div style="padding:0 25px;">
+        <h2 style="color:#c8102e; font-size:18px; margin-bottom:10px;">
+            Pedido ${pedido.codigo} — <strong>${pedido.restaurante.nome}</strong>
+        </h2>
+        <table cellpadding="6" cellspacing="0" width="100%" style="border-collapse:collapse; font-size:14px;">
+            <thead>
+            <tr style="background-color:#f9f9f9; text-align:left;">
+                <th align="left" style="border-bottom:1px solid #ddd;">Produto</th>
+                <th align="right" style="border-bottom:1px solid #ddd;">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#list pedido.itens as item>
+            <tr>
+                <td>${item.quantidade}x ${item.produto.nome}</td>
+                <td align="right">${item.precoTotal?string.currency}</td>
+            </tr>
+            </#list>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totais -->
+    <div style="padding:20px 25px 10px 25px; font-size:15px;">
+        <p style="margin:5px 0;">Subtotal: <span style="float:right;">${pedido.subtotal?string.currency}</span></p>
+        <p style="margin:5px 0;">Taxa de Entrega: <span style="float:right;">${pedido.taxaFrete?string.currency}</span></p>
+        <p style="margin:10px 0; border-top:1px solid #ddd; padding-top:8px; font-weight:bold; color:#c8102e;">
+            Total: <span style="float:right;">${pedido.valorTotal?string.currency}</span>
+        </p>
+    </div>
+
+    <!-- Forma de Pagamento -->
+    <div style="padding:10px 25px 25px 25px;">
+        <h2 style="color:#c8102e; font-size:18px; margin-bottom:6px;">Forma de Pagamento</h2>
+        <p style="font-size:15px;">${pedido.formaPagamento.descricao}</p>
+    </div>
+
+    <!-- Ação sugerida -->
+    <div style="background-color:#f9f9f9; padding:20px 25px; text-align:center;">
+        <p style="margin:0 0 10px 0; font-size:15px;">
+            Caso tenha dúvidas sobre o cancelamento ou deseje refazer o pedido, entre em contato conosco:
+        </p>
+        <a href="mailto:email.teste.pendezzapizza.tcc@gmail.com"
+           style="display:inline-block; background-color:#c8102e; color:#fff; text-decoration:none; padding:10px 20px; border-radius:4px; font-weight:bold;">
+            Falar com o restaurante
+        </a>
+    </div>
+
+    <!-- Rodapé -->
+    <div style="background-color:#f4f4f4; text-align:center; padding:15px; font-size:13px; color:#666;">
+        <p style="margin:0;">© ${pedido.restaurante.nome} — Todos os direitos reservados.</p>
+        <p style="margin:5px 0 0 0;">Este é um email automático, por favor, não responda.</p>
+    </div>
+
+</div>
+
+</body>
+</html>

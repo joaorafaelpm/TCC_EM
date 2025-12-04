@@ -1,0 +1,43 @@
+package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
+
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.UserModelAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.UserModel;
+import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
+import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
+import lombok.AllArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@AllArgsConstructor
+@RequestMapping("/v1/restaurants/{restaurantId}/users")
+public class RestaurantUserController {
+
+    private RestaurantService restaurantService;
+
+    private UserModelAssembler userModelAssembler;
+
+    @GetMapping
+    public CollectionModel<UserModel> list(@PathVariable UUID restaurantId) {
+        Restaurant restaurant = restaurantService.findById(restaurantId);
+        return userModelAssembler.toCollectionRefRestaurant(
+                restaurantId,
+                restaurant.getResponsibleUsers()
+        );
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<Void> associate(@PathVariable UUID restaurantId, @PathVariable UUID userId) {
+        restaurantService.associateResponsibleUser(restaurantId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> disassociate(@PathVariable UUID restaurantId, @PathVariable UUID userId) {
+        restaurantService.disassociateResponsibleUser(restaurantId, userId);
+        return ResponseEntity.noContent().build();
+    }
+}
