@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedido confirmado!</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f5f3eb; font-family: Arial, Helvetica, sans-serif; color:#222;">
+
+<div style="max-width:600px; background-color:#ffffff; border-radius:12px; margin:30px auto; box-shadow:0 2px 8px rgba(0,0,0,0.1); overflow:hidden;">
+
+    <!-- Cabeçalho -->
+    <div style="text-align:center; padding:20px 0; background: linear-gradient(90deg, #008000, #f5f3eb, #c8102e);">
+        <h1 style="margin:0; font-size:24px;">🍕 Pedido Confirmado!</h1>
+    </div>
+
+    <!-- Saudação -->
+    <div style="padding:25px;">
+        <p style="font-size:16px;">Olá <strong>${pedido.cliente.nome}</strong>,</p>
+        <p style="font-size:15px;">Seu pedido foi confirmado pela pizzaria <strong>${pedido.restaurante.nome}</strong> e já está sendo preparado com todo o cuidado!</p>
+    </div>
+
+    <!-- Itens do Pedido -->
+    <div style="padding:0 25px;">
+        <h2 style="color:#008000; font-size:18px; margin-bottom:10px;">Resumo do Pedido - <strong>${pedido.restaurante.nome}</strong> </h2>
+        <table cellpadding="6" cellspacing="0" width="100%" style="border-collapse:collapse; font-size:14px;">
+            <thead>
+            <tr style="background-color:#f5f3eb; text-align:left;">
+                <th align="left">Produto</th>
+                <th align="right">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#list pedido.itens as item>
+            <tr>
+                <td>${item.quantidade}x ${item.produto.nome}</td>
+                <td align="right">${item.precoTotal?string.currency}</td>
+            </tr>
+            </#list>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Totais -->
+    <div style="padding:20px 25px 10px 25px; font-size:15px;">
+        <p style="margin:5px 0;">Subtotal: <span style="float:right;">${pedido.subtotal?string.currency}</span></p>
+        <p style="margin:5px 0;">Taxa de Entrega: <span style="float:right;">${pedido.taxaFrete?string.currency}</span></p>
+        <p style="margin:10px 0; border-top:1px solid #ddd; padding-top:8px; font-weight:bold; color:#c8102e;">
+            Total: <span style="float:right;">${pedido.valorTotal?string.currency}</span>
+        </p>
+    </div>
+
+    <!-- Forma de Pagamento -->
+    <div style="padding:10px 25px 25px 25px;">
+        <h2 style="color:#008000; font-size:18px; margin-bottom:6px;">Forma de Pagamento</h2>
+        <p style="font-size:15px;">${pedido.formaPagamento.descricao}</p>
+    </div>
+
+    <!-- Mensagem de acompanhamento -->
+    <div style="padding:10px 25px 25px 25px; font-size:15px;">
+        <p>Você receberá uma nova atualização assim que seu pedido sair para entrega. 🍽️</p>
+        <p>Agradecemos por escolher <strong>${pedido.restaurante.nome}</strong> — sua pizza está a caminho!</p>
+    </div>
+
+    <!-- Rodapé -->
+    <div style="background-color:#f5f3eb; text-align:center; padding:15px; font-size:13px; color:#555;">
+        <p style="margin:0;">© ${pedido.restaurante.nome} — Todos os direitos reservados.</p>
+        <p style="margin:5px 0 0 0;">Este é um email automático, por favor, não responda.</p>
+    </div>
+
+</div>
+
+</body>
+</html>

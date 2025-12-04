@@ -1,22 +1,22 @@
 
 services:
-  # backend:
-  #   build: ./backend
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
-  #   env_file:
-  #     - backend/.env
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:mysql://mysql:${DATABASE_PORT}/${DATABASE_NAME}
-  #     SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
-  #     SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
-  #   networks:
-  #     - backend
+  backend:
+    build: ./pendezzapizza-api
+    ports:
+      - "8080:${DATABASE_PORT}"
+    depends_on:
+      database:
+        condition: service_healthy
+    env_file:
+      - ./.env
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:${DATABASE_PORT}/${DATABASE_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
+    networks:
+      - backend
 
-  mysql:
+  database:
     image: mysql:8.3.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
@@ -31,7 +31,14 @@ services:
       timeout: 5s
       retries: 5
 
+  test-database:
+    image: mysql:8.3.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_NAME}
+    ports:
+      - "3308:${DATABASE_PORT}"
+
 networks:
   backend:
-
 
