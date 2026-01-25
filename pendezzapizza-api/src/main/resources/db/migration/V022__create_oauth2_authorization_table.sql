@@ -33,4 +33,4 @@ CREATE TABLE oauth2_authorization (
     device_code_expires_at timestamp DEFAULT NULL,
     device_code_metadata blob DEFAULT NULL,
     PRIMARY KEY (id)
-) engine=InnoDB default charset=utf8;
+);

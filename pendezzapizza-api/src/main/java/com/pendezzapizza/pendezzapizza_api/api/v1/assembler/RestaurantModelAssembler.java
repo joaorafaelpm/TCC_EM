@@ -1,26 +1,26 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.mapper.RestaurantMapper;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-
 @Component
-public class RestaurantModelAssembler
-        extends RepresentationModelAssemblerSupport<Restaurant, RestaurantModel> {
+public class RestaurantModelAssembler extends RepresentationModelAssemblerSupport<Restaurant, RestaurantModel> {
 
     @Autowired
-    private RestaurantMapper mapper;
+    private RestaurantMapper restaurantMapper;
 
     @Autowired
-    private PendezzaPizzaLinks links;
+    private PendezzaLinks pendezzaLinks;
+
+    @Autowired
+    private PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     public RestaurantModelAssembler() {
         super(Restaurant.class, RestaurantModel.class);
@@ -28,42 +28,54 @@ public class RestaurantModelAssembler
 
     @Override
     public RestaurantModel toModel(Restaurant entity) {
-        RestaurantModel model = mapper.toModel(entity);
+        RestaurantModel restaurantModel = restaurantMapper.toModel(entity);
 
-
-        if (model.getAddress() != null) {
-            model.getAddress().getCity().add(links.linkToCity(model.getAddress().getCity().getId()));
+        if (pendezzaPizzaSecurity.canConsultCities()) {
+            if (restaurantModel.getAddress() != null) {
+                restaurantModel.getAddress().getCity().add(pendezzaLinks.
+                        linkToCity(restaurantModel.getAddress().getCity().getId()));
+            }
         }
 
-        model.add(links.linkToRestaurant(model.getId()));
-        model.add(links.linkToRestaurantProducts(model.getId(), "products"));
-        model.add(links.linkToRestaurants("restaurants"));
-
-        if (entity.canOpen()) {
-            model.add(links.linkToRestaurantOpening(model.getId(), "open"));
-        }
-        if (entity.canClose()) {
-            model.add(links.linkToRestaurantClosing(model.getId(), "close"));
-        }
-        if (entity.canActivate()) {
-            model.add(links.linkToRestaurantActivation(model.getId(), "activate"));
-        }
-        if (entity.canDeactivate()) {
-            model.add(links.linkToRestaurantInactivation(model.getId(), "deactivate"));
+        if (pendezzaPizzaSecurity.canConsultRestaurants()) {
+            restaurantModel.add(pendezzaLinks.linkToRestaurant(restaurantModel.getId()));
+            restaurantModel.add(pendezzaLinks.linkToRestaurants("restaurants"));
+            restaurantModel.add(pendezzaLinks.linkToRestaurantProducts(restaurantModel.getId(), "products"));
         }
 
-        model.add(links.linkToRestaurantPaymentMethods(model.getId(), "payment-methods"));
-        model.add(links.linkToRestaurantManagers(model.getId(), "responsible-users"));
+        if (pendezzaPizzaSecurity.canManageRestaurantOperation(restaurantModel.getId())) {
+            if (entity.canOpen()) {
+                restaurantModel.add(pendezzaLinks.linkToRestaurantOpening(restaurantModel.getId(), "open"));
+            }
+            if (entity.canClose()) {
+                restaurantModel.add(pendezzaLinks.linkToRestaurantClosing(restaurantModel.getId(), "close"));
+            }
+        }
 
-        return model;
+        if (pendezzaPizzaSecurity.canManageRestaurantRegistrations()) {
+            if (entity.canActivate()) {
+                restaurantModel.add(pendezzaLinks.linkToRestaurantActivation(restaurantModel.getId(), "activate"));
+            }
+            if (entity.canDeactivate()) {
+                restaurantModel.add(pendezzaLinks.linkToRestaurantInactivation(restaurantModel.getId(), "inactivate"));
+            }
+
+            restaurantModel.add(pendezzaLinks.
+                    linkToRestaurantManagers(restaurantModel.getId(), "managers")); // responsaveis -> managers
+            restaurantModel.add(pendezzaLinks.
+                    linkToRestaurantPaymentMethods(restaurantModel.getId(), "payment-methods"));
+        }
+        return restaurantModel;
     }
 
-    public CollectionModel<RestaurantModel> toCollection(Collection<Restaurant> restaurants) {
-        List<RestaurantModel> list = restaurants.stream().map(this::toModel).toList();
-        CollectionModel<RestaurantModel> collection = CollectionModel.of(list);
+    @Override
+    public CollectionModel<RestaurantModel> toCollectionModel(Iterable<? extends Restaurant> entities) {
+        CollectionModel<RestaurantModel> collectionModel = super.toCollectionModel(entities);
 
-        collection.add(links.linkToRestaurants("restaurants"));
+        if (pendezzaPizzaSecurity.canConsultRestaurants()) {
+            collectionModel.add(pendezzaLinks.linkToRestaurants("restaurants"));
+        }
 
-        return collection;
+        return collectionModel;
     }
 }

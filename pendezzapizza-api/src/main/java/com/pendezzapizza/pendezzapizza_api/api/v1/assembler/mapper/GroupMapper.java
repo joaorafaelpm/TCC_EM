@@ -14,4 +14,7 @@ public interface GroupMapper {
     @Bean
     GroupModel toModel(Group group);
 
+    @Bean
+    List<GroupModel> toCollection(Collection<Group> listGroups);
+
 }

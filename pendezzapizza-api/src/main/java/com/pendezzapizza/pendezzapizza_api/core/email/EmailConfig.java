@@ -15,12 +15,16 @@ public class EmailConfig {
     private EmailProperties emailProperties;
 
     @Bean
-    public SendEmailService envioEmailService() {
-        return switch (emailProperties.getImpl()) {
-            case MOCK -> new MockSendingEmailService();
-            case SMTP -> new SmtpEmailSendingService();
-            case SANDBOX -> new SandboxEmailSendingService();
-            default -> new MockSendingEmailService();
-        };
+    public SendEmailService sendEmailService() {
+        switch (emailProperties.getImpl()) {
+            case MOCK:
+                return new MockSendingEmailService();
+            case SMTP:
+                return new SmtpEmailSendingService();
+            case SANDBOX:
+                return new SandboxEmailSendingService();
+            default:
+                return null;
+        }
     }
 }

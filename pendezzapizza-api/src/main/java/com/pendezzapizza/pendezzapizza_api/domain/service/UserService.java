@@ -7,6 +7,7 @@ import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,8 @@ import java.util.UUID;
 public class UserService  {
 
     private final UserRepository userRepository;
+    private PasswordEncoder passwordEncoder ;
+
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -54,15 +57,12 @@ public class UserService  {
     }
 
     @Transactional
-    public void updatePassword(User user, String currentPassword, String newPassword) {
-        if (user.passwordDoesNotMatch(currentPassword)) {
-            throw new BusinessException("Senhas não coincidem, verifique e tente novamente.");
-        }
+    public void changePassword(UUID id , String oldPassword , String newPassword) {
+        User user = findById(id);
 
-        if (user.passwordMatches(currentPassword)) {
-            user.setPassword(newPassword);
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new BusinessException("Senhas não coincidem, por favor verifique de novo e tente novamente.");
         }
-
-        userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(newPassword));
     }
 }

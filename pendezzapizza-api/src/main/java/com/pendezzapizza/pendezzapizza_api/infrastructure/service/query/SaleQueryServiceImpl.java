@@ -1,6 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.infrastructure.service.query;
 
-import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySaleFilter;
+import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
 import com.pendezzapizza.pendezzapizza_api.domain.model.dto.DailySale;
 import com.pendezzapizza.pendezzapizza_api.domain.model.enuns.OrderStatus;
@@ -31,7 +31,7 @@ public class SaleQueryServiceImpl implements SaleQueryService {
 
     //    Agora basta transformar isso em código no criteria:
     @Override
-    public List<DailySale> viewDailySales(DailySaleFilter filter , String timeOffSet) {
+    public List<DailySale> viewDailySales(DailySalesFilter filter , String timeOffSet) {
         var builder = manager.getCriteriaBuilder();
         var query = builder.createQuery(DailySale.class);
 //        from pedido

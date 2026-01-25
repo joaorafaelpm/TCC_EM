@@ -11,7 +11,8 @@ public enum ProblemType {
     SYSTEM_ERROR("/erro-inesperado" , "Erro inesperado."),
     INVALID_PARAMS("/parametro-invalido" , "Parâmetro inválido na URL"),
     USED_ENTITY("/entidade-esta-em-uso" , "Entidade está sendo usada.") ,
-    BUSINESS_EXCEPTION("/erro-de-negocio" , "Houve uma violação da regra de negócio.") ;
+    BUSINESS_EXCEPTION("/erro-de-negocio" , "Houve uma violação da regra de negócio."),
+    AUTHORITY_EXCEPTION("/acesso-negado" , "Acesso negado.") ;
 
     private String path;
     private String title;

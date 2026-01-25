@@ -1,7 +1,9 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.PermissionAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.PermissionModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.PermissionModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.PermissionControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.service.PermissionService;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
@@ -12,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/permissions")
 @AllArgsConstructor
-public class PermissionController {
+public class PermissionController implements PermissionControllerOpenApi {
 
-    private PermissionService permissionService;
+    private final PermissionService permissionService;
+    private final PermissionModelAssembler permissionAssembler;
 
-    private PermissionAssembler permissionAssembler;
-
+    @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
     public CollectionModel<PermissionModel> findAll() {
-        return permissionAssembler.toCollection(permissionService.findAll());
+        return permissionAssembler.toCollectionModel(permissionService.findAll());
     }
 }

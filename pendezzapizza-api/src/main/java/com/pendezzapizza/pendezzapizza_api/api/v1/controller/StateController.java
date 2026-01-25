@@ -2,8 +2,10 @@ package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.StateModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.StateDisassembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.StateDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.StateModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.StateDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.StateControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.StateRepository;
 import com.pendezzapizza.pendezzapizza_api.domain.service.StateService;
@@ -11,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -19,42 +22,45 @@ import java.util.UUID;
 @ResponseBody
 @AllArgsConstructor
 @RequestMapping("/v1/states")
-public class StateController {
+public class StateController implements StateControllerOpenApi {
 
-    private StateRepository stateRepository;
+    private final StateRepository stateRepository;
+    private final StateService stateService;
+    private final StateModelAssembler stateModelAssembler;
+    private final StateDisassembler stateDisassembler;
 
-    private StateService stateService;
-
-    private StateModelAssembler stateModelAssembler;
-    private StateDisassembler stateDisassembler;
-
+    @CheckSecurity.States.CanConsult
     @GetMapping
-    public CollectionModel<StateModel> getAll() {
-        return stateModelAssembler.toCollection(stateRepository.findAll());
+    public CollectionModel<StateModel> all() {
+        return stateModelAssembler.toCollectionModel(stateRepository.findAll());
     }
 
-    @GetMapping("/{id}")
-    public StateModel getById(@PathVariable UUID id) {
-        return stateModelAssembler.toModel(stateService.findById(id));
+    @CheckSecurity.States.CanConsult
+    @GetMapping("/{stateId}")
+    public StateModel findById(@PathVariable UUID stateId) {
+        return stateModelAssembler.toModel(stateService.findById(stateId));
     }
 
+    @CheckSecurity.States.CanEdit
     @PostMapping
     public StateModel add(@RequestBody @Valid StateDTO stateDTO) {
         State state = stateDisassembler.stateDTOToState(stateDTO);
         return stateModelAssembler.toModel(stateService.save(state));
     }
 
-    @PutMapping("/{id}")
-    public StateModel update(@PathVariable UUID id, @RequestBody @Valid StateDTO stateDTO) {
-        State oldState = stateService.findById(id);
-        stateDisassembler.updateStateFromDto(stateDTO, oldState);
-        State savedState = stateService.save(id, oldState);
-        return stateModelAssembler.toModel(savedState);
+    @CheckSecurity.States.CanEdit
+    @PutMapping("/{stateId}")
+    public StateModel save(@PathVariable UUID stateId, @RequestBody @Valid StateDTO stateDTO) {
+        State existingState = stateService.findById(stateId);
+        stateDisassembler.updateStateFromDto(stateDTO, existingState);
+        return stateModelAssembler.toModel(stateService.save(existingState));
     }
 
-    @DeleteMapping("/{id}")
+    @CheckSecurity.States.CanEdit
+    @DeleteMapping("/{stateId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        stateService.delete(id);
+    public ResponseEntity<Void> remove(@PathVariable UUID stateId) {
+        stateService.delete(stateId);
+        return ResponseEntity.noContent().build();
     }
 }

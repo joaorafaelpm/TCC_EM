@@ -1,16 +1,15 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.mapper.CityMapper;
 import com.pendezzapizza.pendezzapizza_api.api.v1.controller.CityController;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.CityModel;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.City;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class CityModelAssembler extends RepresentationModelAssemblerSupport<City, CityModel> {
@@ -19,7 +18,10 @@ public class CityModelAssembler extends RepresentationModelAssemblerSupport<City
     private CityMapper cityMapper;
 
     @Autowired
-    private PendezzaPizzaLinks links;
+    private PendezzaLinks pendezzaLinks;
+
+    @Autowired
+    private PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     public CityModelAssembler() {
         super(CityController.class, CityModel.class);
@@ -27,19 +29,29 @@ public class CityModelAssembler extends RepresentationModelAssemblerSupport<City
 
     @Override
     public CityModel toModel(City city) {
-        CityModel model = cityMapper.toModel(city);
+        CityModel cityModel = cityMapper.toModel(city);
 
-        model.add(links.linkToCity(model.getId()));
-        model.getState().add(links.linkToState(model.getState().getId()));
-        model.add(links.linkToCities());
+        if (pendezzaPizzaSecurity.canConsultCities()) {
+            cityModel.add(pendezzaLinks.linkToCity(cityModel.getId()));
+            cityModel.add(pendezzaLinks.linkToCities());
+        }
 
-        return model;
+        if (pendezzaPizzaSecurity.canConsultStates()) {
+            cityModel.getState().add(pendezzaLinks.
+                    linkToState(cityModel.getState().getId()));
+        }
+
+        return cityModel;
     }
 
-    public CollectionModel<CityModel> toCollection(List<City> cities) {
-        var models = cities.stream().map(this::toModel).toList();
-        CollectionModel<CityModel> collection = CollectionModel.of(models);
-        collection.add(links.linkToCities("cities"));
-        return collection;
+    @Override
+    public CollectionModel<CityModel> toCollectionModel(Iterable<? extends City> entities) {
+        CollectionModel<CityModel> cityCollectionModel = super.toCollectionModel(entities);
+
+        if (pendezzaPizzaSecurity.canConsultCities()) {
+            cityCollectionModel.add(pendezzaLinks.linkToCities("cities"));
+        }
+
+        return cityCollectionModel;
     }
 }

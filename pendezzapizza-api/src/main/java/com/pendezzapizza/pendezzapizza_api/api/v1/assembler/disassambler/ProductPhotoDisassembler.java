@@ -1,6 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.ProductPhotoDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.ProductPhotoDTO;
 import com.pendezzapizza.pendezzapizza_api.domain.model.ProductPhoto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

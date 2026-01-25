@@ -1,9 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.mapper.UserMapper;
-import com.pendezzapizza.pendezzapizza_api.api.v1.controller.UserController;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.UserModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.controller.UserController;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -21,7 +22,10 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
     private UserMapper userMapper;
 
     @Autowired
-    private PendezzaPizzaLinks links;
+    private PendezzaLinks pendezzaLinks;
+
+    @Autowired
+    private PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     public UserModelAssembler() {
         super(UserController.class, UserModel.class);
@@ -29,33 +33,41 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
 
     @Override
     public UserModel toModel(User entity) {
-        UserModel model = userMapper.toModel(entity);
+        UserModel userModel = userMapper.toModel(entity);
 
-        model.add(links.linkToUser(model.getId()));
-        model.add(links.linkToUsers());
-        model.add(links.linkToUserGroups(model.getId(), "groups"));
+        if (pendezzaPizzaSecurity.canConsultUsersGroupsPermissions()) {
+            userModel.add(pendezzaLinks.linkToUser(userModel.getId()));
+            userModel.add(pendezzaLinks.linkToUsers());
+            userModel.add(pendezzaLinks.linkToUserGroups(userModel.getId(), "userGroups"));
+        }
 
-        return model;
+        return userModel;
     }
 
-    public CollectionModel<UserModel> toCollection(Collection<User> users) {
-        List<UserModel> list = users.stream().map(this::toModel).toList();
-        CollectionModel<UserModel> collection = CollectionModel.of(list);
+    @Override
+    public CollectionModel<UserModel> toCollectionModel(Iterable<? extends User> entities) {
+        CollectionModel<UserModel> userModels = super.toCollectionModel(entities);
 
-        collection.add(links.linkToUsers("users"));
+        if (pendezzaPizzaSecurity.canConsultUsersGroupsPermissions()) {
+            userModels.add(pendezzaLinks.linkToUsers("users"));
+        }
 
-        return collection;
+        return userModels;
     }
 
     public CollectionModel<UserModel> toCollectionRefRestaurant(UUID restaurantId, Collection<User> users) {
-        CollectionModel<UserModel> collection = toCollection(users);
+        List<UserModel> userList = users.stream().map(this::toModel).toList();
+        CollectionModel<UserModel> userCollectionModel = CollectionModel.of(userList);
 
-        collection.forEach(user ->
-                user.add(links.linkToRestaurantManagersDissociation(restaurantId, user.getId(), "disassociate"))
-        );
+        if (pendezzaPizzaSecurity.canManageRestaurantRegistrations()) {
+            userCollectionModel.forEach(userModel ->
+                    userModel.add(pendezzaLinks.
+                            linkToRestaurantManagersDissociation(restaurantId, userModel.getId(), "disassociate")));
 
-        return collection.removeLinks()
-                .add(links.linkToRestaurantManagers(restaurantId))
-                .add(links.linkToRestaurantManagersAssociation(restaurantId, "associate"));
+            userCollectionModel.removeLinks()
+                    .add(pendezzaLinks.linkToRestaurantManagers(restaurantId))
+                    .add(pendezzaLinks.linkToRestaurantManagersAssociation(restaurantId, "associate"));
+        }
+        return userCollectionModel;
     }
 }

@@ -1,10 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 
-import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySaleFilter;
+import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
 
 public interface SaleReportService {
 
-    byte[] issueDailySales (DailySaleFilter dailySaleFilter , String timeOffSet);
+    byte[] issueDailySales (DailySalesFilter dailySalesFilter, String timeOffSet);
 
 }

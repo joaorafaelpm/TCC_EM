@@ -12,4 +12,3 @@ public interface ProductPhotoMapper {
     ProductPhotoModel toModel(ProductPhoto productPhoto);
 
 }
-

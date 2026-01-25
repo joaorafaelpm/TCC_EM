@@ -2,6 +2,8 @@ package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.UserModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.UserModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantUserControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import lombok.AllArgsConstructor;
@@ -13,28 +15,27 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/v1/restaurants/{restaurantId}/users")
-public class RestaurantUserController {
+@RequestMapping("/v1/restaurants/{restaurantId}/responsible-users")
+public class RestaurantUserController implements RestaurantUserControllerOpenApi {
 
-    private RestaurantService restaurantService;
+    private final RestaurantService restaurantService;
+    private final UserModelAssembler userModelAssembler;
 
-    private UserModelAssembler userModelAssembler;
-
+    @CheckSecurity.Restaurants.CanManageRegistration
     @GetMapping
     public CollectionModel<UserModel> list(@PathVariable UUID restaurantId) {
         Restaurant restaurant = restaurantService.findById(restaurantId);
-        return userModelAssembler.toCollectionRefRestaurant(
-                restaurantId,
-                restaurant.getResponsibleUsers()
-        );
+        return userModelAssembler.toCollectionRefRestaurant(restaurantId, restaurant.getResponsibleUsers());
     }
 
+    @CheckSecurity.Restaurants.CanManageRegistration
     @PutMapping("/{userId}")
     public ResponseEntity<Void> associate(@PathVariable UUID restaurantId, @PathVariable UUID userId) {
         restaurantService.associateResponsibleUser(restaurantId, userId);
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.Restaurants.CanManageRegistration
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> disassociate(@PathVariable UUID restaurantId, @PathVariable UUID userId) {
         restaurantService.disassociateResponsibleUser(restaurantId, userId);

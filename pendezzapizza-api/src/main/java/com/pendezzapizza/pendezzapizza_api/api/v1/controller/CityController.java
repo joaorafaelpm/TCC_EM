@@ -1,10 +1,12 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-
+import com.pendezzapizza.pendezzapizza_api.api.ResourceUriHelper;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.CityModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.CityDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.CityModel;
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.CityDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.CityDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.CityControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.StateNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.City;
@@ -12,10 +14,10 @@ import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
 import com.pendezzapizza.pendezzapizza_api.domain.service.CityService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -23,52 +25,59 @@ import java.util.UUID;
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "/v1/cities", produces = MediaType.APPLICATION_JSON_VALUE)
-@Slf4j
-public class CityController {
+public class CityController implements CityControllerOpenApi {
 
-    private CityRepository cityRepository;
+    private final CityRepository cityRepository;
+    private final CityService cityService;
+    private final CityModelAssembler cityAssembler;
+    private final CityDisassembler cityDisassembler;
 
-    private CityService cityService;
-
-    private CityModelAssembler cityAssembler;
-    private CityDisassembler cityDisassembler;
-
+    @CheckSecurity.Cities.CanConsult
     @GetMapping
-    public CollectionModel<CityModel> getAll() {
-        return cityAssembler.toCollection(cityRepository.findAll());
+    public CollectionModel<CityModel> all() {
+        return cityAssembler.toCollectionModel(cityRepository.findAll());
     }
 
-    @GetMapping("/{id}")
-    public CityModel getById(@PathVariable UUID id) {
-        return cityAssembler.toModel(cityService.findById(id));
+    @CheckSecurity.Cities.CanConsult
+    @GetMapping(value = "/{cityId}")
+    public CityModel findById(@PathVariable UUID cityId) {
+        return cityAssembler.toModel(cityService.findById(cityId));
     }
 
+    @CheckSecurity.Cities.CanEdit
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public CityModel add(@RequestBody @Valid CityDTO cityDTO) {
         try {
             City city = cityDisassembler.cityDTOToCity(cityDTO);
-            return cityAssembler.toModel(cityService.save(city));
-        }
-        catch (StateNotFoundException e) {
+            CityModel cityModel = cityAssembler.toModel(cityService.save(city));
+
+            ResourceUriHelper.addUriResponseHeader(cityModel.getId());
+
+            return cityModel;
+        } catch (StateNotFoundException e) {
             throw new BusinessException(e.getMessage(), e);
         }
     }
 
-    @PutMapping("/{id}")
-    public CityModel update(@PathVariable UUID id, @RequestBody @Valid CityDTO cityDTO) {
-        City oldCity = cityService.findById(id);
-        City newCity = cityDisassembler.cityDTOToCity(cityDTO);
+    @CheckSecurity.Cities.CanEdit
+    @PutMapping(value = "/{cityId}")
+    public CityModel save(@PathVariable UUID cityId, @RequestBody @Valid CityDTO cityDTO) {
+        try {
+            City existingCity = cityService.findById(cityId);
 
-        cityDisassembler.updateCityFromDto(cityDTO, oldCity);
-        oldCity.setState(newCity.getState());
+            cityDisassembler.updateCityFromDto(cityDTO, existingCity);
 
-        return cityAssembler.toModel(cityService.save(id, oldCity));
+            return cityAssembler.toModel(cityService.save(existingCity));
+        } catch (StateNotFoundException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        cityService.delete(id);
+    @CheckSecurity.Cities.CanEdit
+    @DeleteMapping("/{cityId}")
+    public ResponseEntity<Void> remove(@PathVariable UUID cityId) {
+        cityService.delete(cityId);
+        return ResponseEntity.noContent().build();
     }
 }

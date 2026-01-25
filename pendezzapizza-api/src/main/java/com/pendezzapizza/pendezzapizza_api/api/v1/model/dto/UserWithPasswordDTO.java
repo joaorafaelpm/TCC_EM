@@ -1,0 +1,22 @@
+package com.pendezzapizza.pendezzapizza_api.api.v1.model.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class UserWithPasswordDTO extends UserDTO {
+
+    @Schema(example = "senha", type = "string")
+    @NotBlank
+    private String password;
+
+    public UserWithPasswordDTO(String name, String email, String password) {
+        super(name, email);
+        this.password = password;
+    }
+}

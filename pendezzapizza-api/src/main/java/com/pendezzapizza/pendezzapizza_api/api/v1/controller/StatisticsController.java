@@ -1,8 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.StatisticsModel;
-import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySaleFilter;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.StatisticsControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
+import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.dto.DailySale;
 import com.pendezzapizza.pendezzapizza_api.domain.service.SaleQueryService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.SaleReportService;
@@ -20,32 +22,33 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/statistics")
 @AllArgsConstructor
-public class StatisticsController {
+public class StatisticsController implements StatisticsControllerOpenApi {
 
-    private PendezzaPizzaLinks links;
-    private SaleQueryService saleQueryService;
-    private SaleReportService saleReportService;
+    private final PendezzaLinks pendezzaLinks;
+    private final SaleQueryService saleQueryService;
+    private final SaleReportService saleReportService;
 
+    @CheckSecurity.Statistics.CanConsult
     @GetMapping
-    public StatisticsModel exposeLinks() {
+    public StatisticsModel statistics() {
         StatisticsModel statisticsModel = new StatisticsModel();
-        statisticsModel.add(links.linkToDailySalesStatistics("daily-sales"));
+        statisticsModel.add(pendezzaLinks.linkToDailySalesStatistics("daily-sales"));
         return statisticsModel;
     }
 
+    @CheckSecurity.Statistics.CanConsult
     @GetMapping(path = "/daily-sales", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<DailySale> getDailySalesJson(
-            DailySaleFilter filter,
-            @RequestParam(required = false, defaultValue = "+00:00") String timeOffset) {
+    public List<DailySale> consultDailySales(DailySalesFilter filter,
+                                             @RequestParam(required = false, defaultValue = "+00:00") String timeOffset) {
         return saleQueryService.viewDailySales(filter, timeOffset);
     }
 
+    @CheckSecurity.Statistics.CanConsult
     @GetMapping(path = "/daily-sales", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> getDailySalesPdf(
-            DailySaleFilter filter,
-            @RequestParam(required = false, defaultValue = "+00:00") String timeOffset) {
+    public ResponseEntity<byte[]> consultDailySalesPdf(DailySalesFilter filter,
+                                                       @RequestParam(required = false, defaultValue = "+00:00") String timeOffset) {
 
-        byte[] pdfBytes = saleReportService.issueDailySales(filter, timeOffset);
+        byte[] bytesPdf = saleReportService.issueDailySales(filter, timeOffset);
 
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=daily-sales.pdf");
@@ -53,6 +56,6 @@ public class StatisticsController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .headers(headers)
-                .body(pdfBytes);
+                .body(bytesPdf);
     }
 }

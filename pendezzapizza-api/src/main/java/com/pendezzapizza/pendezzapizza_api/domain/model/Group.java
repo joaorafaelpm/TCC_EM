@@ -17,6 +17,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "`group`")
 public class Group {
 
     @Id

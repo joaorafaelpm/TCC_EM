@@ -45,12 +45,12 @@ public class GroupService {
     }
 
     @Transactional
-    public void associate (UUID groupId , UUID permissionId) {
+    public void associatePermission (UUID groupId , UUID permissionId) {
         Group group = findById(groupId);
         group.associatePermission(permissionService.findById(permissionId));
     }
     @Transactional
-    public void disassociate (UUID groupId , UUID permissionId) {
+    public void disassociatePermission (UUID groupId , UUID permissionId) {
         Group group = findById(groupId);
         group.disassociatePermission(permissionService.findById(permissionId));
     }

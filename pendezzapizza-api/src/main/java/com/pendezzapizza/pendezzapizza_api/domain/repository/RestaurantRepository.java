@@ -26,12 +26,9 @@ public interface RestaurantRepository
 """)
     Optional<Restaurant> findByIdMapperResolved(UUID id);
 
-    List<Restaurant> findByShippingFeeBetween (BigDecimal lowerShippingFee , BigDecimal higherShippingFee);
-
-    Optional<Restaurant> findFirstByNameContaining (String nome);
-
-    List<Restaurant> findTop2ByNameContaining (String nome) ;
-
     List<Restaurant> find (String name , BigDecimal startShippingFee , BigDecimal endShippingFee) ;
+
+    boolean existsResponsible(UUID restaurantId , UUID userId);
+
 
 }

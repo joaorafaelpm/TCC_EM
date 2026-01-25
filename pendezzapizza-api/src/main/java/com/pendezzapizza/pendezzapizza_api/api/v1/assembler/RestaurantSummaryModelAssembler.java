@@ -1,26 +1,26 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.mapper.RestaurantSummaryMapper;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantSummaryModel;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.List;
-
 @Component
-public class RestaurantSummaryModelAssembler
-        extends RepresentationModelAssemblerSupport<Restaurant, RestaurantSummaryModel> {
+public class RestaurantSummaryModelAssembler extends RepresentationModelAssemblerSupport<Restaurant, RestaurantSummaryModel> {
 
     @Autowired
-    private RestaurantSummaryMapper mapper;
+    private RestaurantSummaryMapper restaurantMapper;
 
     @Autowired
-    private PendezzaPizzaLinks links;
+    private PendezzaLinks pendezzaLinks;
+
+    @Autowired
+    private PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     public RestaurantSummaryModelAssembler() {
         super(Restaurant.class, RestaurantSummaryModel.class);
@@ -28,20 +28,24 @@ public class RestaurantSummaryModelAssembler
 
     @Override
     public RestaurantSummaryModel toModel(Restaurant entity) {
-        RestaurantSummaryModel model = mapper.toModel(entity);
+        RestaurantSummaryModel restaurantSummaryModel = restaurantMapper.toModel(entity);
 
-        model.add(links.linkToRestaurant(model.getId()));
-        model.add(links.linkToRestaurants("restaurants"));
+        if (pendezzaPizzaSecurity.canConsultRestaurants()) {
+            restaurantSummaryModel.add(pendezzaLinks.linkToRestaurant(restaurantSummaryModel.getId()));
+            restaurantSummaryModel.add(pendezzaLinks.linkToRestaurants("restaurants"));
+        }
 
-        return model;
+        return restaurantSummaryModel;
     }
 
-    public CollectionModel<RestaurantSummaryModel> toCollection(Collection<Restaurant> restaurants) {
-        List<RestaurantSummaryModel> list = restaurants.stream().map(this::toModel).toList();
-        CollectionModel<RestaurantSummaryModel> collection = CollectionModel.of(list);
+    @Override
+    public CollectionModel<RestaurantSummaryModel> toCollectionModel(Iterable<? extends Restaurant> entities) {
+        CollectionModel<RestaurantSummaryModel> collectionModel = super.toCollectionModel(entities);
 
-        collection.add(links.linkToRestaurants("restaurants"));
+        if (pendezzaPizzaSecurity.canConsultRestaurants()) {
+            collectionModel.add(pendezzaLinks.linkToRestaurants("restaurants"));
+        }
 
-        return collection;
+        return collectionModel;
     }
 }

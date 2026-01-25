@@ -1,25 +1,27 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.mapper.StateMapper;
 import com.pendezzapizza.pendezzapizza_api.api.v1.controller.StateController;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.StateModel;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class StateModelAssembler extends RepresentationModelAssemblerSupport<State, StateModel> {
 
     @Autowired
-    private StateMapper mapper;
+    private StateMapper stateMapper;
 
     @Autowired
-    private PendezzaPizzaLinks links;
+    private PendezzaLinks pendezzaPizzaLinks;
+
+    @Autowired
+    private PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     public StateModelAssembler() {
         super(StateController.class, StateModel.class);
@@ -27,20 +29,24 @@ public class StateModelAssembler extends RepresentationModelAssemblerSupport<Sta
 
     @Override
     public StateModel toModel(State state) {
-        StateModel model = mapper.toModel(state);
+        StateModel stateModel = stateMapper.toModel(state);
 
-        model.add(links.linkToState(model.getId()));
-        model.add(links.linkToStates());
+        if (pendezzaPizzaSecurity.canConsultStates()) {
+            stateModel.add(pendezzaPizzaLinks.linkToState(stateModel.getId()));
+            stateModel.add(pendezzaPizzaLinks.linkToStates());
+        }
 
-        return model;
+        return stateModel;
     }
 
-    public CollectionModel<StateModel> toCollection(List<State> states) {
-        var list = states.stream().map(this::toModel).toList();
-        CollectionModel<StateModel> collection = CollectionModel.of(list);
+    @Override
+    public CollectionModel<StateModel> toCollectionModel(Iterable<? extends State> entities) {
+        CollectionModel<StateModel> statesCollectionModel = super.toCollectionModel(entities);
 
-        collection.add(links.linkToStates());
+        if (pendezzaPizzaSecurity.canConsultStates()) {
+            statesCollectionModel.add(pendezzaPizzaLinks.linkToStates());
+        }
 
-        return collection;
+        return statesCollectionModel;
     }
 }

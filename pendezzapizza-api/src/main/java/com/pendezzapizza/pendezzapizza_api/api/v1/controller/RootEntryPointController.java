@@ -1,6 +1,8 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.MediaType;
@@ -13,25 +15,49 @@ import org.springframework.web.bind.annotation.RestController;
 public class RootEntryPointController {
 
     @Autowired
-    private PendezzaPizzaLinks links;
+    private PendezzaLinks pendezzaLinks;
 
+    @Autowired
+    private PendezzaPizzaSecurity pendezzaPizzaSecurity;
+
+    @Operation(hidden = true)
     @GetMapping
     public RootEntryPointModel root() {
-        var rootModel = new RootEntryPointModel();
+        var rootEntryPointModel = new RootEntryPointModel();
 
-        rootModel.add(links.linkToOrders("orders"));
-        rootModel.add(links.linkToRestaurants("restaurants"));
-        rootModel.add(links.linkToGroups("groups"));
-        rootModel.add(links.linkToUsers("users"));
-        rootModel.add(links.linkToPermissions("permissions"));
-        rootModel.add(links.linkToPaymentMethods("paymentMethods"));
-        rootModel.add(links.linkToStates("states"));
-        rootModel.add(links.linkToCities("cities"));
-        rootModel.add(links.linkToStatistics("statistics"));
+        if (pendezzaPizzaSecurity.canCreateOrders()) {
+            rootEntryPointModel.add(pendezzaLinks.linkToOrders("orders"));
+        }
 
-        return rootModel;
+        if (pendezzaPizzaSecurity.canConsultRestaurants()) {
+            rootEntryPointModel.add(pendezzaLinks.linkToRestaurants("restaurants"));
+        }
+
+        if (pendezzaPizzaSecurity.canConsultUsersGroupsPermissions()) {
+            rootEntryPointModel.add(pendezzaLinks.linkToGroups("groups"));
+            rootEntryPointModel.add(pendezzaLinks.linkToUsers("users"));
+            rootEntryPointModel.add(pendezzaLinks.linkToPermissions("permissions"));
+        }
+
+        if (pendezzaPizzaSecurity.canConsultPaymentMethods()) {
+            rootEntryPointModel.add(pendezzaLinks.linkToPaymentMethods("payment-methods"));
+        }
+
+        if (pendezzaPizzaSecurity.canConsultStates()) {
+            rootEntryPointModel.add(pendezzaLinks.linkToStates("states"));
+        }
+
+        if (pendezzaPizzaSecurity.canConsultCities()) {
+            rootEntryPointModel.add(pendezzaLinks.linkToCities("cities"));
+        }
+
+        if (pendezzaPizzaSecurity.canConsultStatistics()) {
+            rootEntryPointModel.add(pendezzaLinks.linkToStatistics("statistics"));
+        }
+
+        return rootEntryPointModel;
     }
 
-    public static class RootEntryPointModel
-            extends RepresentationModel<RootEntryPointModel> { }
+    public static class RootEntryPointModel extends RepresentationModel<RootEntryPointModel> {
+    }
 }

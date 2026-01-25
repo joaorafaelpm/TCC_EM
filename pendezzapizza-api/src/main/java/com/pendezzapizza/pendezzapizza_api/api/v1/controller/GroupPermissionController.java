@@ -1,7 +1,9 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.PermissionAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.PermissionModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.PermissionModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.GroupPermissionControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.service.GroupService;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
@@ -13,35 +15,28 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/groups/{groupId}/permissions")
 @AllArgsConstructor
-public class GroupPermissionController {
+public class GroupPermissionController implements GroupPermissionControllerOpenApi {
 
-    private GroupService groupService;
+    private final GroupService groupService;
+    private final PermissionModelAssembler permissionAssembler;
 
-    private PermissionAssembler permissionAssembler;
-
+    @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
     public CollectionModel<PermissionModel> listPermissions(@PathVariable UUID groupId) {
-        return permissionAssembler.toCollectionRefGroup(
-                groupId,
-                groupService.findById(groupId).getPermission()
-        );
+        return permissionAssembler.toCollectionRefGroup(groupId, groupService.findById(groupId).getPermission());
     }
 
+    @CheckSecurity.UsersGroupsPermissions.CanEdit
     @PutMapping("/{permissionId}")
-    public ResponseEntity<Void> associatePermission(
-            @PathVariable UUID groupId,
-            @PathVariable UUID permissionId
-    ) {
-        groupService.associate(groupId, permissionId);
+    public ResponseEntity<Void> associatePermission(@PathVariable UUID groupId, @PathVariable UUID permissionId) {
+        groupService.associatePermission(groupId, permissionId);
         return ResponseEntity.noContent().build();
     }
 
+    @CheckSecurity.UsersGroupsPermissions.CanEdit
     @DeleteMapping("/{permissionId}")
-    public ResponseEntity<Void> disassociatePermission(
-            @PathVariable UUID groupId,
-            @PathVariable UUID permissionId
-    ) {
-        groupService.disassociate(groupId, permissionId);
+    public ResponseEntity<Void> disassociatePermission(@PathVariable UUID groupId, @PathVariable UUID permissionId) {
+        groupService.disassociatePermission(groupId, permissionId);
         return ResponseEntity.noContent().build();
     }
 }

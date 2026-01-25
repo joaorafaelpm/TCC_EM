@@ -1,9 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.mapper.OrderMapper;
 import com.pendezzapizza.pendezzapizza_api.api.v1.controller.OrderController;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderModel;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -19,7 +20,10 @@ public class OrderModelAssembler extends RepresentationModelAssemblerSupport<Ord
     private OrderMapper orderMapper;
 
     @Autowired
-    private PendezzaPizzaLinks links;
+    private PendezzaLinks pendezzaLinks;
+
+    @Autowired
+    private PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     public OrderModelAssembler() {
         super(OrderController.class, OrderModel.class);
@@ -27,35 +31,53 @@ public class OrderModelAssembler extends RepresentationModelAssemblerSupport<Ord
 
     @Override
     public OrderModel toModel(Order order) {
-        OrderModel model = orderMapper.toModel(order);
+        OrderModel orderModel = orderMapper.toModel(order);
 
-        UUID orderId = model.getId();
-        UUID restaurantId = model.getRestaurant().getId();
-        UUID customerId = model.getClient().getId();
-        UUID cityId = model.getDeliveryAddress().getCity().getId();
-        UUID paymentMethodId = model.getPaymentMethod().getId();
+        UUID orderId = orderModel.getId();
+        UUID restaurantId = orderModel.getRestaurant().getId();
+        UUID clientId = orderModel.getCustomer().getId();
+        UUID cityId = orderModel.getDeliveryAddress().getCity().getId();
+        UUID paymentMethodId = orderModel.getPaymentMethod().getId();
 
-        if (order.canBeConfirmed()) {
-            model.add(links.linkToConfirmOrder(orderId, "confirm"));
+        // Ações de gerenciamento de estado do pedido
+        if (pendezzaPizzaSecurity.canManageOrders(order.getId())) {
+            if (order.canBeConfirmed()) {
+                orderModel.add(pendezzaLinks.linkToConfirmOrder(orderId, "confirm"));
+            }
+            if (order.canBeDelivered()) {
+                orderModel.add(pendezzaLinks.linkToDeliverOrder(orderId, "deliver"));
+            }
+            if (order.canBeCanceled()) {
+                orderModel.add(pendezzaLinks.linkToCancelOrder(orderId, "cancel"));
+            }
         }
-        if (order.canBeDelivered()) {
-            model.add(links.linkToDeliverOrder(orderId, "deliver"));
-        }
-        if (order.canBeCanceled()) {
-            model.add(links.linkToCancelOrder(orderId, "cancel"));
+
+        if (pendezzaPizzaSecurity.canSearchOrders()) {
+            orderModel.add(pendezzaLinks.linkToOrders("orders"));
         }
 
-        model.add(links.linkToOrders("orders"));
-        model.getRestaurant().add(links.linkToRestaurant(restaurantId));
-        model.getDeliveryAddress().getCity().add(links.linkToCity(cityId));
-        model.getPaymentMethod().add(links.linkToPaymentMethod(paymentMethodId));
-        model.getClient().add(links.linkToUser(customerId));
+        if (pendezzaPizzaSecurity.canConsultRestaurants()) {
+            orderModel.getRestaurant().add(pendezzaLinks.linkToRestaurant(restaurantId));
 
-        model.getItems().forEach(item ->
-                item.add(links.linkToProduct(
-                        restaurantId, item.getProductId(), IanaLinkRelations.SELF.value()))
-        );
+            // Links para produtos dentro dos itens do pedido
+            orderModel.getItems().forEach(item -> {
+                item.add(pendezzaLinks.linkToProduct(
+                        orderModel.getRestaurant().getId(), item.getProductId(), IanaLinkRelations.SELF.value()));
+            });
+        }
 
-        return model;
+        if (pendezzaPizzaSecurity.canConsultCities()) {
+            orderModel.getDeliveryAddress().getCity().add(pendezzaLinks.linkToCity(cityId));
+        }
+
+        if (pendezzaPizzaSecurity.canConsultPaymentMethods()) {
+            orderModel.getPaymentMethod().add(pendezzaLinks.linkToPaymentMethod(paymentMethodId));
+        }
+
+        if (pendezzaPizzaSecurity.canConsultUsersGroupsPermissions()) {
+            orderModel.getCustomer().add(pendezzaLinks.linkToUser(clientId));
+        }
+
+        return orderModel;
     }
 }

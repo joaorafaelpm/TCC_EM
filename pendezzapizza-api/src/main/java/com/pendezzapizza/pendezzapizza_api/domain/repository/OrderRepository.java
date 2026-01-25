@@ -22,8 +22,10 @@ public interface OrderRepository extends CustomJPARepository<Order, UUID> ,
     """)
     Optional<Order> findByIdMapperResolved(UUID id);
 
-    @Query("from Order p join fetch p.client")
+    @Query("from Order p join fetch p.customer")
     List<Order> findAll ();
+
+    boolean isOrderManagedBy (UUID orderId , UUID userId);
 
 
 }

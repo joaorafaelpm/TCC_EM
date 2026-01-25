@@ -1,10 +1,11 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.ProductPhotoAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.ProductPhotoModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.ProductPhotoDisassembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.ProductPhotoDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.ProductPhotoModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.ProductPhotoDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantProductPhotoControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Product;
 import com.pendezzapizza.pendezzapizza_api.domain.model.ProductPhoto;
@@ -29,34 +30,25 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/restaurants/{restaurantId}/products/{productId}/photo")
 @AllArgsConstructor
-public class RestaurantProductPhotoController {
+public class RestaurantProductPhotoController implements RestaurantProductPhotoControllerOpenApi {
 
-    private ProductPhotoCatalogService productPhotoService;
-    private ProductService productService;
-    private PhotoStorageService photoStorageService;
+    private final ProductPhotoCatalogService photoService;
+    private final ProductService productRegistrationService;
+    private final PhotoStorageService photoStorageService;
+    private final ProductPhotoModelAssembler photoAssembler;
+    private final ProductPhotoDisassembler photoDisassembler;
 
-    private ProductPhotoAssembler productPhotoAssembler;
-    private ProductPhotoDisassembler productPhotoDisassembler;
-
+    @CheckSecurity.Restaurants.CanConsult
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ProductPhotoModel getPhoto(
-            @PathVariable UUID restaurantId,
-            @PathVariable UUID productId
-    ) {
-        return productPhotoAssembler.toModel(
-                productPhotoService.findById(restaurantId, productId)
-        );
+    public ProductPhotoModel findPhoto(@PathVariable UUID restaurantId, @PathVariable UUID productId) {
+        return photoAssembler.toModel(photoService.findById(restaurantId, productId));
     }
 
     @GetMapping
-    public ResponseEntity<InputStreamResource> servePhoto(
-            @PathVariable UUID restaurantId,
-            @PathVariable UUID productId,
-            @RequestHeader(name = "accept") String acceptHeaders
-    ) throws HttpMediaTypeNotAcceptableException {
+    public ResponseEntity<InputStreamResource> servePhoto(@PathVariable UUID restaurantId, @PathVariable UUID productId,
+                                                          @RequestHeader(name = "accept") String acceptHeaders) throws HttpMediaTypeNotAcceptableException {
         try {
-            ProductPhoto productPhoto = productPhotoService.findById(restaurantId, productId);
-
+            ProductPhoto productPhoto = photoService.findById(restaurantId, productId);
             MediaType mediaType = MediaType.parseMediaType(productPhoto.getContentType());
             List<MediaType> acceptedMediaTypes = MediaType.parseMediaTypes(acceptHeaders);
 
@@ -67,59 +59,39 @@ public class RestaurantProductPhotoController {
             return ResponseEntity.ok()
                     .contentType(mediaType)
                     .body(new InputStreamResource(inputStream));
-
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
-    /**
-     * At first, this remains inside the controller because of an infrastructure limitation:
-     * When this exception is thrown, we must ensure that NO JSON is returned.
-     * Currently, the ExceptionHandler catches the exception and returns JSON,
-     * causing a "Not Acceptable" — not because the media type is wrong,
-     * but because we handled the error incorrectly.
-     */
-    private void verifyMediaTypeCompatibility(
-            MediaType photoMediaType,
-            List<MediaType> acceptedMediaTypes
-    ) throws HttpMediaTypeNotAcceptableException {
-
+    private void verifyMediaTypeCompatibility(MediaType photoMediaType, List<MediaType> acceptedMediaTypes) throws HttpMediaTypeNotAcceptableException {
         boolean compatible = acceptedMediaTypes.stream()
-                .anyMatch(accepted -> accepted.isCompatibleWith(photoMediaType));
+                .anyMatch(acceptedMediaType -> acceptedMediaType.isCompatibleWith(photoMediaType));
 
         if (!compatible) {
             throw new HttpMediaTypeNotAcceptableException(acceptedMediaTypes);
         }
     }
 
+    @CheckSecurity.Restaurants.CanManageOperation
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ProductPhotoModel uploadPhoto(
-            @PathVariable UUID restaurantId,
-            @PathVariable UUID productId,
-            @Valid ProductPhotoDTO productPhotoDTO
-    ) throws IOException {
-
-        Product product = productService.findById(restaurantId, productId);
+    public ProductPhotoModel updatePhoto(@PathVariable UUID restaurantId, @PathVariable UUID productId,
+                                         @Valid ProductPhotoDTO productPhotoDTO) throws IOException {
+        Product product = productRegistrationService.findById(restaurantId, productId);
         MultipartFile file = productPhotoDTO.getFile();
 
-        ProductPhoto productPhoto =
-                productPhotoDisassembler.photoProductDTOToProductPhoto(productPhotoDTO);
+        ProductPhoto photo = photoDisassembler.photoProductDTOToProductPhoto(productPhotoDTO);
+        photo.setProduct(product);
 
-        productPhoto.setProduct(product);
-
-        ProductPhoto savedPhoto =
-                productPhotoService.save(productPhoto, file.getInputStream());
-
-        return productPhotoAssembler.toModel(savedPhoto);
+        ProductPhoto savedPhoto = photoService.save(photo, file.getInputStream());
+        return photoAssembler.toModel(savedPhoto);
     }
 
+    @CheckSecurity.Restaurants.CanManageOperation
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePhoto(
-            @PathVariable UUID restaurantId,
-            @PathVariable UUID productId
-    ) {
-        productPhotoService.delete(restaurantId, productId);
+    public ResponseEntity<Void> removePhoto(@PathVariable UUID restaurantId, @PathVariable UUID productId) {
+        photoService.delete(restaurantId, productId);
+        return ResponseEntity.noContent().build();
     }
 }

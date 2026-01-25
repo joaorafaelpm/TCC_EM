@@ -26,6 +26,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true , callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "`order`")
 public class Order extends AbstractAggregateRoot<Order> {
 
     @Id
@@ -59,7 +60,7 @@ public class Order extends AbstractAggregateRoot<Order> {
 
     @ManyToOne
     @JoinColumn(nullable = false , name = "client_user_id")
-    private User client ;
+    private User customer ;
 
     @Embedded
     private Address deliveryAddress ;

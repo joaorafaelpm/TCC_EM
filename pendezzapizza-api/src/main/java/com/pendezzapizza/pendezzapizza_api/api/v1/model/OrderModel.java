@@ -1,6 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.model;
 
-import com.pendezzapizza.pendezzapizza_api.domain.model.enuns.OrderStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,27 +18,36 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderModel extends RepresentationModel<OrderModel> {
 
+    @Schema(example = "936dc9ec-05bf-44e5-8c07-7e51adc6083d")
     private UUID id;
 
-    private BigDecimal subtotal ;
-    private BigDecimal shippingFee ;
-    private BigDecimal totalCost ;
-    private OffsetDateTime creationDate;
-    private OffsetDateTime confirmationDate ;
-    private OffsetDateTime cancellationDate;
-    private OffsetDateTime deliveryDate;
+    @Schema(example = "298.90")
+    private BigDecimal subtotal;
 
-    private OrderStatus orderStatus ;
-    private UserModel client ;
+    @Schema(example = "10.00")
+    private BigDecimal shippingFee;
 
-    private RestaurantSummaryModel restaurant ;
+    @Schema(example = "308.90")
+    private BigDecimal totalValue;
 
+    @Schema(example = "2022-12-01T20:34:04Z")
+    private OffsetDateTime createdAt;
 
+    @Schema(example = "2022-12-01T20:35:10Z")
+    private OffsetDateTime confirmedAt;
 
-    private AddressModel deliveryAddress ;
+    @Schema(example = "2022-12-01T20:55:30Z")
+    private OffsetDateTime deliveredAt;
 
-    private PaymentMethodModel paymentMethod ;
+    @Schema(example = "2022-12-01T20:35:00Z")
+    private OffsetDateTime canceledAt;
 
+    @Schema(example = "CRIADO")
+    private String status;
+
+    private RestaurantSummaryModel restaurant;
+    private UserModel customer;
+    private AddressModel deliveryAddress;
+    private PaymentMethodModel paymentMethod;
     private List<OrderItemModel> items;
-
 }

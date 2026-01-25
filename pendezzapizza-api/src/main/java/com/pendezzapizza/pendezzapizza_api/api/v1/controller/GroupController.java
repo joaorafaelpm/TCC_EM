@@ -1,9 +1,11 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.GroupAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.GroupModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.GroupDisassembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.GroupDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.GroupModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.GroupDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.GroupControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Group;
 import com.pendezzapizza.pendezzapizza_api.domain.service.GroupService;
 import jakarta.validation.Valid;
@@ -18,48 +20,46 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/groups")
 @AllArgsConstructor
-public class GroupController {
+public class GroupController implements GroupControllerOpenApi {
 
-    private GroupService groupService;
+    private final GroupService groupService;
+    private final GroupModelAssembler groupAssembler;
+    private final GroupDisassembler groupDisassembler;
 
-    private GroupAssembler groupAssembler;
-    private GroupDisassembler groupDisassembler;
-
+    @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public CollectionModel<GroupModel> findAll() {
-        return groupAssembler.toCollection(groupService.findAll());
+    public CollectionModel<GroupModel> all() {
+        return groupAssembler.toCollectionModel(groupService.findAll());
     }
 
+    @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping("/{groupId}")
-    public ResponseEntity<GroupModel> findById(@PathVariable UUID groupId) {
-        return ResponseEntity.ok(
-                groupAssembler.toModel(groupService.findById(groupId))
-        );
+    public GroupModel findById(@PathVariable UUID groupId) {
+        return groupAssembler.toModel(groupService.findById(groupId));
     }
 
+    @CheckSecurity.UsersGroupsPermissions.CanEdit
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupModel save(@RequestBody @Valid GroupDTO groupDTO) {
+    public GroupModel add(@RequestBody @Valid GroupDTO groupDTO) {
         Group group = groupDisassembler.groupDTOToGroup(groupDTO);
         return groupAssembler.toModel(groupService.save(group));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<GroupModel> update(
-            @PathVariable UUID id,
-            @RequestBody @Valid GroupDTO groupDTO
-    ) {
-        Group existingGroup = groupService.findById(id);
+    @CheckSecurity.UsersGroupsPermissions.CanEdit
+    @PutMapping("/{groupId}")
+    public GroupModel save(@PathVariable UUID groupId, @RequestBody @Valid GroupDTO groupDTO) {
+        Group existingGroup = groupService.findById(groupId);
         groupDisassembler.updateGroupFromDto(groupDTO, existingGroup);
 
-        return ResponseEntity.ok(
-                groupAssembler.toModel(groupService.save(existingGroup))
-        );
+        return groupAssembler.toModel(groupService.save(existingGroup));
     }
 
-    @DeleteMapping("/{id}")
+    @CheckSecurity.UsersGroupsPermissions.CanEdit
+    @DeleteMapping("/{groupId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        groupService.deleteById(id);
+    public ResponseEntity<Void> remove(@PathVariable UUID groupId) {
+        groupService.deleteById(groupId);
+        return ResponseEntity.noContent().build();
     }
 }

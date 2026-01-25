@@ -1,9 +1,11 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.PaymentMethodAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.PaymentMethodModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.PaymentMethodDisassembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.PaymentMethodDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.PaymentMethodModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.PaymentMethodDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.PaymentMethodControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.PaymentMethod;
 import com.pendezzapizza.pendezzapizza_api.domain.service.PaymentMethodService;
 import jakarta.validation.Valid;
@@ -23,93 +25,81 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/v1/payment-methods")
 @AllArgsConstructor
-public class PaymentMethodController {
+public class PaymentMethodController implements PaymentMethodControllerOpenApi {
 
-    private PaymentMethodService paymentMethodService;
+    private final PaymentMethodService paymentMethodService;
+    private final PaymentMethodModelAssembler paymentMethodAssembler;
+    private final PaymentMethodDisassembler paymentMethodDisassembler;
 
-    private PaymentMethodAssembler paymentMethodAssembler;
-    private PaymentMethodDisassembler paymentMethodDisassembler;
-
+    @CheckSecurity.PaymentMethods.CanConsult
     @GetMapping
-    public ResponseEntity<CollectionModel<PaymentMethodModel>> findAll(ServletWebRequest request) {
-
-        // Generate custom eTag
-        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
-
-        String eTag = "0";
-
-        OffsetDateTime lastUpdatedAt = paymentMethodService.getLastUpdateDate();
-
-        if (lastUpdatedAt != null) {
-            eTag = String.valueOf(lastUpdatedAt.toEpochSecond());
-        }
-
-        // If nothing changed, skip processing
-        if (request.checkNotModified(eTag)) {
-            return null;
-        }
-
-        CollectionModel<PaymentMethodModel> models =
-                paymentMethodAssembler.toCollection(paymentMethodService.findAll());
-
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
-                .eTag(eTag)
-                .body(models);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<PaymentMethodModel> findById(
-            @PathVariable UUID id,
-            ServletWebRequest request
-    ) {
+    public ResponseEntity<CollectionModel<PaymentMethodModel>> all(ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
+        OffsetDateTime lastUpdateDate = paymentMethodService.getLastUpdateDate();
 
-        OffsetDateTime lastUpdatedAt = paymentMethodService.getLastUpdateDateById(id);
-
-        if (lastUpdatedAt != null) {
-            eTag = String.valueOf(lastUpdatedAt.toEpochSecond());
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
         }
 
         if (request.checkNotModified(eTag)) {
             return null;
         }
 
-        PaymentMethodModel model =
-                paymentMethodAssembler.toModel(paymentMethodService.findById(id));
+        CollectionModel<PaymentMethodModel> paymentMethodModels = paymentMethodAssembler
+                .toCollectionModel(paymentMethodService.findAll());
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
                 .eTag(eTag)
-                .body(model);
+                .body(paymentMethodModels);
     }
 
+    @CheckSecurity.PaymentMethods.CanConsult
+    @GetMapping("/{paymentMethodId}")
+    public ResponseEntity<PaymentMethodModel> findById(@PathVariable UUID paymentMethodId, ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = paymentMethodService.getLastUpdateDateById(paymentMethodId);
+
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
+        PaymentMethodModel paymentMethodModel = paymentMethodAssembler
+                .toModel(paymentMethodService.findById(paymentMethodId));
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(paymentMethodModel);
+    }
+
+    @CheckSecurity.PaymentMethods.CanEdit
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PaymentMethodModel add(@RequestBody @Valid PaymentMethodDTO dto) {
-        PaymentMethod paymentMethod =
-                paymentMethodDisassembler.paymentMethodDTOToPaymentMethod(dto);
-
+    public PaymentMethodModel add(@RequestBody @Valid PaymentMethodDTO paymentMethodDTO) {
+        PaymentMethod paymentMethod = paymentMethodDisassembler.paymentMethodDTOToPaymentMethod(paymentMethodDTO);
         return paymentMethodAssembler.toModel(paymentMethodService.save(paymentMethod));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PaymentMethodModel> update(
-            @PathVariable UUID id,
-            @RequestBody @Valid PaymentMethodDTO dto
-    ) {
-        PaymentMethod old = paymentMethodService.findById(id);
-        paymentMethodDisassembler.updatePaymentMethodFromDto(dto, old);
+    @CheckSecurity.PaymentMethods.CanEdit
+    @PutMapping("/{paymentMethodId}")
+    public PaymentMethodModel save(@PathVariable UUID paymentMethodId, @RequestBody @Valid PaymentMethodDTO paymentMethodDTO) {
+        PaymentMethod existingPaymentMethod = paymentMethodService.findById(paymentMethodId);
+        paymentMethodDisassembler.updatePaymentMethodFromDto(paymentMethodDTO, existingPaymentMethod);
 
-        return ResponseEntity.ok(
-                paymentMethodAssembler.toModel(paymentMethodService.save(id, old))
-        );
+        return paymentMethodAssembler.toModel(paymentMethodService.save(existingPaymentMethod));
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable UUID id) {
-        paymentMethodService.remove(id);
+    @CheckSecurity.PaymentMethods.CanEdit
+    @DeleteMapping("/{paymentMethodId}")
+    public ResponseEntity<Void> remove(@PathVariable UUID paymentMethodId) {
+        paymentMethodService.remove(paymentMethodId);
+        return ResponseEntity.noContent().build();
     }
 }

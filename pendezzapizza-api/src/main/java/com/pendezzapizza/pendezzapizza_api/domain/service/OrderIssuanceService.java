@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.*;
 import jakarta.transaction.Transactional;
@@ -14,55 +15,55 @@ public class OrderIssuanceService {
 
     private final OrderService orderService;
     private final RestaurantService restaurantService;
-    private final UserService userService;
     private final PaymentMethodService paymentMethodService;
     private final ProductService productService;
     private final CityService cityService;
+    private final UserService userService;
+    private final PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     @Transactional
     public Order issueOrder(Order order) {
 
+        // Atribuímos o restaurante, cliente e forma de pagamento ao Pedido
         assignRelationalObjectsToOrder(order);
 
+        // Atribuímos o preço unitário, o produto e o pedido ao itemPedido
         assignUnitPriceAndProductToOrderItem(order);
 
         order.setShippingFee(order.getRestaurant().getShippingFee());
         order.calculateTotalOrderCost();
 
-
         return orderService.save(order);
     }
 
-    public void assignRelationalObjectsToOrder (Order order) {
+    public void assignRelationalObjectsToOrder(Order order) {
         UUID restaurantId = order.getRestaurant().getId();
         UUID paymentMethodId = order.getPaymentMethods().getId();
         UUID cityId = order.getDeliveryAddress().getCity().getId();
+        UUID customerId = pendezzaPizzaSecurity.getUserId();
 
         City city = cityService.findById(cityId);
         Restaurant restaurant = restaurantService.findById(restaurantId);
         PaymentMethod paymentMethod = paymentMethodService.findById(paymentMethodId);
-
-        UUID userId = order.getClient().getId();
-        User user = userService.findById(userId);
+        User user = userService.findById(customerId);
 
         order.getDeliveryAddress().setCity(city);
         order.setRestaurant(restaurant);
-        order.setClient(user);
+        order.setCustomer(user);
+
         if (restaurant.doesNotAcceptPaymentMethod(paymentMethod)) {
-            throw new BusinessException(String.format("Payment method '%s' is not accepted by this restaurant.",
+            throw new BusinessException(String.format("Forma de pagamento '%s' não é aceita por esse restaurante.",
                     paymentMethod.getDescription()));
         }
         order.setPaymentMethods(paymentMethod);
     }
 
-    public void assignUnitPriceAndProductToOrderItem (Order order) {
-        order.getItems().forEach( item -> {
-            Product product = productService.findById(order.getRestaurant().getId() , item.getProduct().getId());
+    public void assignUnitPriceAndProductToOrderItem(Order order) {
+        order.getItems().forEach(item -> {
+            Product product = productService.findById(order.getRestaurant().getId(), item.getProduct().getId());
             item.setOrder(order);
             item.setProduct(product);
             item.setUnitPrice(product.getPrice());
         });
     }
-
-
 }

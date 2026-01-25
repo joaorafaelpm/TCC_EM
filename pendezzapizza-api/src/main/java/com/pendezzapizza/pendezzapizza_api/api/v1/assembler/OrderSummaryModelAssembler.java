@@ -1,9 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaPizzaLinks;
+import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.mapper.OrderSummaryMapper;
 import com.pendezzapizza.pendezzapizza_api.api.v1.controller.OrderController;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderSummaryModel;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -11,7 +12,7 @@ import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.util.UUID;
 
 @Component
 public class OrderSummaryModelAssembler extends RepresentationModelAssemblerSupport<Order, OrderSummaryModel> {
@@ -20,7 +21,10 @@ public class OrderSummaryModelAssembler extends RepresentationModelAssemblerSupp
     private OrderSummaryMapper orderSummaryMapper;
 
     @Autowired
-    private PendezzaPizzaLinks appLinks;
+    private PendezzaLinks pendezzaLinks;
+
+    @Autowired
+    private PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     public OrderSummaryModelAssembler() {
         super(OrderController.class, OrderSummaryModel.class);
@@ -28,22 +32,35 @@ public class OrderSummaryModelAssembler extends RepresentationModelAssemblerSupp
 
     @Override
     public OrderSummaryModel toModel(Order order) {
-        OrderSummaryModel model = orderSummaryMapper.toModel(order);
+        OrderSummaryModel orderModel = orderSummaryMapper.toModel(order);
 
-        model.add(appLinks.linkToOrders(IanaLinkRelations.COLLECTION.value()));
+        UUID restaurantId = orderModel.getRestaurant().getId();
+        UUID clientId = order.getCustomer().getId();
 
-        model.getRestaurant().add(appLinks.linkToRestaurant(model.getRestaurant().getId()));
-        model.getClient().add(appLinks.linkToUser(model.getClient().getId()));
+        if (pendezzaPizzaSecurity.canSearchOrders()) {
+            orderModel.add(pendezzaLinks.linkToOrders(IanaLinkRelations.COLLECTION.value()));
+            orderModel.add(pendezzaLinks.linkToOrder(orderModel.getId()));
+        }
 
-        model.add(appLinks.linkToOrder(model.getId()));
+        if (pendezzaPizzaSecurity.canConsultRestaurants()) {
+            orderModel.getRestaurant().add(pendezzaLinks.linkToRestaurant(restaurantId));
+        }
 
-        return model;
+        if (pendezzaPizzaSecurity.canConsultUsersGroupsPermissions()) {
+            orderModel.getCustomer().add(pendezzaLinks.linkToUser(clientId));
+        }
+
+        return orderModel;
     }
 
-    public CollectionModel<OrderSummaryModel> toCollection(Collection<Order> orders) {
-        var models = orders.stream().map(this::toModel).toList();
-        CollectionModel<OrderSummaryModel> collection = CollectionModel.of(models);
-        collection.add(appLinks.linkToOrders("orders"));
-        return collection;
+    @Override
+    public CollectionModel<OrderSummaryModel> toCollectionModel(Iterable<? extends Order> entities) {
+        CollectionModel<OrderSummaryModel> ordersCollectionModel = super.toCollectionModel(entities);
+
+        if (pendezzaPizzaSecurity.canSearchOrders()) {
+            ordersCollectionModel.add(pendezzaLinks.linkToOrders("orders"));
+        }
+
+        return ordersCollectionModel;
     }
 }

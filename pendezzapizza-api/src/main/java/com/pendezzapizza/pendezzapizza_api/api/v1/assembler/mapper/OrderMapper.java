@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 public interface OrderMapper {
 
     @Bean
+    @Mapping(source = "orderStatus", target = "status")
+    @Mapping(source = "deliveryAddress.city.state.name" , target = "deliveryAddress.city.state")
     @Mapping(source = "items" , target = "items" , qualifiedByName = "mapItems")
     OrderModel toModel(Order order);
 
@@ -25,9 +27,8 @@ public interface OrderMapper {
     OrderItemModel orderItemToOrderItemModel (OrderItem orderItem);
 
     @Named("mapItems")
-    default List<OrderItemModel> mapItems (List<OrderItem> itens) {
-        return itens.stream().map(this::orderItemToOrderItemModel).collect(Collectors.toList());
+    default List<OrderItemModel> mapItems (List<OrderItem> items) {
+        return items.stream().map(this::orderItemToOrderItemModel).collect(Collectors.toList());
     }
 
 }
-

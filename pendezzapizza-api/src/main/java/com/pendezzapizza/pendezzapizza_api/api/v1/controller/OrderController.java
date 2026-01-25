@@ -1,14 +1,15 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.OrderModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.OrderSummaryModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.OrderDisassembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.OrderDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderSummaryModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.OrderDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.OrderControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.data.PageWrapper;
 import com.pendezzapizza.pendezzapizza_api.core.data.PageableTranslator;
+import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.filter.OrderFilter;
@@ -31,35 +32,32 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/orders")
 @AllArgsConstructor
-public class OrderController {
+public class OrderController implements OrderControllerOpenApi {
 
-    private OrderService orderService;
-    private OrderIssuanceService orderIssuanceService;
+    private final OrderService orderService;
+    private final OrderIssuanceService orderIssuanceService;
+    private final OrderModelAssembler orderModelAssembler;
+    private final OrderSummaryModelAssembler orderSummaryModelAssembler;
+    private final OrderDisassembler orderDisassembler;
+    private final PagedResourcesAssembler<Order> pagedResourcesAssembler;
 
-    private OrderModelAssembler orderModelAssembler;
-    private OrderSummaryModelAssembler orderSummaryModelAssembler;
-    private OrderDisassembler orderDisassembler;
-    private PagedResourcesAssembler<Order> pagedResourcesAssembler;
-
+    @CheckSecurity.Orders.CanList
     @GetMapping
-    public PagedModel<OrderSummaryModel> search(
-            OrderFilter orderFilter, Pageable pageable) {
-
+    public PagedModel<OrderSummaryModel> search(OrderFilter orderFilter, Pageable pageable) {
         Pageable translatedPageable = translatePageable(pageable);
+        Page<Order> ordersPage = orderService.findAll(OrderSpecs.withFilter(orderFilter), translatedPageable);
+        ordersPage = new PageWrapper<>(ordersPage, pageable);
 
-        Page<Order> orderPage =
-                orderService.findAll(OrderSpecs.withFilter(orderFilter), translatedPageable);
-
-        orderPage = new PageWrapper<>(orderPage, pageable);
-
-        return pagedResourcesAssembler.toModel(orderPage, orderSummaryModelAssembler);
+        return pagedResourcesAssembler.toModel(ordersPage, orderSummaryModelAssembler);
     }
 
-    @GetMapping("/{id}")
-    public OrderModel getOne(@PathVariable UUID id) {
-        return orderModelAssembler.toModel(orderService.findByIdMapperSolver(id));
+    @CheckSecurity.Orders.CanSearch
+    @GetMapping("/{orderId}")
+    public OrderModel findById(@PathVariable UUID orderId) {
+        return orderModelAssembler.toModel(orderService.findById(orderId));
     }
 
+    @CheckSecurity.Orders.CanCreate
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderModel save(@RequestBody @Valid OrderDTO orderDTO) {
@@ -73,17 +71,13 @@ public class OrderController {
 
     private Pageable translatePageable(Pageable apiPageable) {
         var mapping = Map.of(
-                "id", "id",
                 "subtotal", "subtotal",
                 "shippingFee", "shippingFee",
                 "totalValue", "totalValue",
-                "creationDate", "creationDate",
+                "createdAt", "createdAt",
                 "restaurant.name", "restaurant.name",
-                "restaurant.id", "restaurant.id",
-                "client.id", "client.id",
-                "client.name", "client.name"
+                "customer.name", "customer.name"
         );
-
         return PageableTranslator.translate(apiPageable, mapping);
     }
 }

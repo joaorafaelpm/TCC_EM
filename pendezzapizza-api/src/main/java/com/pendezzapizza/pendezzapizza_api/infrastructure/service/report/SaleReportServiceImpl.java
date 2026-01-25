@@ -1,6 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.infrastructure.service.report;
 
-import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySaleFilter;
+import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.service.SaleQueryService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.SaleReportService;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -19,14 +19,14 @@ public class SaleReportServiceImpl implements SaleReportService {
     private SaleQueryService vendaQueryService;
 
     @Override
-    public byte[] issueDailySales(DailySaleFilter dailySaleFilter, String timeOffSet){
+    public byte[] issueDailySales(DailySalesFilter dailySalesFilter, String timeOffSet){
         try {
             var inputStream = this.getClass().getResourceAsStream("/relatorios/vendas-diarias.jasper");
 
             var params = new HashMap<String , Object>();
             params.put("REPORT_LOCALE" , Locale.of("pt" , "BR"));
 
-            var dailySales = vendaQueryService.viewDailySales(dailySaleFilter , timeOffSet);
+            var dailySales = vendaQueryService.viewDailySales(dailySalesFilter, timeOffSet);
             var dataSource = new JRBeanCollectionDataSource(dailySales);
 
             var jasperPrint = JasperFillManager.fillReport(inputStream , params , dataSource);

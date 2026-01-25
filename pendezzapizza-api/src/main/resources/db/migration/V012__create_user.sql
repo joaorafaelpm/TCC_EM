@@ -3,5 +3,5 @@ CREATE TABLE IF NOT EXISTS `user` (
     name VARCHAR(255) NOT NULL ,
     email VARCHAR(255) NOT NULL ,
     password VARCHAR(255) NOT NULL ,
-    registration_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) engine=InnoDB default charset=utf8;

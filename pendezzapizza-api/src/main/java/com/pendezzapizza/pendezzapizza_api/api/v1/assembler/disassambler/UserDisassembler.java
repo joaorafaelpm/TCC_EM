@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.UserDTO;
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.UserWithPasswordDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.UserDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.UserWithPasswordDTO;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import org.mapstruct.*;
 import org.springframework.context.annotation.Bean;
@@ -24,4 +24,3 @@ public interface UserDisassembler {
 
 
 }
-

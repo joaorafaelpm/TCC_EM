@@ -1,6 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.CityDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.CityDTO;
 import com.pendezzapizza.pendezzapizza_api.domain.model.City;
 import org.mapstruct.*;
 import org.springframework.context.annotation.Bean;
