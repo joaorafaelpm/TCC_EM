@@ -1,0 +1,370 @@
+/* NAVBAR FIXA NO TOPO */
+.navbar {
+    position: fixed;
+    height: 110px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 140px 0px 140px;          /* controla altura e espaço lateral */
+    background-color: #fff6e2;
+    z-index: 1000;
+}
+
+/* LOGO */
+.navbar .logo {
+    width: 130px;
+    cursor: pointer;
+}
+
+/* MENU CENTRAL */
+.navbar-menu {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+    font-size: 15.4px;
+    color: #742b2b;
+}
+
+.navbar-menu li {
+    cursor: pointer;
+    line-height: 1;
+}
+
+.navbar-menu a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+
+/* ITEM ATIVO */
+.navbar .active {
+    padding-bottom: 2px;
+    border-bottom: 2px solid rgb(113, 37, 37);
+}
+
+/* LADO DIREITO */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 35px;
+}
+
+/* ÍCONES */
+.icon {
+    width: 24px;
+    cursor: pointer;
+}
+
+/* CARRINHO */
+.navbar-search-icon {
+    position: relative;
+}
+
+.navbar-search-icon .dot {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background-color: rgb(255, 59, 59);
+    border-radius: 50%;
+    top: -6px;
+    right: -6px;
+}
+
+/* BOTÃO */
+.navbar button {
+    padding: 10px 22px;
+    background: transparent;
+    border: 2px solid #742b2b;
+    border-radius: 25px;
+    color: #742b2b;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.4s;
+    line-height: 1;
+}
+
+.navbar button:hover {
+    background:#742b2b;
+    color: white;
+    transition: 0.4s;
+}
+
+
+/* SOMBRA AO ROLAR */
+.navbar.scrolled {
+    box-shadow: 0 6px 12px rgba(27, 17, 12, 0.152);
+}
+
+
+.pedido-telefone-n{
+    margin-top: 1px;
+    text-align: start;
+    color: rgb(130, 40, 40);
+    font-size: 0.9vw;
+    font-weight: 500;
+    
+    
+}
+.pedido-telefone-n strong{
+    display: block;
+    font-size: 1vw;
+    font-weight: 850;
+   
+}
+
+@media (max-width:1050px) {
+
+    .navbar{
+        padding: 0px 100px 0px 100px;
+        height: 100px;
+    }
+    .icon{
+        width: 23px;
+    }
+    
+    .navbar .logo 
+    {
+        width: 120px;
+    }
+    
+    .navbar-menu 
+    {
+        gap: 20px;
+        font-size: 13px;
+    }
+
+    .navbar-right
+    {
+        gap: 25px;
+    }
+
+    .navbar-right .img
+    {
+        width: 18px;
+    }
+
+    .navbar-right button{
+
+        padding: 8px 20px;
+        font-size: 14px;
+    }
+
+
+
+    .pedido-telefone-n{
+        font-size: 0.85vw;
+    }
+    .pedido-telefone-n strong{
+        font-size: 0.95vw;
+    }
+
+
+}
+
+
+@media (max-width:900px) {
+
+     .navbar{
+        padding: 0px 80px 0px 80px;
+        height: 95px;
+    }
+
+     .icon{
+        width: 22px;
+    }
+
+    .navbar .logo 
+    {
+
+        width: 120px;
+    }
+    
+    .navbar-menu 
+    {
+        gap:13px;
+        font-size: 10px;
+    }
+
+    .navbar-right
+    {
+        gap: 18px;
+    }
+
+    .navbar-right .img
+    {
+        width: 14px;
+    }
+
+    .navbar-right button{
+
+        padding: 6px 17px;
+        font-size: 12px;
+    }
+
+    
+
+    .pedido-telefone-n{
+        font-size: 0.82vw;
+    }
+    .pedido-telefone-n strong{
+        font-size: 0.92vw;
+    }
+
+
+}
+
+
+@media (max-width:750px) {
+     .navbar{
+        padding: 0px 40px 0px 40px;
+        height: 90px;
+    }
+     .icon{
+        width: 21px;
+    }
+
+    .navbar .logo 
+    {
+
+        width: 120px;
+    }
+    
+    .navbar-menu 
+    {
+
+        display: none;
+        
+    }
+
+    .navbar-right
+    {
+        gap: 15px;
+    }
+
+    .navbar-right .img
+    {
+        width: 10px;
+    }
+
+    .navbar-right button{
+
+        padding: 6px 14px;
+        font-size: 11px;
+    }
+
+    
+
+    .pedido-telefone-n{
+        font-size: 1.7vw;
+    }
+    .pedido-telefone-n strong{
+        font-size: 1.8vw;
+    }
+
+
+}
+
+@media (max-width:450px) {
+     .navbar{
+        padding: 0px 35px 0px 35px;
+        height: 80px;
+    }
+
+    .navbar .logo 
+    {
+
+        width: 110px;
+    }
+    
+      .icon{
+        width: 20px;
+    }
+
+    .navbar-menu 
+    {
+        display: none;
+    }
+
+    .navbar-right
+    {
+        gap: 13px;
+    }
+
+    .navbar-right .img
+    {
+        width: 6px;
+    }
+
+    .navbar-right button{
+
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    
+
+    .pedido-telefone-n{
+          display: none;
+    }
+    .pedido-telefone-n strong{
+          display: none;
+    }
+
+
+}
+
+
+
+@media (max-width:360px) {
+     .navbar{
+        padding: 0px 20px 0px 20px;
+        height: 75px;
+    }
+    
+
+    .navbar .logo 
+    {
+
+        width: 100px;
+    }
+    
+      .icon{
+        width: 20px;
+    }
+
+    .navbar-menu 
+    {
+        display: none;
+    }
+
+    .navbar-right
+    {
+        gap: 13px;
+    }
+
+    .navbar-right .img
+    {
+        width: 6px;
+    }
+
+    .navbar-right button{
+
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+
+    
+
+    .pedido-telefone-n{
+          display: none;
+    }
+    .pedido-telefone-n strong{
+        display: none;
+    }
+
+
+}

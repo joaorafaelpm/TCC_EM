@@ -1,44 +1,61 @@
 
-services:
-  backend:
-    build: ./pendezzapizza-api
-    ports:
-      - "8080:${DATABASE_PORT}"
-    depends_on:
-      database:
-        condition: service_healthy
-    env_file:
-      - ./.env
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:${DATABASE_PORT}/${DATABASE_NAME}
-      SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
-    networks:
-      - backend
+networks:
+  pendezzapizza-network:
+    driver: bridge
 
-  database:
+services:
+  pendezzapizza-mysql:
     image: mysql:8.3.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_DATABASE: ${DATABASE_NAME}
     ports:
-      - "3307:${DATABASE_PORT}"
+      - ${DATABASE_PORT}
     networks:
-      - backend
+      - pendezzapizza-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  test-database:
-    image: mysql:8.3.0
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_DATABASE: ${DATABASE_NAME}
-    ports:
-      - "3308:${DATABASE_PORT}"
+  pendezzapizza-redis:
+    image: redis:8.4.0-alpine
+    networks:
+      - pendezzapizza-network
 
-networks:
-  backend:
+  pendezzapizza-api:
+    image: pendezzapizza-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://pendezzapizza-mysql/${DATABASE_NAME}?createDatabaseIfNotExists=true&serverTimeZone=UTC
+      SPRING_SESSION_STORE_TYPE: redis
+      SPRING_DATA_REDIS_HOST: pendezzapizza-redis
+    networks:
+      - pendezzapizza-network
+    env_file:
+      - ./.env
+    depends_on:
+      pendezzapizza-mysql:
+        condition: service_healthy
+    volumes:
+      - ${CONTAINER_VOLUME}
+
+  pendezzapizza-web:
+    build: ./frontend/
+    container_name: pendezzapizza-web
+    ports:
+      - "5173:5173"
+    networks:
+      - pendezzapizza-network
+
+  pendezzapizza-proxy:
+    build: ./nginx
+    image: pendezzapizza-proxy
+    ports:
+      - ${NGNIX_PORT}
+    networks:
+      - pendezzapizza-network
+    depends_on:
+      - pendezzapizza-api
+      - pendezzapizza-web
 

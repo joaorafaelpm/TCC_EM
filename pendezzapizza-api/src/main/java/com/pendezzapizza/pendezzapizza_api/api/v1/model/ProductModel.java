@@ -19,13 +19,13 @@ public class ProductModel extends RepresentationModel<ProductModel> {
     @Schema(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48")
     private UUID id;
 
-    @Schema(example = "Porco com molho agridoce")
+    @Schema(example = "Fettuccine Alfredo")
     private String name;
 
-    @Schema(example = "Deliciosa carne suína ao molho especial")
+    @Schema(example = "Fettuccine artesanal com molho cremoso de manteiga e parmesão de 24 meses.")
     private String description;
 
-    @Schema(example = "78.90")
+    @Schema(example = "45.50")
     private BigDecimal price;
 
     @Schema(example = "true")

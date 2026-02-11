@@ -1,0 +1,250 @@
+.about-hero {
+  width: 100%;
+  height: 700px;
+  background-image: url('/fundo4.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin: 50px 0px 0px 0px;
+}
+
+/* camada escura */
+.about-overlay {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+   
+  padding: 0 8%;
+  
+  
+}
+
+.about-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.about-text {
+  width: 60%;
+}
+
+
+.about-overlay h3 {
+   font-size: 1.5rem;
+   font-weight: 420;
+   letter-spacing: -1px;
+   width: 50%;
+   color: rgb(18, 83, 35);
+   margin-bottom: 20px;
+  
+}
+
+.about-overlay h1 {
+  font-size: 52px;
+  max-width: 720px;
+  margin-bottom: 20px;
+  width: 70%;
+  color:#742b2b;
+  font-weight: 750;
+  line-height: 1;
+  
+
+}
+
+.about-overlay p {
+  max-width: 680px;
+  font-size: 18px;
+  line-height: 1.6;
+  color:#742b2b;
+  width: 60%;
+  font-weight: 350;
+  margin-bottom: 3vw;
+}
+
+
+
+
+.btn-s{
+    background: transparent;
+    color:rgb(18, 83, 35);
+    font-size: max(0.95vw, 1.14rem);
+    font-weight: 500;
+    padding: 0.8vw 2.5vw;
+    border: 2px solid rgb(18, 83, 35);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.4s ease;
+    transition: 0.4s;
+    margin-top: 2vw;
+    margin-bottom: -3.05vw ;
+    width: 190px;
+   
+}
+
+.btn-s:hover{
+    background:rgb(18, 83, 35);
+    color: #fff6e2;
+    transition: background-color 0.4s ease;
+    transition: 0.4s;
+    
+    
+}
+
+
+.about-image {
+  width: 37%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.about-image img {
+  width: 100%;
+  max-width: 520px;
+  height: 520px;
+  object-fit: cover;
+
+  border-radius: 20px;
+
+  box-shadow: 0 15px 40px rgba(41, 33, 12, 0.27);
+}
+
+/* ===============================
+   RESPONSIVIDADE AVANÇADA
+================================ */
+
+/* 🔹 até 1050px */
+@media (max-width: 1050px) {
+  .about-hero {
+    height: 780px;
+  }
+
+  .about-overlay h1 {
+    font-size: 46px;
+    width: 85%;
+  }
+
+  .about-overlay p {
+    width: 75%;
+  }
+
+  .about-image img {
+    height: 480px;
+  }
+}
+
+/* 🔹 até 900px — imagem desce */
+@media (max-width: 900px) {
+  .about-hero {
+    height: 980px;
+  }
+
+  .about-container {
+    flex-direction: column;
+    align-items: flex-start; /* texto alinhado à esquerda */
+    gap: 60px;
+  }
+
+  .about-text {
+    width: 100%;
+  }
+
+  .about-overlay h3,
+  .about-overlay h1,
+  .about-overlay p {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .about-image {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .about-image img {
+    width: 100%;
+    max-width: 600px;
+    height: 420px;
+  }
+}
+
+/* 🔹 até 750px */
+@media (max-width: 750px) {
+  .about-hero {
+    height: 1050px;
+  }
+
+  .about-overlay h1 {
+    font-size: 40px;
+  }
+
+  .about-overlay p {
+    font-size: 17px;
+    margin-bottom: 35px;
+  }
+
+  .btn-s {
+    font-size: 1rem;
+    padding: 12px 36px;
+  }
+}
+
+/* 🔹 até 450px (mobile médio) */
+@media (max-width: 450px) {
+  .about-hero {
+    height: 900px; /* aumenta pois tela é mais estreita */
+  }
+
+  .about-overlay {
+    padding: 0 6%;
+  }
+
+  .about-overlay h3 {
+    font-size: 1.2rem;
+  }
+
+  .about-overlay h1 {
+    font-size: 32px;
+    line-height: 1.1;
+  }
+
+  .about-overlay p {
+    font-size: 16px;
+  }
+
+  .about-image img {
+    height: 320px;
+    border-radius: 18px;
+  }
+}
+
+/* 🔹 até 360px (mobile pequeno) */
+@media (max-width: 360px) {
+  .about-hero {
+    height: 850px;
+  }
+
+  .about-overlay h1 {
+    font-size: 28px;
+  }
+
+  .about-overlay p {
+    font-size: 15px;
+  }
+
+  .btn-s {
+    width: 100%;
+    text-align: center;
+  }
+
+  .about-image img {
+    height: 280px;
+  }
+}

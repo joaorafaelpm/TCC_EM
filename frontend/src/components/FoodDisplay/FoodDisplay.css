@@ -1,0 +1,130 @@
+.food-list-h2{
+    color:rgb(16, 69, 30);
+    font-size: 1.6vw;
+    font-weight: 430;
+    letter-spacing: -1px;
+    margin-bottom: 0.8vw;
+ 
+}
+.food-display-title{
+    font-size: 2rem;
+    font-weight: 725;
+    letter-spacing: -1px;
+    color: rgb(16, 69, 30);
+    margin: 0px 0 40px 5px;
+    display: flex;
+    justify-content: center;
+}
+
+.food-display{
+    
+    margin: 15px 125px auto 125px;
+}
+
+.food-display-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 25px;
+}
+
+
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.show-more-btn {
+  padding: 12px 28px;
+  background: transparent;
+  color: #742b2b;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.4s;
+  border: 2px solid #742b2b;
+}
+
+.show-more-btn:hover {
+   background: #742b2b;
+   color: white; 
+  transition: 0.4s;
+}
+/* ============================= */
+/* ======= RESPONSIVO ========= */
+/* ============================= */
+
+/* 1400px */
+@media (max-width: 1400px) {
+  .food-display {
+    margin: 15px 80px;
+  }
+
+  .food-display-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 1100px */
+@media (max-width: 1100px) {
+  .food-display {
+    margin: 15px 50px;
+  }
+
+  .food-display-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 900px */
+@media (max-width: 900px) {
+  .food-display {
+    margin: 15px 30px;
+  }
+
+  .food-display-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 600px */
+@media (max-width: 600px) {
+  .food-display {
+    margin: 10px 18px;
+  }
+
+  .food-display-title {
+    font-size: 1.6rem;
+  }
+}
+
+/* ✅ MOBILE — 2 CARDS */
+@media (max-width: 480px) {
+  .food-display {
+    margin: 10px 14px;
+  }
+
+  .food-display-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .food-display-title {
+    font-size: 1.45rem;
+    margin-bottom: 30px;
+  }
+}
+
+/* 📱 MOBILE PEQUENO */
+@media (max-width: 360px) {
+  .food-display-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .food-display-title {
+    font-size: 1.3rem;
+    margin-top: -50px;
+  }
+}

@@ -1,34 +1,28 @@
 {
-  "name": "prendezzas-pizza",
-  "version": "0.1.0",
+  "name": "pendezza-pizza",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
-  "port" : 3001,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.47.10",
-    "@svgr/webpack": "^8.1.0",
-    "cookie": "^1.0.2",
-    "iron-session": "^8.0.4",
-    "next": "^15.1.4",
-    "next-cookies": "^2.0.3",
-    "next-iron-session": "^4.2.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-icons": "^5.4.0",
-    "react-router-dom": "^7.1.1",
-    "supabase": "^2.2.1",
-    "uuid4": "^2.0.3"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.10.1"
   },
   "devDependencies": {
-    "@types/node": "22.10.2",
-    "@types/react": "19.0.2",
-    "file-loader": "^6.2.0",
-    "typescript": "5.7.2"
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "vite": "^7.2.4"
   }
 }

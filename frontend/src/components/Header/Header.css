@@ -1,0 +1,553 @@
+.header {
+    height: 80vh;
+    width: 82%;
+    background: url('/planner2.png') no-repeat;
+    margin: -55px auto;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    border-radius: 20px;      
+    overflow: hidden;   
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.093);     
+    animation: fadeIn 0.9s ease-in-out; 
+}
+
+
+.header-contents{
+   position: absolute;
+   display: flex;
+   flex-direction: column;
+   gap: 1vw;
+   align-items: start;
+   left: 6vw;
+   bottom: 25%;
+   max-width: 33%;
+   animation: fadeIn 1s ease-in-out; 
+    
+}
+
+.header-contents h2{
+    color:rgb(16, 69, 30);
+    font-size: 3.15vw;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+
+}
+
+.header-contents p{
+    color:rgb(16, 69, 30);
+    font-size: 1vw;
+    font-weight: 500;
+    line-height: 0.9;
+    max-width: 72%;
+    letter-spacing: -0.4px;
+    margin-bottom: 13px;
+    margin-top: 0px;
+    
+}
+
+.header-contents .p {
+    color:rgb(16, 69, 30);
+    font-size: 1vw;
+    font-weight: 500;
+    line-height: 1;
+    max-width: 100%;
+    letter-spacing: -0.4px;
+    margin-top: 1px;
+    margin-bottom: 3px;
+
+    
+}
+
+.header-contents .t{
+    color: rgb(16, 69, 30);
+    font-size: 1.1vw;
+    font-weight: 900;
+    line-height: 0.95;
+    max-width: 100%;
+    letter-spacing: 0px;
+    margin-bottom: 4px;
+    
+}
+
+.header-contents .btn{
+    background-color: rgb(16, 69, 30);
+    color: white;
+    font-size: max(0.98vw, 1.2rem);
+    font-weight: 500;
+    padding: 0.96vw 2.58vw;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.4s ease;
+    transition: 0.4s;
+    margin-top: 0.2vw;
+    margin-bottom: -3.05vw ;
+    
+   
+}
+
+.header-contents .btn:hover{
+    filter: brightness(1.52);
+    transition: background-color 0.4s ease;
+    transition: 0.4s;
+    
+    
+}
+
+
+.info-row{
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.info-icon{
+    width: 22px;
+    height: 22px;
+    margin-top: 2px;
+}
+
+.pedido-telefone{
+    margin-top: 40px;
+    text-align: center;
+    color: rgb(16, 69, 30);
+    font-size: 0.89vw;
+    font-weight: 500;
+    margin-bottom: -5vw;
+   
+}
+
+.pedido-telefone strong{
+    display: block;
+    font-size: 0.95vw;
+    font-weight: 850;
+    margin-top: 2px;
+}
+
+
+@media (max-width:1050px) {
+    
+    .header {
+        height: 75vh;
+        width: 87%;
+    }
+    
+    .header-contents{
+       max-width: 45%;
+       left: 5vw;
+       bottom: 32%;
+    }
+    
+    .header-contents h2{
+        font-size: 3.8vw;
+        max-width: 80%;
+    }
+    
+    .header-contents p{
+        font-size: 1.2vw;
+        max-width: 50%;
+    }
+    
+    .header-contents .p {
+        font-size: 1.2vw;
+    }
+    
+    .header-contents .t{
+        font-size: 1.3vw;
+    }
+    
+    .header-contents .btn{
+        font-size: max(1vw, 1rem);
+        padding: 1vw 2.8vw;
+        margin-bottom: -4.5vw ;
+    }
+
+    .pedido-telefone{
+        font-size: 1vw;
+        margin-bottom: -6.5vw;
+    }
+
+    .pedido-telefone strong{
+        font-size: 1.1vw;
+    }
+
+    .info-icon{
+        width: 26px;
+        height: 26px;
+    }
+
+    .info-row{
+        gap: 15px;
+    }
+}
+
+@media (max-width:900px) {
+    .header {
+        height: 70vh;
+        width: 90%;
+    }
+    
+    .header-contents{
+       max-width: 44%;
+       left: 5vw;
+       bottom: 35%;
+    }
+    
+    .header-contents h2{
+        font-size: 3.7vw;
+        max-width: 90%;
+    }
+    
+    .header-contents p{
+        font-size: 1.4vw;
+        max-width: 60%;
+    }
+    
+    .header-contents .p {
+        font-size: 1.4vw;
+    }
+    
+    .header-contents .t{
+        font-size: 1.5vw;
+    }
+    
+    .header-contents .btn{
+        font-size: max(1.3vw, 1.3rem);
+        padding: 1.2vw 3.2vw;
+        margin-bottom: -4.5vw ;
+    }
+
+    .pedido-telefone{
+        font-size: 1.2vw;
+        margin-bottom: -6.5vw;
+    }
+
+    .pedido-telefone strong{
+        font-size: 1.3vw;
+    }
+
+    .info-icon{
+        width: 26px;
+        height: 26px;
+    }
+
+    .info-row{
+        gap: 3px;
+    }
+    
+}
+
+@media (max-width:750px) {
+
+   .header {
+        height: 65vh;
+        width: 92%;
+    }
+    
+    .header-contents{
+       max-width: 44%;
+       left: 5vw;
+       bottom: 35%;
+    }
+    
+    .header-contents h2{
+        font-size: 3.7vw;
+        max-width: 90%;
+    }
+    
+    .header-contents p{
+        font-size: 1.4vw;
+        max-width: 60%;
+    }
+    
+    .header-contents .p {
+        font-size: 1.4vw;
+    }
+    
+    .header-contents .t{
+        font-size: 1.5vw;
+    }
+    
+    .header-contents .btn{
+        font-size: max(1.3vw, 1.3rem);
+        padding: 1.2vw 3.2vw;
+        margin-bottom: -4.5vw ;
+    }
+
+    .pedido-telefone{
+        font-size: 1.2vw;
+        margin-bottom: -6.5vw;
+    }
+
+    .pedido-telefone strong{
+        font-size: 1.3vw;
+    }
+
+    .info-icon{
+        width: 26px;
+        height: 26px;
+    }
+
+    .info-row{
+        gap: 3px;
+    }
+    
+    
+    
+}
+
+
+@media (max-width:700px) {
+
+   .header {
+        height: 65vh;
+        width: 95%;
+    }
+    
+    .header-contents{
+       max-width: 44%;
+       left: 5vw;
+       bottom: 40%;
+    }
+    
+    .header-contents h2{
+        font-size: 3.9vw;
+        max-width: 93%;
+    }
+    
+    .header-contents p{
+        font-size: 1.5vw;
+        max-width: 60%;
+    }
+    
+    .header-contents .p {
+        font-size: 1.5vw;
+    }
+    
+    .header-contents .t{
+        font-size: 1.6vw;
+    }
+    
+    .header-contents .btn{
+        font-size: max(1.1vw, 1.1rem);
+        padding: 1.2vw 3.1vw;
+        margin-bottom: -4.5vw ;
+        margin-top: 0.5vw;
+    }
+
+    .pedido-telefone{
+        font-size: 1.3vw;
+        margin-bottom: -6.5vw;
+    }
+
+    .pedido-telefone strong{
+        font-size: 1.4vw;
+    }
+
+    .info-icon{
+        width: 26px;
+        height: 26px;
+    }
+
+    .info-row{
+        gap: 3px;
+    }
+    
+    
+    
+}
+
+
+@media (max-width:450px) {
+    .header {
+        height: 110vh;
+        width: 98%;
+        margin: -80px auto;
+        background: url('/fundom.png') no-repeat;
+        background-size: cover;
+        background-position: center;
+        border-radius: 15px;
+
+        
+    }
+
+    
+    
+    .header-contents{
+       max-width:100%;
+       left: 5vw;
+       bottom: 42%;
+       z-index: 2;
+       
+    }
+    
+    .header-contents h2{
+        font-size: 8vw;
+        max-width: 100%;
+        letter-spacing:  1.5px;
+        margin-bottom:  1vw;
+
+    }
+    
+    .header-contents p{
+        font-size: 3.2vw;
+        max-width: 80%;
+        letter-spacing:  0.8px;
+        margin-bottom:  3vw;
+        margin-top:2.5vw;
+
+    }
+    
+    .header-contents .p {
+        font-size: 3.2vw;
+        margin-top: 1vw;
+        letter-spacing: 0.5px;
+
+    }
+    
+    .header-contents .t{
+        font-size: 3.3vw;
+        margin-bottom:  1.8vw;
+        letter-spacing: 0.5px;
+    }
+    
+    .header-contents .btn{
+        font-size: max(1.1vw, 1.1rem);
+        padding: 4vw 7vw;
+        margin-bottom: -5vw ;
+        margin-top: 4vw;
+        text-align: center;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+
+
+    .pedido-telefone{
+        font-size: 3.2vw;
+        margin-bottom: -5.5vw;
+        position: center;
+        margin-left: 50%;
+        transform: translateX(-50%);
+
+    }
+
+    .pedido-telefone strong{
+        font-size: 3.3vw;
+    }
+
+    .info-icon{
+        width: 26px;
+        height: 26px;
+
+    }
+
+    .info-row{
+        gap: 7px;
+
+    }
+    
+    
+    
+}
+
+@media (max-width:360px) {
+     .header {
+        height: 105vh;
+        width: 99%;
+        margin: -80px auto;
+        background: url('/fundom.png') no-repeat;
+        background-size: cover;
+        background-position: center;
+        border-radius: 14px;
+
+        
+    }
+
+    
+    
+    .header-contents{
+       max-width:100%;
+       left: 5vw;
+       bottom: 45%;
+       z-index: 2;
+       
+    }
+    
+    .header-contents h2{
+        font-size: 8.2vw;
+        max-width: 100%;
+        letter-spacing:  1.5px;
+        margin-bottom:  1.5vw;
+
+    }
+    
+    .header-contents p{
+        font-size: 3.5vw;
+        max-width: 80%;
+        letter-spacing:  0.8px;
+        margin-bottom:  3.7vw;
+        margin-top:3.2vw;
+
+    }
+    
+    .header-contents .p {
+        font-size: 3.5vw;
+        margin-top: 1.8vw;
+        letter-spacing: 0.5px;
+
+    }
+    
+    .header-contents .t{
+        font-size: 3.6vw;
+        margin-bottom:  2.2vw;
+        letter-spacing: 0.5px;
+    }
+    
+    .header-contents .btn{
+        font-size: max(1.1vw, 1.1rem);
+        padding: 4vw 7vw;
+        margin-bottom: -5vw ;
+        margin-top: 5vw;
+        text-align: center;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    
+
+
+    .pedido-telefone{
+        font-size: 3.5vw;
+        margin-bottom: -5vw;
+        position: center;
+        margin-left: 50%;
+        transform: translateX(-50%);
+
+    }
+
+    .pedido-telefone strong{
+        font-size: 3.6vw;
+    }
+
+    .info-icon{
+        width: 22px;
+        height: 22px;
+
+    }
+
+    .info-row{
+        gap: 7px;
+
+    }
+    
+    
+}
