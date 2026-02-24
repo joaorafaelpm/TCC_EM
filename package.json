@@ -1,0 +1,6 @@
+{
+  "devDependencies": {
+    "fs": "^0.0.1-security",
+    "serialize-anything": "^1.2.3"
+  }
+}

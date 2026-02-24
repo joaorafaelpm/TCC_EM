@@ -23,7 +23,7 @@ public class AddressModel {
     private String complement;
 
     @Schema(example = "Jardim Aparecida")
-    private String district;
+    private String neighborhood;
 
     private CitySummaryModel city;
 }

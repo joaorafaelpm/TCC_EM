@@ -33,20 +33,12 @@ services:
     networks:
       - pendezzapizza-network
     env_file:
-      - ./.env
+      - .env
     depends_on:
       pendezzapizza-mysql:
         condition: service_healthy
     volumes:
       - ${CONTAINER_VOLUME}
-
-  pendezzapizza-web:
-    build: ./frontend/
-    container_name: pendezzapizza-web
-    ports:
-      - "5173:5173"
-    networks:
-      - pendezzapizza-network
 
   pendezzapizza-proxy:
     build: ./nginx
@@ -57,5 +49,4 @@ services:
       - pendezzapizza-network
     depends_on:
       - pendezzapizza-api
-      - pendezzapizza-web
 

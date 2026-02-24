@@ -26,14 +26,9 @@ public class StateService {
     }
 
     @Transactional
-    public State save(UUID id, State state) {
-        return stateRepository.save(state);
-    }
-
-    @Transactional
     public void delete(UUID id) {
         try {
-            stateRepository.deleteById(id);
+            stateRepository.delete(findById(id));
             stateRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(id);

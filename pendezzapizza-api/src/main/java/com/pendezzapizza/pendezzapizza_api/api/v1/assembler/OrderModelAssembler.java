@@ -35,7 +35,7 @@ public class OrderModelAssembler extends RepresentationModelAssemblerSupport<Ord
 
         UUID orderId = orderModel.getId();
         UUID restaurantId = orderModel.getRestaurant().getId();
-        UUID clientId = orderModel.getCustomer().getId();
+        UUID customerId = orderModel.getCustomer().getId();
         UUID cityId = orderModel.getDeliveryAddress().getCity().getId();
         UUID paymentMethodId = orderModel.getPaymentMethod().getId();
 
@@ -75,7 +75,7 @@ public class OrderModelAssembler extends RepresentationModelAssemblerSupport<Ord
         }
 
         if (pendezzaPizzaSecurity.canConsultUsersGroupsPermissions()) {
-            orderModel.getCustomer().add(pendezzaLinks.linkToUser(clientId));
+            orderModel.getCustomer().add(pendezzaLinks.linkToUser(customerId));
         }
 
         return orderModel;

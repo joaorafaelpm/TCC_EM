@@ -24,5 +24,5 @@ public interface ProductRepository extends CustomJPARepository<Product, UUID> , 
 
     @Query("from ProductPhoto f join f.product p where p.restaurant.id = :restaurantId and " +
             "f.product.id = :productId")
-    Optional<ProductPhoto> findProductPhotoById (UUID restaurantId , UUID produtId) ;
+    Optional<ProductPhoto> findProductPhotoById (UUID restaurantId , UUID productId) ;
 }

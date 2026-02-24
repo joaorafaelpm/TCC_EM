@@ -1,10 +1,12 @@
 package com.pendezzapizza.pendezzapizza_api.core.security.authorizationserver;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.pendezzapizza.pendezzapizza_api.domain.model.Permission;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
@@ -27,6 +30,7 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
@@ -39,6 +43,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Configuration
 public class AuthorizationServerConfig {
@@ -110,23 +115,44 @@ public class AuthorizationServerConfig {
     }
 
     @Bean
-    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer (UserRepository userRepository) {
+    public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(UserRepository userRepository) {
         return context -> {
             Authentication authentication = context.getPrincipal();
+            String grantType = context.getAuthorizationGrantType().getValue();
 
-            if (authentication.getPrincipal() instanceof User) {
-                User authenticationPrincipal = (User) authentication.getPrincipal();
+            if ("client_credentials".equals(grantType)) {
+                String clientId = context.getRegisteredClient().getClientId();
 
-                com.pendezzapizza.pendezzapizza_api.domain.model.User user = userRepository.findByEmail(authenticationPrincipal.getUsername()).orElseThrow();
+                if ("pendezzapizza-tests".equals(clientId)) {
+                    String gerenteEmail = "joao.ger@pendezzapizza.com";
 
-                Set<String> authorities = new HashSet<>();
+                    var user = userRepository.findByEmail(gerenteEmail)
+                            .orElseThrow(() -> new RuntimeException("Usuário gerente não encontrado"));
 
-                for (GrantedAuthority authority: authenticationPrincipal.getAuthorities()) {
-                    authorities.add(authority.getAuthority());
+                    Set<String> authorities = user.getGroups().stream()
+                            .flatMap(group -> group.getPermission().stream())
+                            .map(Permission::getName)
+                            .collect(Collectors.toSet());
+
+                    context.getClaims().claim("user_id", user.getId().toString());
+                    context.getClaims().claim("email", user.getEmail());
+                    context.getClaims().claim("authorities", authorities);
                 }
+                return;
+            }
 
-                context.getClaims().claim("user_id" , user.getId());
-                context.getClaims().claim("authorities" , authorities);
+            if (authentication.getPrincipal() instanceof User springUser) {
+
+                var user = userRepository.findByEmail(springUser.getUsername())
+                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+                Set<String> authorities = springUser.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toSet());
+
+                context.getClaims().claim("user_id", user.getId());
+                context.getClaims().claim("email", user.getEmail());
+                context.getClaims().claim("authorities", authorities);
             }
         };
     }
@@ -154,14 +180,29 @@ public class AuthorizationServerConfig {
 
         return converter ;
     }
-
     @Bean
     public OAuth2AuthorizationService oAuth2AuthorizationService(JdbcOperations jdbcOperations,
                                                                  RegisteredClientRepository clientRepository) {
-        return new JdbcOAuth2AuthorizationService(
-                jdbcOperations,
-                clientRepository
-        );
+        var rowMapper = new JdbcOAuth2AuthorizationService
+                .OAuth2AuthorizationRowMapper(clientRepository);
+        var parametersMapper = new JdbcOAuth2AuthorizationService
+                .OAuth2AuthorizationParametersMapper();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ClassLoader classLoader = JdbcOAuth2AuthorizationService.class.getClassLoader();
+
+        objectMapper.registerModules(SecurityJackson2Modules.getModules(classLoader));
+        objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
+        objectMapper.addMixIn(UUID.class, UUIDMixin.class);
+
+        rowMapper.setObjectMapper(objectMapper);
+        parametersMapper.setObjectMapper(objectMapper);
+
+        var service = new JdbcOAuth2AuthorizationService(jdbcOperations, clientRepository);
+        service.setAuthorizationRowMapper(rowMapper);
+        service.setAuthorizationParametersMapper(parametersMapper);
+
+        return service;
     }
 
     @Bean

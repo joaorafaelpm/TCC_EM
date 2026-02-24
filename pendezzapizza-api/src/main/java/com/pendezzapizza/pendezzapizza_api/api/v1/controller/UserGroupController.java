@@ -8,13 +8,14 @@ import com.pendezzapizza.pendezzapizza_api.domain.service.GroupService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/users/{userId}/groups")
+@RequestMapping(path ="/v1/users/{userId}/groups", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class UserGroupController implements UserGroupControllerOpenApi {
 

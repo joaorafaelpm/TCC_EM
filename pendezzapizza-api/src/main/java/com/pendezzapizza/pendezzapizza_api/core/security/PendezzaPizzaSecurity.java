@@ -23,7 +23,7 @@ public class PendezzaPizzaSecurity {
 
     public UUID getUserId() {
         Jwt jwt = (Jwt) getAuthentication().getPrincipal();
-        return jwt.getClaim("user_id");
+        return UUID.fromString(jwt.getClaim("user_id"));
     }
 
     public boolean managesRestaurant(UUID restaurantId) {

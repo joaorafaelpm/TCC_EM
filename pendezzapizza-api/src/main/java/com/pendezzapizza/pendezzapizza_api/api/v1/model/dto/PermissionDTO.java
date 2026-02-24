@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.model.dto;
 
+import com.pendezzapizza.pendezzapizza_api.core.validation.ValidationName;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,6 @@ public class PermissionDTO {
     private String name;
 
     @Schema(example = "Permite editar cozinhas")
-    @NotBlank
+    @ValidationName
     private String description;
 }

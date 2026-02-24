@@ -50,8 +50,7 @@ public class RestaurantService {
     @Transactional
     public void remove (UUID id) {
         try {
-            Restaurant restaurant = findById(id);
-            restaurantRepository.delete(restaurant);
+            restaurantRepository.delete(findById(id));
         }
         catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(

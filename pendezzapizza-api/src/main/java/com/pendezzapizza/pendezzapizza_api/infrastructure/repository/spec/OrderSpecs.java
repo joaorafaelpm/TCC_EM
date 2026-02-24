@@ -12,17 +12,17 @@ public class OrderSpecs {
     public static Specification<Order> withFilter (OrderFilter filter) {
         return (root,query,builder) -> {
             if (Order.class.equals(query.getResultType())) {
-                root.fetch("client");
+                root.fetch("customer");
             }
 
             var predicates = new ArrayList<Predicate>() ;
 
-            if (filter.getClientId() != null) {
-                predicates.add(builder.equal(root.get("client").get("id") , filter.getClientId()));
+            if (filter.getCustomerId() != null) {
+                predicates.add(builder.equal(root.get("customer").get("id") , filter.getCustomerId()));
             }
 
             if(filter.getRestaurantId() != null) {
-                predicates.add(builder.equal(root.get("restaurant").get("id") , filter.getClientId()));
+                predicates.add(builder.equal(root.get("restaurant").get("id") , filter.getCustomerId()));
             }
 
             if (filter.getStartCreationDate() != null) {

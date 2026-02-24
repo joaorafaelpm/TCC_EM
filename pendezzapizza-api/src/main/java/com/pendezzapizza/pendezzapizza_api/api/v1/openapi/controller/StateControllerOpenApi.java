@@ -42,7 +42,8 @@ public interface StateControllerOpenApi {
 
     @Operation(summary = "Remove um estado por id", responses = {
             @ApiResponse(responseCode = "204", description = "Estado removido"),
-            @ApiResponse(responseCode = "404", description = "Estado não encontrado", content = @Content(schema = @Schema(ref = "ApiError")))
+            @ApiResponse(responseCode = "404", description = "Estado não encontrado", content = @Content(schema = @Schema(ref = "ApiError"))),
+            @ApiResponse(responseCode = "409", description = "Estado não pode ser removido por que está sendo usado", content = @Content(schema = @Schema(ref = "ApiError")))
     })
     ResponseEntity<Void> remove(@Parameter(description = "Id de um estado", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID stateId);
 }

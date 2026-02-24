@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public interface OrderDisassembler {
 
     @Mapping(source = "restaurantId", target = "restaurant")
-    @Mapping(source = "paymentMethodId", target = "paymentMethods")
+    @Mapping(source = "paymentMethodId", target = "paymentMethod")
     @Mapping(source = "items", target = "items", qualifiedByName = "mapItems")
     Order orderDTOToOrder(OrderDTO OrderDTO);
 

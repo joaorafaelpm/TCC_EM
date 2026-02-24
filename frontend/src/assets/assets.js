@@ -54,9 +54,6 @@ import galeria3 from './galeria3.png'
 import close from './close.png'
 
 
-
-
-
 export const assets = {
   close,
   coca,
@@ -117,8 +114,6 @@ export const assets = {
 
 
 export const category_list= [
-    
-   
     {
     name: "Promoções",
     image: promoçao,
@@ -139,7 +134,6 @@ export const category_list= [
     image: bebidas,
     category: "Bebidas"
   },
- 
  
   
   

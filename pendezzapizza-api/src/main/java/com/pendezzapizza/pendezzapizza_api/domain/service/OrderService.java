@@ -50,8 +50,7 @@ public class OrderService {
     @Transactional
     public void remove (UUID id) {
         try {
-            Order order = findById(id);
-            orderRepository.delete(order);
+            orderRepository.delete(findById(id));
             orderRepository.flush();
         }
         catch (DataIntegrityViolationException e) {

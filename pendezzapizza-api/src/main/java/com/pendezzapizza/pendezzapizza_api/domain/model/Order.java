@@ -52,14 +52,14 @@ public class Order extends AbstractAggregateRoot<Order> {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private PaymentMethod paymentMethods ;
+    private PaymentMethod paymentMethod ;
 
     @ManyToOne
     @JoinColumn(nullable = false)
     private Restaurant restaurant;
 
     @ManyToOne
-    @JoinColumn(nullable = false , name = "client_user_id")
+    @JoinColumn(nullable = false , name = "customer_user_id")
     private User customer ;
 
     @Embedded

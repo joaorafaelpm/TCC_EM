@@ -14,13 +14,14 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/users")
+@RequestMapping(path ="/v1/users", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class UserController implements UserControllerOpenApi {
 
@@ -45,7 +46,7 @@ public class UserController implements UserControllerOpenApi {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserModel add(@RequestBody @Valid UserWithPasswordDTO userWithPasswordDTO) {
-        User user = userDisassembler.userDTOToUser(userWithPasswordDTO);
+        User user = userDisassembler.userWithPasswordDTOToUser(userWithPasswordDTO);
         userService.save(user);
         return userModelAssembler.toModel(user);
     }
@@ -66,4 +67,12 @@ public class UserController implements UserControllerOpenApi {
         userService.changePassword(userId, passwordDTO.getCurrentPassword(), passwordDTO.getNewPassword());
         return ResponseEntity.noContent().build();
     }
+
+    @CheckSecurity.UsersGroupsPermissions.CanUpdateUser
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> remove(@PathVariable UUID userId) {
+        userService.delete(userId);
+        return ResponseEntity.noContent().build();
+    }
+
 }

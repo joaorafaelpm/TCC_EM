@@ -10,6 +10,7 @@ import './App.css'
 import { useEffect } from 'react'
 import { useState } from 'react'
 import LoginPopup from './components/LoginPopup/LoginPopup'
+import Callback from './pages/Callback/Callback'
 
 
 
@@ -40,6 +41,7 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/cart' element={<Cart />} />
             <Route path='/order' element={<PlaceOrder />} />
+            <Route path="/redirect" element={<Callback />} />
             
           </Routes>
           

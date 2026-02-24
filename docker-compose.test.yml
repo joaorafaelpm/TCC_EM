@@ -1,0 +1,41 @@
+# docker-compose.test.yml
+networks:
+  pendezzapizza-test-network:
+    driver: bridge
+
+services:
+  # 1. Banco de Dados isolado para o teste
+  test-database:
+    image: mysql:8.3.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pendezzapizza-test
+    networks:
+      - pendezzapizza-test-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Redis isolado para o teste
+  test-redis:
+    image: redis:8.4.0-alpine
+    networks:
+      - pendezzapizza-test-network
+
+  # 3. A sua API (usando a mesma imagem, mas conectando no banco de teste)
+  test-api:
+    image: pendezzapizza-api
+    environment:
+      # Aponta para o container 'mysql' e 'redis' declarados neste arquivo
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql/pendezzapizza-test?createDatabaseIfNotExists=true&serverTimeZone=UTC
+      SPRING_SESSION_STORE_TYPE: redis
+      SPRING_DATA_REDIS_HOST: redis
+    env_file:
+      - .env.test
+    networks:
+      - pendezzapizza-test-network
+    depends_on:
+      mysql:
+        condition: service_healthy

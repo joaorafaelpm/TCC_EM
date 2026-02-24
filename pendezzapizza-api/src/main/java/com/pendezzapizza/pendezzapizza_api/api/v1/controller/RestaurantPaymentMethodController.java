@@ -8,6 +8,7 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,8 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/v1/restaurants/{restaurantId}/payment-methods")
+@RequestMapping(path ="/v1/restaurants/{restaurantId}/payment-methods", produces = MediaType.APPLICATION_JSON_VALUE)
+
 public class RestaurantPaymentMethodController implements RestaurantPaymentMethodControllerOpenApi {
 
     private final RestaurantService restaurantService;

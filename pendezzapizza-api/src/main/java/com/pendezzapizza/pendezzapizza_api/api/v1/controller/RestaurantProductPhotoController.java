@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/restaurants/{restaurantId}/products/{productId}/photo")
+@RequestMapping(path ="/v1/restaurants/{restaurantId}/products/{productId}/photo")
 @AllArgsConstructor
 public class RestaurantProductPhotoController implements RestaurantProductPhotoControllerOpenApi {
 

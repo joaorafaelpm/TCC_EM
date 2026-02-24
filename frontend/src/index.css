@@ -5,8 +5,6 @@
   margin: 0;
   box-sizing: border-box;
   font-family: Outfit ,sans-serif;
-
-  
 }
 
 :root {
@@ -30,13 +28,6 @@ body {
   min-height: 100vh;
   background-color: var(--bg-color);
   animation: fadeIn 0.6s ease-in;
- 
-
-   
- 
-
-
-
 }
 
 a{

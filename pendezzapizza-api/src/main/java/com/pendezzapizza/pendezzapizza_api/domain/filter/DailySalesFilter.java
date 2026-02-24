@@ -6,12 +6,13 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class DailySalesFilter {
 
-    private Long restaurantId ;
+    private UUID restaurantId ;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private OffsetDateTime startCreationDate;

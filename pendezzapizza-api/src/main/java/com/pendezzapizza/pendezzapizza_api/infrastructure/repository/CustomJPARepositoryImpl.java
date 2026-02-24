@@ -61,7 +61,7 @@ public class CustomJPARepositoryImpl<T , ID>
         try {
             String jpql =
                     "FROM " + getDomainClass().getSimpleName()
-                            + " e WHERE e." + foreignEntity.getClass().getSimpleName() + ".id = :foreignId"
+                            + " e WHERE e." + foreignEntity.getClass().getSimpleName().toLowerCase() + ".id = :foreignId"
                             + " AND e.id = :entityId";
 
             return manager.createQuery(jpql, getDomainClass())

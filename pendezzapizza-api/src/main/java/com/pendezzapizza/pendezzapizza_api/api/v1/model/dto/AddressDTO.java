@@ -32,7 +32,7 @@ public class AddressDTO {
 
     @Schema(example = "Jardim Aparecida")
     @NotBlank
-    private String district;
+    private String neighborhood;
 
     @NotNull
     @Valid

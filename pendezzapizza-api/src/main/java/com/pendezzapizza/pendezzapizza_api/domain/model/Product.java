@@ -28,14 +28,20 @@ public class Product {
     private String name ;
     private String description ;
     private BigDecimal price ;
-    private Boolean active = false;
+    private Boolean active = true;
 
     @ManyToOne
-    @JoinColumn(name = "restaurante_id" , nullable = false)
-//    @JsonIgnore
+    @JoinColumn(name = "restaurant_id" , nullable = false)
     private Restaurant restaurant;
 
-
-
-
+    public void activate() { this.active = true; }
+    public void deactivate() { this.active = false; }
+    public boolean isActive() { return this.active; }
+    public boolean isInactive() { return !isActive(); }
+    public boolean canActivate() {
+        return isInactive();
+    }
+    public boolean canDeactivate() {
+        return isActive();
+    }
 }

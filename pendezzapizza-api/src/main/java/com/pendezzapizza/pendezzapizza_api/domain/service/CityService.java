@@ -48,7 +48,7 @@ public class CityService {
 
     @Transactional
     public void delete(UUID id) {
-        cityRepository.deleteById(id);
+        cityRepository.delete(findById(id));
         cityRepository.flush();
     }
 }

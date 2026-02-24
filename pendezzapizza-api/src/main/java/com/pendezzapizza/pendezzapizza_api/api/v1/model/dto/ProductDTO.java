@@ -26,10 +26,8 @@ public class ProductDTO {
     private String description;
 
     @Schema(example = "78.90", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull
     @PositiveOrZero
     private BigDecimal price;
 
-    @Schema(example = "false")
-    @NotNull
-    private Boolean active = false;
 }

@@ -24,13 +24,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/orders")
+@RequestMapping(path = "/v1/orders", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class OrderController implements OrderControllerOpenApi {
 

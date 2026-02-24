@@ -46,7 +46,7 @@ public class PaymentMethodService {
     @Transactional
     public void remove (UUID id) {
         try {
-            paymentMethodRepository.deleteById(id);
+            paymentMethodRepository.delete(findById(id));
             paymentMethodRepository.flush();
         }
         catch (DataIntegrityViolationException e) {

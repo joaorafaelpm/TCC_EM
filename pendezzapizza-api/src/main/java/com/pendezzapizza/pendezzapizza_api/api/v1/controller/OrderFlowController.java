@@ -5,13 +5,15 @@ import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.service.OrderFlowService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/orders/{orderId}")
+@RequestMapping(path = "/v1/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
+
 @AllArgsConstructor
 public class OrderFlowController implements OrderFlowControllerOpenApi {
 

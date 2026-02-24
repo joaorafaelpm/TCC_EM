@@ -35,7 +35,7 @@ public class OrderSummaryModelAssembler extends RepresentationModelAssemblerSupp
         OrderSummaryModel orderModel = orderSummaryMapper.toModel(order);
 
         UUID restaurantId = orderModel.getRestaurant().getId();
-        UUID clientId = order.getCustomer().getId();
+        UUID customerId = order.getCustomer().getId();
 
         if (pendezzaPizzaSecurity.canSearchOrders()) {
             orderModel.add(pendezzaLinks.linkToOrders(IanaLinkRelations.COLLECTION.value()));
@@ -47,7 +47,7 @@ public class OrderSummaryModelAssembler extends RepresentationModelAssemblerSupp
         }
 
         if (pendezzaPizzaSecurity.canConsultUsersGroupsPermissions()) {
-            orderModel.getCustomer().add(pendezzaLinks.linkToUser(clientId));
+            orderModel.getCustomer().add(pendezzaLinks.linkToUser(customerId));
         }
 
         return orderModel;

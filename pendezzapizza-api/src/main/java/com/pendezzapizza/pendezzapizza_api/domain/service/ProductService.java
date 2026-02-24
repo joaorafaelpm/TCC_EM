@@ -53,5 +53,19 @@ public class ProductService {
         productRepository.flush();
     }
 
+    @Transactional
+    public void active (UUID restaurantId , UUID productId) {
+        Product product = findById(restaurantId, productId);
+        if (product.canActivate()) {
+            product.activate();
+        }
+    }
+    @Transactional
+    public void deactivate (UUID restaurantId, UUID productId) {
+        Product product = findById(restaurantId, productId);
+        if (product.canDeactivate()) {
+            product.deactivate();
+        }
+    }
 
 }

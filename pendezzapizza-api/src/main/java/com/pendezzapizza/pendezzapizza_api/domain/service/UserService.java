@@ -6,6 +6,7 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class UserService  {
@@ -34,8 +36,8 @@ public class UserService  {
     public User save(User user) {
 
         userRepository.detach(user);
-
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+
         if (existingUser.isPresent() && !existingUser.get().equals(user)) {
             throw new BusinessException(String.format(
                     "The email '%s' is already in use", user.getEmail()
@@ -48,7 +50,7 @@ public class UserService  {
     @Transactional
     public void delete(UUID id) {
         try {
-            userRepository.deleteById(id);
+            userRepository.delete(findById(id));
             userRepository.flush();
         }
         catch (DataIntegrityViolationException e) {

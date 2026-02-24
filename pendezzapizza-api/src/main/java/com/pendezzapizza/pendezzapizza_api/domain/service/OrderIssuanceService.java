@@ -38,7 +38,7 @@ public class OrderIssuanceService {
 
     public void assignRelationalObjectsToOrder(Order order) {
         UUID restaurantId = order.getRestaurant().getId();
-        UUID paymentMethodId = order.getPaymentMethods().getId();
+        UUID paymentMethodId = order.getPaymentMethod().getId();
         UUID cityId = order.getDeliveryAddress().getCity().getId();
         UUID customerId = pendezzaPizzaSecurity.getUserId();
 
@@ -55,7 +55,7 @@ public class OrderIssuanceService {
             throw new BusinessException(String.format("Forma de pagamento '%s' não é aceita por esse restaurante.",
                     paymentMethod.getDescription()));
         }
-        order.setPaymentMethods(paymentMethod);
+        order.setPaymentMethod(paymentMethod);
     }
 
     public void assignUnitPriceAndProductToOrderItem(Order order) {

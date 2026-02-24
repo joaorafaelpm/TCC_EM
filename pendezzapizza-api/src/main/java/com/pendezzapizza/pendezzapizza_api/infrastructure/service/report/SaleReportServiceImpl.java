@@ -21,7 +21,7 @@ public class SaleReportServiceImpl implements SaleReportService {
     @Override
     public byte[] issueDailySales(DailySalesFilter dailySalesFilter, String timeOffSet){
         try {
-            var inputStream = this.getClass().getResourceAsStream("/relatorios/vendas-diarias.jasper");
+            var inputStream = this.getClass().getResourceAsStream("/relatorios/pendezzapizza.jasper");
 
             var params = new HashMap<String , Object>();
             params.put("REPORT_LOCALE" , Locale.of("pt" , "BR"));

@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,8 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/v1/restaurants")
+@RequestMapping(path ="/v1/restaurants", produces = MediaType.APPLICATION_JSON_VALUE)
+
 public class RestaurantController implements RestaurantControllerOpenApi {
 
     private final RestaurantService restaurantService;

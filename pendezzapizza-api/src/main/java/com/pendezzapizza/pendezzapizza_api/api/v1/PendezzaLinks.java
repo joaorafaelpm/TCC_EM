@@ -29,7 +29,7 @@ public class PendezzaLinks {
 
     public Link linkToOrders(String rel) {
         TemplateVariables filterVariables = new TemplateVariables(
-                new TemplateVariable("clientId", TemplateVariable.VariableType.REQUEST_PARAM),
+                new TemplateVariable("customerId", TemplateVariable.VariableType.REQUEST_PARAM),
                 new TemplateVariable("restaurantId", TemplateVariable.VariableType.REQUEST_PARAM),
                 new TemplateVariable("creationDateStart", TemplateVariable.VariableType.REQUEST_PARAM),
                 new TemplateVariable("creationDateEnd", TemplateVariable.VariableType.REQUEST_PARAM)

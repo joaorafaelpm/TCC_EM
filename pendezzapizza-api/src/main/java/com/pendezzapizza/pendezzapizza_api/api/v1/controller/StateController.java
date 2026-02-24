@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +22,7 @@ import java.util.UUID;
 @RestController
 @ResponseBody
 @AllArgsConstructor
-@RequestMapping("/v1/states")
+@RequestMapping(value = "/v1/states" , produces = MediaType.APPLICATION_JSON_VALUE)
 public class StateController implements StateControllerOpenApi {
 
     private final StateRepository stateRepository;
@@ -43,6 +44,7 @@ public class StateController implements StateControllerOpenApi {
 
     @CheckSecurity.States.CanEdit
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public StateModel add(@RequestBody @Valid StateDTO stateDTO) {
         State state = stateDisassembler.stateDTOToState(stateDTO);
         return stateModelAssembler.toModel(stateService.save(state));

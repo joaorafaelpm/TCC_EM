@@ -13,13 +13,16 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/restaurants/{restaurantId}/products")
+@RequestMapping(path ="/v1/restaurants/{restaurantId}/products", produces = MediaType.APPLICATION_JSON_VALUE)
+
 @AllArgsConstructor
 public class RestaurantProductController implements RestaurantProductControllerOpenApi {
 
@@ -60,5 +63,21 @@ public class RestaurantProductController implements RestaurantProductControllerO
         Product existingProduct = productService.findById(restaurantId, productId);
         productDisassembler.updateProductFromDto(productDTO, existingProduct);
         return productAssembler.toModel(productService.save(restaurantId, existingProduct));
+    }
+    @CheckSecurity.Restaurants.CanManageOperation
+    @PutMapping("/{productId}/active")
+    public ResponseEntity<Void> activeProduct(@PathVariable UUID restaurantId, @PathVariable UUID productId) {
+        productService.active(
+                restaurantId, productId
+        );
+        return ResponseEntity.noContent().build();
+    }
+    @CheckSecurity.Restaurants.CanManageOperation
+    @DeleteMapping("/{productId}/active")
+    public ResponseEntity<Void> deactivateProduct(@PathVariable UUID restaurantId, @PathVariable UUID productId) {
+        productService.deactivate(
+                restaurantId, productId
+        );
+        return ResponseEntity.noContent().build();
     }
 }

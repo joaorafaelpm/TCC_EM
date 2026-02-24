@@ -35,14 +35,14 @@ public @interface CheckSecurity {
 //   Depois disso, antes de serializar em um objeto json e retornar ao cliente, a gente verifica se ele tem autoridade de consultar pedidos, se ele é o usuário correspondente do pedido, ou se ele é dono do restaurante onde o pedido foi feito
         @PreAuthorize("@pendezzaPizzaSecurity.canSearchOrders()")
         @PostAuthorize("@pendezzaPizzaSecurity.canSearchOrders(" +
-                "returnObject.client.id , returnObject.restaurant.id)")
+                "returnObject.customer.id , returnObject.restaurant.id)")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface CanSearch {
         }
 
         @PreAuthorize("@pendezzaPizzaSecurity.canListOrders(" +
-                "#orderFilter.clientId , #orderFilter.restaurantId )")
+                "#orderFilter.customerId , #orderFilter.restaurantId )")
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         public @interface CanList {

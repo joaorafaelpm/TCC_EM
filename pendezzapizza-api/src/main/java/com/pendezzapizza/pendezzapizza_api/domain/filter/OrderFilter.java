@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 @Setter
 public class OrderFilter {
 
-    private Long clientId ;
+    private Long customerId ;
     private Long restaurantId ;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

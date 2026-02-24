@@ -12,13 +12,15 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/groups")
+@RequestMapping(path = "/v1/groups", produces = MediaType.APPLICATION_JSON_VALUE)
+
 @AllArgsConstructor
 public class GroupController implements GroupControllerOpenApi {
 

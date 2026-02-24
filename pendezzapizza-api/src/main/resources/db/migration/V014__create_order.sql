@@ -9,10 +9,10 @@ create table IF NOT EXISTS `order` (
     cancellation_date DATETIME ,
     delivery_date DATETIME ,
 
-    status_order VARCHAR(10) NOT NULL DEFAULT "CREATED" ,
+    order_status VARCHAR(10) NOT NULL DEFAULT "CREATED" ,
     payment_method_id BINARY(16) NOT NULL,
     restaurant_id BINARY(16) NOT NULL,
-    client_user_id BINARY(16) NOT NULL,
+    customer_user_id BINARY(16) NOT NULL,
 
     address_city_id BINARY(16) NOT NULL,
     address_street VARCHAR(255) NOT NULL,
@@ -22,7 +22,7 @@ create table IF NOT EXISTS `order` (
 
     constraint fk_order_address_city foreign key (address_city_id) references city (id),
     constraint fk_order_restaurant foreign key (restaurant_id) references restaurant (id),
-    constraint fk_order_user_client foreign key (client_user_id) references user (id),
+    constraint fk_order_user_customer foreign key (customer_user_id) references user (id),
     constraint fk_order_payment_method foreign key (payment_method_id) references payment_method (id),
 
 	primary key (id)

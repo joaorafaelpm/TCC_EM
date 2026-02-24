@@ -69,7 +69,7 @@ public class SaleQueryServiceImpl implements SaleQueryService {
         }
 
 //        Evitar pedidos Cancelados ou Criados
-        predicates.add(root.get("statusOrder").
+        predicates.add(root.get("orderStatus").
                 in(OrderStatus.DELIVERED , OrderStatus.CONFIRMED));
 
         query.select(selection);
