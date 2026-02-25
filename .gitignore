@@ -4,6 +4,7 @@ node_modules/
 
 # Env
 .env
+.env.test
 ./**/.env
 
 # Maven
