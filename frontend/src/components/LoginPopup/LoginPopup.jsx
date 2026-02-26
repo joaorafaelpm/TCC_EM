@@ -1,26 +1,27 @@
 import React, { useState } from "react";
 import "./LoginPopup.css";
-import { visitAuthorizationUrl } from "../../../util/UserUtils";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 const LoginPopup = ({ setShowLogin }) => {
   const [currState, setCurrState] = useState("Login");
   const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
 
- const handleLogin = async (e) => {
-    e.preventDefault();
-    // O Spring vai exibir a tela de login dele
-    await visitAuthorizationUrl();
-  };
+  // Pega os parâmetros OAuth2 que o Spring passou na URL quando redirecionou
+  // ex: ?response_type=code&client_id=...&redirect_uri=...
+  const queryParams = window.location.search;
 
   return (
     <div className="login-popup">
-      <form className="login-popup-container" onSubmit={handleLogin}>
+      {/*
+        action: POST direto pro Spring com os params OAuth2
+        Assim o Spring autentica e redireciona pro /callback do React com o code
+      */}
+      <form
+        className="login-popup-container"
+        action={`http://localhost:80/api/login${queryParams}`}
+        method="POST"
+      >
         <div className="login-popup-title">
           <h2>{currState}</h2>
           <svg
@@ -46,24 +47,24 @@ const LoginPopup = ({ setShowLogin }) => {
           {currState !== "Login" && (
             <input
               type="text"
+              name="nome"
               placeholder="Seu Nome"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               required
             />
           )}
+          {/* IMPORTANTE: Spring Security exige name="username" e name="password" */}
           <input
             type="email"
+            name="username"
             placeholder="Seu Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
           />
           <input
             type="password"
+            name="password"
             placeholder="Senha"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
             required
           />
         </div>
@@ -89,7 +90,8 @@ const LoginPopup = ({ setShowLogin }) => {
           </p>
         ) : (
           <p>
-            Já tem uma conta? <span onClick={() => setCurrState("Login")}>Login</span>
+            Já tem uma conta?{" "}
+            <span onClick={() => setCurrState("Login")}>Login</span>
           </p>
         )}
       </form>

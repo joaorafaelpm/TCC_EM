@@ -1,8 +1,8 @@
-const USERNAME_INPUT = "#Email";
-const PASSWORD_INPUT = "#Password";
+const USERNAME_INPUT = '[name="username"]';
+const PASSWORD_INPUT = '[name="password"]';
 const SUBMIT_BUTTON = "#LoginButton";
-const ERROR_MESSAGE_CLASS = ".alert-danger";
-const ERROR_MESSAGE_TEXT = "O e-mail ou senha não confere";
+const ERROR_MESSAGE_CLASS = "#erroMsg";
+const ERROR_MESSAGE_TEXT = "Email ou senha inválidos.";
 
 class LoginPage {
   static visitLoginPage() {
@@ -20,6 +20,7 @@ class LoginPage {
   }
 
   static submit() {
+    cy.get(".login-popup-condition > input").check();
     cy.get(SUBMIT_BUTTON).click();
   }
 

@@ -71,10 +71,10 @@ Cypress.Commands.add("getLoginTestEnv", () => {
 Cypress.Commands.add("getAccessTokenRequestEnv", () => {
   return (
     cy
-      .env(["API_AUTH_URL", "API_URL", "CLIENT_ID" , "CLIENT_SECRET" , "CODE_VERIFIER"])
+      .env(["REDIRECT_URL", "API_URL", "CLIENT_ID" , "CLIENT_SECRET" , "CODE_VERIFIER"])
       .then((env) => {
         return {
-          authUrl: env.API_AUTH_URL,
+          redirectUrl: env.REDIRECT_URL,
           apiUrl: env.API_URL,
           clientId: env.CLIENT_ID,
           clientSecret: env.CLIENT_SECRET,
@@ -83,7 +83,7 @@ Cypress.Commands.add("getAccessTokenRequestEnv", () => {
       })
   );
 });
-Cypress.Commands.add("makeAccessTokenRequestAndWriteIt", ({ authUrl, apiUrl, clientId, clientSecret, codeVerifier }) => {
+Cypress.Commands.add("makeAccessTokenRequestAndWriteIt", ({ redirectUrl, apiUrl, clientId, clientSecret, codeVerifier }) => {
    cy.location("search").then((search) => {
       const urlParams = new URLSearchParams(search);
       const capturedCode = urlParams.get("code");
@@ -100,7 +100,7 @@ Cypress.Commands.add("makeAccessTokenRequestAndWriteIt", ({ authUrl, apiUrl, cli
         body: {
           grant_type: "authorization_code",
           code: capturedCode,
-          redirect_uri: "http://localhost:80/redirect",
+          redirect_uri: redirectUrl,
           code_verifier: codeVerifier,
         },
       });

@@ -9,7 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
@@ -18,7 +19,7 @@ import java.util.UUID;
 public interface CityControllerOpenApi {
 
     @Operation(summary = "Lista de cidades")
-    CollectionModel<CityModel> all();
+    PagedModel<CityModel> all( @Parameter(hidden = true) Pageable pageable);
 
     @Operation(summary = "Busca uma Cidade por id", responses = {
             @ApiResponse(responseCode = "200"),

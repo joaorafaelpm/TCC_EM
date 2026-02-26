@@ -79,6 +79,7 @@ module.exports = defineConfig({
       SCOPES: process.env.SCOPES,
       API_AUTH_URL: process.env.ACCESS_TOKEN_URL,
       API_URL: process.env.API_URL,
+      REDIRECT_URL: process.env.REDIRECT_URL,
       CODE_VERIFIER: process.env.CODE_VERIFIER,
       CLIENT_USERNAME: process.env.CLIENT_USERNAME,
       CLIENT_PASSWORD: process.env.CLIENT_PASSWORD,

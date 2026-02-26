@@ -5,9 +5,10 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -17,8 +18,8 @@ public class CityService {
     private final CityRepository cityRepository;
     private final StateService stateService;
 
-    public List<City> findAll() {
-        return cityRepository.findAll();
+    public Page<City> findAll(Pageable pageable) {
+        return cityRepository.findAll(pageable);
     }
 
     public City findById(UUID id) {

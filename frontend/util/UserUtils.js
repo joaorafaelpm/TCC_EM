@@ -41,7 +41,7 @@ export async function visitAuthorizationUrl() {
     code_challenge_method: "S256",
   });
 
-  window.location.href = `http://localhost:80/oauth2/authorize?${params}`;
+  window.location.href = `http://localhost:80/api/oauth2/authorize?${params}`;
 }
 
 export async function getAccessToken(capturedCode) {

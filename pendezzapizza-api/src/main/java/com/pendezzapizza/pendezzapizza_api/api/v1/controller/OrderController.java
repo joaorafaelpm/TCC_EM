@@ -70,6 +70,7 @@ public class OrderController implements OrderControllerOpenApi {
         }
     }
 
+//    Nós usamos essa tradução para indicar o nome referente à ordenação da requisição, se eu quiser limitar por nome do restaurante eu preciso colocar restaurantName , restaurant.name
     private Pageable translatePageable(Pageable apiPageable) {
         var mapping = Map.of(
                 "subtotal", "subtotal",

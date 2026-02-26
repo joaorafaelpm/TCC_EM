@@ -25,6 +25,8 @@ services:
       - pendezzapizza-network
 
   pendezzapizza-api:
+    # image: jrfifipi/pendezzapizza:v1
+
     image: pendezzapizza-api
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://pendezzapizza-mysql/${DATABASE_NAME}?createDatabaseIfNotExists=true&serverTimeZone=UTC
@@ -33,7 +35,7 @@ services:
     networks:
       - pendezzapizza-network
     env_file:
-      - .env
+      - ./pendezzapizza-api/.env
     depends_on:
       pendezzapizza-mysql:
         condition: service_healthy
@@ -43,6 +45,8 @@ services:
   pendezzapizza-proxy:
     build: ./nginx
     image: pendezzapizza-proxy
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     ports:
       - ${NGNIX_PORT}
     networks:

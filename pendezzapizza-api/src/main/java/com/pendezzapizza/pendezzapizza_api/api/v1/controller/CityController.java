@@ -14,7 +14,10 @@ import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
 import com.pendezzapizza.pendezzapizza_api.domain.service.CityService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +35,14 @@ public class CityController implements CityControllerOpenApi {
     private final CityModelAssembler cityAssembler;
     private final CityDisassembler cityDisassembler;
 
+    private final PagedResourcesAssembler<City> pagedResourcesAssembler;
+
+
     @CheckSecurity.Cities.CanConsult
     @GetMapping
-    public CollectionModel<CityModel> all() {
-        return cityAssembler.toCollectionModel(cityRepository.findAll());
+    public PagedModel<CityModel> all(Pageable pageable) {
+        Page<City> findAll = cityService.findAll(pageable);
+        return pagedResourcesAssembler.toModel(findAll , cityAssembler);
     }
 
     @CheckSecurity.Cities.CanConsult

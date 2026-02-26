@@ -42,6 +42,7 @@ function App() {
             <Route path='/cart' element={<Cart />} />
             <Route path='/order' element={<PlaceOrder />} />
             <Route path="/redirect" element={<Callback />} />
+            <Route path="/login" element={<LoginPopup setShowLogin={setShowLogin}/>} />
             
           </Routes>
           
