@@ -114,6 +114,7 @@ public class AuthorizationServerConfig {
         return keyPair;
     }
 
+
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(UserRepository userRepository) {
         return context -> {

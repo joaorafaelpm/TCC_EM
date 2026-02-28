@@ -5,6 +5,7 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,12 @@ public class CityService {
     private final CityRepository cityRepository;
     private final StateService stateService;
 
+    @Cacheable("cities")
     public Page<City> findAll(Pageable pageable) {
         return cityRepository.findAll(pageable);
     }
 
+    @Cacheable("citiesLastUpdate")
     public OffsetDateTime getLastUpdateDate() {
         OffsetDateTime lastCityUpdateDate = cityRepository.getLastCityUpdateDate();
         OffsetDateTime lastStateUpdateDate = cityRepository.getLastStateUpdateDate();

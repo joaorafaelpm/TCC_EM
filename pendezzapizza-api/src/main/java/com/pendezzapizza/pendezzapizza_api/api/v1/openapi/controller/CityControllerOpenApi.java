@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -20,7 +20,7 @@ import java.util.UUID;
 public interface CityControllerOpenApi {
 
     @Operation(summary = "Lista de cidades")
-    ResponseEntity<PagedModel<CityModel>> all(
+    ResponseEntity<Page<CityModel>> all(
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true)ServletWebRequest request
             );

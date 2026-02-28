@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -41,15 +43,20 @@ public class ResourceServerConfig {
                         loginFormConfigurer.loginPage("/login").permitAll())
                 // Habilita a validação de tokens JWT para requisições de API
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwtConfigurer -> {
-                            // CUIDADO: Usar localhost aqui força a aplicação a chamar a si mesma via rede.
-                            // Em produção, certifique-se que a aplicação consegue se enxergar externamente.
-                            jwtConfigurer.jwkSetUri("http://pendezzapizza-api:8080/oauth2/jwks");
-                            jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter());
-                        })
+                        .jwt(jwtConfigurer ->
+                                // Agora usa o bean abaixo, que tem cache
+                                jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        )
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder
+                .withJwkSetUri("http://pendezzapizza-api:8080/oauth2/jwks")
+                .build();
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
