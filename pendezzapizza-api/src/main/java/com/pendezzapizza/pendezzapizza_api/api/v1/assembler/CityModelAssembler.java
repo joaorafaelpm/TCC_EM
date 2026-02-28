@@ -43,6 +43,20 @@ public class CityModelAssembler extends RepresentationModelAssemblerSupport<City
 
         return cityModel;
     }
+    public CityModel toModel(CityModel cityModel) {
+
+        if (pendezzaPizzaSecurity.canConsultCities()) {
+            cityModel.add(pendezzaLinks.linkToCity(cityModel.getId()));
+            cityModel.add(pendezzaLinks.linkToCities());
+        }
+
+        if (pendezzaPizzaSecurity.canConsultStates()) {
+            cityModel.getState().add(pendezzaLinks.
+                    linkToState(cityModel.getState().getId()));
+        }
+
+        return cityModel;
+    }
 
     @Override
     public CollectionModel<CityModel> toCollectionModel(Iterable<? extends City> entities) {

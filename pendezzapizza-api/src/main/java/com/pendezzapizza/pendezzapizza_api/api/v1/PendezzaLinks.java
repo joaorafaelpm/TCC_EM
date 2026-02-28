@@ -244,7 +244,7 @@ public class PendezzaLinks {
 
     public Link linkToCity(UUID cityId, String rel) {
         return linkTo(methodOn(CityController.class)
-                .findById(cityId)).withRel(rel);
+                .findById(cityId , null)).withRel(rel);
     }
 
     public Link linkToCity(UUID cityId) {

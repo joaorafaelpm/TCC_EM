@@ -6,9 +6,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -34,6 +36,9 @@ public class Product {
     @JoinColumn(name = "restaurant_id" , nullable = false)
     private Restaurant restaurant;
 
+    @UpdateTimestamp
+    private OffsetDateTime updateDate ;
+
     public void activate() { this.active = true; }
     public void deactivate() { this.active = false; }
     public boolean isActive() { return this.active; }
@@ -44,4 +49,6 @@ public class Product {
     public boolean canDeactivate() {
         return isActive();
     }
+
+
 }

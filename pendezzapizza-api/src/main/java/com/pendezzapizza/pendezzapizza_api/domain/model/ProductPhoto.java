@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
@@ -33,6 +35,9 @@ public class ProductPhoto {
     private String contentType;
 
     private Long size;
+
+    @UpdateTimestamp
+    private OffsetDateTime updateDate ;
 
     public UUID getRestaurantId() {
         if (getProduct() != null && getProduct().getRestaurant() != null) {

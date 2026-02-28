@@ -7,8 +7,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.io.Serializable;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
@@ -16,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class City {
+public class City implements Serializable {
 
         @Id
         @GeneratedValue
@@ -34,4 +37,6 @@ public class City {
         @JoinColumn(name = "state_id" , nullable = false)
         private State state ;
 
+        @UpdateTimestamp
+        private OffsetDateTime updateDate ;
 }

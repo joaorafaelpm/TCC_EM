@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
@@ -67,6 +68,9 @@ public class Order extends AbstractAggregateRoot<Order> {
 
     @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL)
     private List<OrderItem> items = new ArrayList<>();
+
+    @UpdateTimestamp
+    private OffsetDateTime updateDate ;
 
     public void calculateTotalOrderCost() {
         getItems().forEach(OrderItem::calculateTotalPrice);

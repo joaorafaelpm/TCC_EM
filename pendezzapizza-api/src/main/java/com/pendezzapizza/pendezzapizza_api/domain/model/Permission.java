@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Data
@@ -28,4 +30,6 @@ public class Permission {
 
     private String description ;
 
+    @UpdateTimestamp
+    private OffsetDateTime updateDate ;
 }

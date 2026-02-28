@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -21,6 +22,32 @@ public class CityService {
     public Page<City> findAll(Pageable pageable) {
         return cityRepository.findAll(pageable);
     }
+
+    public OffsetDateTime getLastUpdateDate() {
+        OffsetDateTime lastCityUpdateDate = cityRepository.getLastCityUpdateDate();
+        OffsetDateTime lastStateUpdateDate = cityRepository.getLastStateUpdateDate();
+
+        if (lastCityUpdateDate == null) return lastStateUpdateDate;
+        if (lastStateUpdateDate == null) return lastCityUpdateDate;
+
+        return lastCityUpdateDate.isAfter(lastStateUpdateDate)
+                ? lastCityUpdateDate
+                : lastStateUpdateDate;
+    }
+
+    public OffsetDateTime getLastUpdateDateById(UUID cityId) {
+        City byId = findById(cityId);
+        OffsetDateTime lastCityUpdateDate = cityRepository.getLastCityUpdateDateById(cityId);
+        OffsetDateTime lastStateUpdateDate = cityRepository.getLastStateUpdateDateById(byId.getState().getId());
+
+        if (lastCityUpdateDate == null) return lastStateUpdateDate;
+        if (lastStateUpdateDate == null) return lastCityUpdateDate;
+
+        return lastCityUpdateDate.isAfter(lastStateUpdateDate)
+                ? lastCityUpdateDate
+                : lastStateUpdateDate;
+    }
+
 
     public City findById(UUID id) {
         return cityRepository.findByIdOrThrowException(id);

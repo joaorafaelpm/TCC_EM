@@ -6,6 +6,8 @@ import com.pendezzapizza.pendezzapizza_api.domain.repository.PaymentMethodReposi
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -20,6 +22,9 @@ public class PaymentMethodService {
 
     public List<PaymentMethod> findAll() {
         return paymentMethodRepository.findAll();
+    }
+    public Page<PaymentMethod> findAll(Pageable pageable) {
+        return paymentMethodRepository.findAll(pageable);
     }
 
     public PaymentMethod findById (UUID id) {

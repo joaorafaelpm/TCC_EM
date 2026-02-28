@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -34,6 +36,9 @@ public class Group {
             joinColumns = @JoinColumn(name = "group_id") ,
             inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<Permission> permission = new HashSet<>();
+
+    @UpdateTimestamp
+    private OffsetDateTime updateDate ;
 
     public boolean associatePermission (Permission permission) {
         return getPermission().add(permission);

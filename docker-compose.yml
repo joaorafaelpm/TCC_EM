@@ -15,12 +15,13 @@ services:
       - pendezzapizza-network
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   pendezzapizza-redis:
     image: redis:8.4.0-alpine
+
     networks:
       - pendezzapizza-network
 

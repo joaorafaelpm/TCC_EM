@@ -18,12 +18,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @AllArgsConstructor
@@ -37,18 +42,50 @@ public class CityController implements CityControllerOpenApi {
 
     private final PagedResourcesAssembler<City> pagedResourcesAssembler;
 
-
-    @CheckSecurity.Cities.CanConsult
+    @CheckSecurity.PaymentMethods.CanConsult
     @GetMapping
-    public PagedModel<CityModel> all(Pageable pageable) {
-        Page<City> findAll = cityService.findAll(pageable);
-        return pagedResourcesAssembler.toModel(findAll , cityAssembler);
+    public ResponseEntity<PagedModel<CityModel>> all(Pageable pageable, ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = cityService.getLastUpdateDate();
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
+        Page<City> cityModels = cityService.findAll(pageable);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(pagedResourcesAssembler.toModel(cityModels , cityAssembler));
+
     }
 
     @CheckSecurity.Cities.CanConsult
     @GetMapping(value = "/{cityId}")
-    public CityModel findById(@PathVariable UUID cityId) {
-        return cityAssembler.toModel(cityService.findById(cityId));
+    public ResponseEntity<CityModel> findById(@PathVariable UUID cityId , ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+    OffsetDateTime lastUpdateDate = cityService.getLastUpdateDateById(cityId);
+
+    if (lastUpdateDate != null) {
+        eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+    }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
+        CityModel cityModel = cityAssembler
+                .toModel(cityService.findById(cityId));
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(cityModel);
     }
 
     @CheckSecurity.Cities.CanEdit

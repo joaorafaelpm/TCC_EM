@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.UUID;
 
@@ -19,7 +20,10 @@ import java.util.UUID;
 public interface CityControllerOpenApi {
 
     @Operation(summary = "Lista de cidades")
-    PagedModel<CityModel> all( @Parameter(hidden = true) Pageable pageable);
+    ResponseEntity<PagedModel<CityModel>> all(
+            @Parameter(hidden = true) Pageable pageable,
+            @Parameter(hidden = true)ServletWebRequest request
+            );
 
     @Operation(summary = "Busca uma Cidade por id", responses = {
             @ApiResponse(responseCode = "200"),
@@ -30,8 +34,9 @@ public interface CityControllerOpenApi {
                     description = "Id da cidade inválido",
                     content = @Content(schema = @Schema(ref = "ApiError")))
     })
-    CityModel findById(
-            @Parameter(description = "Id de uma cidade", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID cityId);
+    ResponseEntity<CityModel> findById(
+            @Parameter(description = "Id de uma cidade", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID cityId,
+            @Parameter(hidden = true) ServletWebRequest request);
 
     @Operation(summary = "Cadastra uma Cidade",
             description = "Cadastro de uma Cidade, necesita de um Estado e nome válido")
