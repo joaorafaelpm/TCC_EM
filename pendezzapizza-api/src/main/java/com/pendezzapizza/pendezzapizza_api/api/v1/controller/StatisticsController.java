@@ -1,6 +1,5 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.PendezzaLinks;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.StatisticsModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.StatisticsControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
@@ -24,7 +23,6 @@ import java.util.List;
 @AllArgsConstructor
 public class StatisticsController implements StatisticsControllerOpenApi {
 
-    private final PendezzaLinks pendezzaLinks;
     private final SaleQueryService saleQueryService;
     private final SaleReportService saleReportService;
 
@@ -32,7 +30,6 @@ public class StatisticsController implements StatisticsControllerOpenApi {
     @GetMapping
     public StatisticsModel statistics() {
         StatisticsModel statisticsModel = new StatisticsModel();
-        statisticsModel.add(pendezzaLinks.linkToDailySalesStatistics("daily-sales"));
         return statisticsModel;
     }
 

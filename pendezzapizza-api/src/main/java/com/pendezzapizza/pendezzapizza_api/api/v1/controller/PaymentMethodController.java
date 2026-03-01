@@ -12,9 +12,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,11 +32,10 @@ public class PaymentMethodController implements PaymentMethodControllerOpenApi {
     private final PaymentMethodService paymentMethodService;
     private final PaymentMethodModelAssembler paymentMethodAssembler;
     private final PaymentMethodDisassembler paymentMethodDisassembler;
-    private final PagedResourcesAssembler<PaymentMethod> pagedResourcesAssembler;
 
     @CheckSecurity.PaymentMethods.CanConsult
     @GetMapping
-    public ResponseEntity<PagedModel<PaymentMethodModel>> all(Pageable pageable, ServletWebRequest request) {
+    public ResponseEntity<Page<PaymentMethodModel>> all(Pageable pageable, ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = paymentMethodService.getLastUpdateDate();
@@ -51,18 +47,13 @@ public class PaymentMethodController implements PaymentMethodControllerOpenApi {
             return null;
         }
 
-        Page<PaymentMethod> paymentMethodModels = paymentMethodService.findAll(pageable);
-
+        Page<PaymentMethod> paymentMethods = paymentMethodService.findAll(pageable);
+        Page<PaymentMethodModel> paymentMethodModels = paymentMethods.map(paymentMethodAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
                 .eTag(eTag)
-                .body(pagedResourcesAssembler.toModel(paymentMethodModels , paymentMethodAssembler));
+                .body(paymentMethodModels);
 
-    }
-
-    @Override
-    public ResponseEntity<CollectionModel<PaymentMethodModel>> all(ServletWebRequest request) {
-        return null;
     }
 
     @CheckSecurity.PaymentMethods.CanConsult

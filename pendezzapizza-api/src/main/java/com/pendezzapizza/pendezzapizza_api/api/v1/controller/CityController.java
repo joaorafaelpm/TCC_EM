@@ -10,13 +10,11 @@ import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.StateNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.City;
-import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
 import com.pendezzapizza.pendezzapizza_api.domain.service.CityService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,12 +32,9 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(path = "/v1/cities", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CityController implements CityControllerOpenApi {
 
-    private final CityRepository cityRepository;
     private final CityService cityService;
     private final CityModelAssembler cityAssembler;
     private final CityDisassembler cityDisassembler;
-
-    private final PagedResourcesAssembler<City> pagedResourcesAssembler;
 
     @CheckSecurity.PaymentMethods.CanConsult
     @GetMapping
@@ -69,11 +64,11 @@ public class CityController implements CityControllerOpenApi {
     public ResponseEntity<CityModel> findById(@PathVariable UUID cityId , ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
-    OffsetDateTime lastUpdateDate = cityService.getLastUpdateDateById(cityId);
+        OffsetDateTime lastUpdateDate = cityService.getLastUpdateDateById(cityId);
 
-    if (lastUpdateDate != null) {
-        eTag = String.valueOf(lastUpdateDate.toEpochSecond());
-    }
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
 
         if (request.checkNotModified(eTag)) {
             return null;

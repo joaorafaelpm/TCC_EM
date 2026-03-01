@@ -5,7 +5,9 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,11 @@ public class CityService {
         return cityRepository.findAll(pageable);
     }
 
+    @Cacheable("cities")
+    public City findById(UUID id) {
+        return cityRepository.findByIdOrThrowException(id);
+    }
+
     @Cacheable("citiesLastUpdate")
     public OffsetDateTime getLastUpdateDate() {
         OffsetDateTime lastCityUpdateDate = cityRepository.getLastCityUpdateDate();
@@ -38,6 +45,7 @@ public class CityService {
                 : lastStateUpdateDate;
     }
 
+    @Cacheable("citiesLastUpdate")
     public OffsetDateTime getLastUpdateDateById(UUID cityId) {
         City byId = findById(cityId);
         OffsetDateTime lastCityUpdateDate = cityRepository.getLastCityUpdateDateById(cityId);
@@ -51,11 +59,10 @@ public class CityService {
                 : lastStateUpdateDate;
     }
 
-
-    public City findById(UUID id) {
-        return cityRepository.findByIdOrThrowException(id);
-    }
-
+    @Caching(evict = {
+            @CacheEvict(value = "cities",           allEntries = true),
+            @CacheEvict(value = "citiesLastUpdate", allEntries = true)
+    })
     @Transactional
     public City save(City city) {
         UUID stateId = city.getState().getId();
@@ -65,6 +72,10 @@ public class CityService {
         return cityRepository.save(city);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "cities",           allEntries = true),
+            @CacheEvict(value = "citiesLastUpdate", allEntries = true)
+    })
     @Transactional
     public City save(UUID id, City updatedCity) {
         City existingCity = findById(id);
@@ -77,6 +88,10 @@ public class CityService {
         return cityRepository.save(existingCity);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "cities",           allEntries = true),
+            @CacheEvict(value = "citiesLastUpdate", allEntries = true)
+    })
     @Transactional
     public void delete(UUID id) {
         cityRepository.delete(findById(id));

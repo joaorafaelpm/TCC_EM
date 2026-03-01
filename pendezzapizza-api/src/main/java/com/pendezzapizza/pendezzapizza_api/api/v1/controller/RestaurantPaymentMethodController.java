@@ -7,11 +7,11 @@ import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -25,9 +25,9 @@ public class RestaurantPaymentMethodController implements RestaurantPaymentMetho
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
-    public CollectionModel<PaymentMethodModel> all(@PathVariable UUID restaurantId) {
+    public Collection<PaymentMethodModel> all(@PathVariable UUID restaurantId) {
         Restaurant restaurant = restaurantService.findById(restaurantId);
-        return paymentMethodAssembler.toCollectionRefRestaurant(restaurantId, restaurant.getPaymentMethods());
+        return paymentMethodAssembler.toCollectionModel(restaurant.getPaymentMethods());
     }
 
     @CheckSecurity.Restaurants.CanManageOperation

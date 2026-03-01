@@ -4,16 +4,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import java.util.UUID;
 
-@Relation(collectionRelation = "cities")
 @Getter
 @Setter
 @AllArgsConstructor
-public class CitySummaryModel extends RepresentationModel<CitySummaryModel> {
+public class CitySummaryModel{
 
     @Schema(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48")
     private UUID id;

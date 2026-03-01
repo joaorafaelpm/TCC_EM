@@ -7,11 +7,11 @@ import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.service.GroupService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -25,8 +25,8 @@ public class UserGroupController implements UserGroupControllerOpenApi {
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public CollectionModel<GroupModel> getAllGroupsFromUser(@PathVariable UUID userId) {
-        return groupAssembler.toCollectionRefUser(userId, userService.findById(userId).getGroups());
+    public Collection<GroupModel> getAllGroupsFromUser(@PathVariable UUID userId) {
+        return groupAssembler.toCollectionModel(userService.findById(userId).getGroups());
     }
 
     @CheckSecurity.UsersGroupsPermissions.CanEdit

@@ -7,11 +7,11 @@ import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -24,9 +24,9 @@ public class RestaurantUserController implements RestaurantUserControllerOpenApi
 
     @CheckSecurity.Restaurants.CanManageRegistration
     @GetMapping
-    public CollectionModel<UserModel> list(@PathVariable UUID restaurantId) {
+    public Collection<UserModel> list(@PathVariable UUID restaurantId) {
         Restaurant restaurant = restaurantService.findById(restaurantId);
-        return userModelAssembler.toCollectionRefRestaurant(restaurantId, restaurant.getResponsibleUsers());
+        return userModelAssembler.toCollectionModel(restaurant.getResponsibleUsers());
     }
 
     @CheckSecurity.Restaurants.CanManageRegistration

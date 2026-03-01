@@ -6,11 +6,12 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.PermissionC
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.service.PermissionService;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collection;
 
 @RestController
 @RequestMapping(path = "/v1/permissions", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -22,7 +23,7 @@ public class PermissionController implements PermissionControllerOpenApi {
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public CollectionModel<PermissionModel> findAll() {
+    public Collection<PermissionModel> findAll() {
         return permissionAssembler.toCollectionModel(permissionService.findAll());
     }
 }

@@ -11,16 +11,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @Tag(name = "Usuários")
 public interface UserControllerOpenApi {
 
     @Operation(summary = "Busca todos os usuários")
-    CollectionModel<UserModel> findAll();
+    Collection<UserModel> findAll();
 
     @Operation(summary = "Busca de um usuário por id", responses = {
             @ApiResponse(responseCode = "200"),

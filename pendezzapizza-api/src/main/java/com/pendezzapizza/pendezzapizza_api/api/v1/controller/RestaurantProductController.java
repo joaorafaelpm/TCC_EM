@@ -11,12 +11,12 @@ import com.pendezzapizza.pendezzapizza_api.domain.service.ProductService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +33,7 @@ public class RestaurantProductController implements RestaurantProductControllerO
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
-    public CollectionModel<ProductModel> findAllByRestaurant(@PathVariable UUID restaurantId, @RequestParam(required = false) Boolean includeInactives) {
+    public Collection<ProductModel> findAllByRestaurant(@PathVariable UUID restaurantId, @RequestParam(required = false) Boolean includeInactives) {
         List<Product> products;
         if (includeInactives != null && includeInactives) {
             products = productService.findByRestaurant(restaurantService.findById(restaurantId));

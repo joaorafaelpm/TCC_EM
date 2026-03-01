@@ -5,10 +5,13 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Group;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.GroupRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -21,12 +24,24 @@ public class GroupService {
     private final PermissionService permissionService;
     private final UserService userService;
 
-    public List<Group> findAll () {
-        return groupRepository.findAll();
+    @Cacheable("groups")
+    public Page<Group> findAll (Pageable pageable) {
+        return groupRepository.findAll(pageable);
     }
 
+    @Cacheable("groups")
     public Group findById (UUID id ) {
         return groupRepository.findByIdOrThrowException(id);
+    }
+
+    @Cacheable("groupsLastUpdate")
+    public OffsetDateTime getLastUpdateDate() {
+        return groupRepository.getLastGroupUpdateDate();
+    }
+
+    @Cacheable("groupsLastUpdate")
+    public OffsetDateTime getLastUpdateDateById(UUID groupId) {
+        return groupRepository.getLastGroupUpdateDateById(groupId);
     }
 
     @Transactional

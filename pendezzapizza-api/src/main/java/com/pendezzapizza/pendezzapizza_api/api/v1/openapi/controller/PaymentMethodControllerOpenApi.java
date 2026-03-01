@@ -9,7 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.ServletWebRequest;
 
@@ -19,7 +20,9 @@ import java.util.UUID;
 public interface PaymentMethodControllerOpenApi {
 
     @Operation(description = "Lista formas de pagamento")
-    ResponseEntity<CollectionModel<PaymentMethodModel>> all(@Parameter(hidden = true) ServletWebRequest request);
+    ResponseEntity<Page<PaymentMethodModel>> all(
+            @Parameter(hidden = true) Pageable pageable,
+            @Parameter(hidden = true) ServletWebRequest request);
 
     @Operation(summary = "Busca uma forma de pagamento por id", responses = {
             @ApiResponse(responseCode = "200"),

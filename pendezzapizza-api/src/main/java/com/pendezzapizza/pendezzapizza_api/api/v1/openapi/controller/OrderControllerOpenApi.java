@@ -13,8 +13,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.PagedModel;
 
 import java.util.UUID;
 
@@ -24,8 +24,8 @@ public interface OrderControllerOpenApi {
     @PageableParameter
     @PedidoFilterAnnotation
     @Operation(summary = "Lista de pedidos")
-    PagedModel<OrderSummaryModel> search(@Parameter(hidden = true) OrderFilter orderFilter,
-                                         @Parameter(hidden = true) Pageable pageable);
+    Page<OrderSummaryModel> search(@Parameter(hidden = true) OrderFilter orderFilter,
+                                   @Parameter(hidden = true) Pageable pageable);
 
     @Operation(summary = "Cadastra um novo pedido", responses = {
             @ApiResponse(responseCode = "201", description = "Pedido cadastrado")

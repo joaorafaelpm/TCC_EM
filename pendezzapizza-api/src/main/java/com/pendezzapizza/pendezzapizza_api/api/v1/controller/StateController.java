@@ -11,12 +11,12 @@ import com.pendezzapizza.pendezzapizza_api.domain.repository.StateRepository;
 import com.pendezzapizza.pendezzapizza_api.domain.service.StateService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -32,7 +32,7 @@ public class StateController implements StateControllerOpenApi {
 
     @CheckSecurity.States.CanConsult
     @GetMapping
-    public CollectionModel<StateModel> all() {
+    public Collection<StateModel> all() {
         return stateModelAssembler.toCollectionModel(stateRepository.findAll());
     }
 

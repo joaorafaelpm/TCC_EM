@@ -6,11 +6,11 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.GroupPermis
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.service.GroupService;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -23,8 +23,8 @@ public class GroupPermissionController implements GroupPermissionControllerOpenA
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public CollectionModel<PermissionModel> listPermissions(@PathVariable UUID groupId) {
-        return permissionAssembler.toCollectionRefGroup(groupId, groupService.findById(groupId).getPermission());
+    public Collection<PermissionModel> listPermissions(@PathVariable UUID groupId) {
+        return permissionAssembler.toCollectionModel(groupService.findById(groupId).getPermission());
     }
 
     @CheckSecurity.UsersGroupsPermissions.CanEdit

@@ -12,12 +12,12 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import com.pendezzapizza.pendezzapizza_api.domain.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -31,7 +31,7 @@ public class UserController implements UserControllerOpenApi {
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public CollectionModel<UserModel> findAll() {
+    public Collection<UserModel> findAll() {
         return userModelAssembler.toCollectionModel(userService.findAll());
     }
 

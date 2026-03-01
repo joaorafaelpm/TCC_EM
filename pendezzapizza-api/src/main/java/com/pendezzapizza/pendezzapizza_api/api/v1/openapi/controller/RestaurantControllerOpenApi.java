@@ -10,9 +10,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,7 +20,7 @@ import java.util.UUID;
 public interface RestaurantControllerOpenApi {
 
     @Operation(summary = "Lista de restaurantes")
-    CollectionModel<RestaurantSummaryModel> list();
+    Collection<RestaurantSummaryModel> list();
 
     @Operation(summary = "Busca um restaurante por id", responses = {
             @ApiResponse(responseCode = "200"),

@@ -14,12 +14,12 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +36,7 @@ public class RestaurantController implements RestaurantControllerOpenApi {
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
-    public CollectionModel<RestaurantSummaryModel> list() {
+    public Collection<RestaurantSummaryModel> list() {
         return restaurantSummaryAssembler.toCollectionModel(restaurantService.findAll());
     }
 

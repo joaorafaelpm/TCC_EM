@@ -47,8 +47,27 @@ public class CacheConfig {
                         .maximumSize(100)
                         .build());
 
-
         manager.registerCustomCache("citiesLastUpdate",
+                Caffeine.newBuilder()
+                        .expireAfterWrite(30, TimeUnit.MINUTES)
+                        .maximumSize(1)
+                        .build());
+        manager.registerCustomCache("groupsLastUpdate",
+                Caffeine.newBuilder()
+                        .expireAfterWrite(30, TimeUnit.MINUTES)
+                        .maximumSize(1)
+                        .build());
+        manager.registerCustomCache("permissionsLastUpdate",
+                Caffeine.newBuilder()
+                        .expireAfterWrite(30, TimeUnit.MINUTES)
+                        .maximumSize(1)
+                        .build());
+        manager.registerCustomCache("paymentMethodsLastUpdate",
+                Caffeine.newBuilder()
+                        .expireAfterWrite(30, TimeUnit.MINUTES)
+                        .maximumSize(1)
+                        .build());
+        manager.registerCustomCache("statesMethodsLastUpdate",
                 Caffeine.newBuilder()
                         .expireAfterWrite(30, TimeUnit.MINUTES)
                         .maximumSize(1)

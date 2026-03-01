@@ -21,8 +21,6 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -40,16 +38,14 @@ public class OrderController implements OrderControllerOpenApi {
     private final OrderModelAssembler orderModelAssembler;
     private final OrderSummaryModelAssembler orderSummaryModelAssembler;
     private final OrderDisassembler orderDisassembler;
-    private final PagedResourcesAssembler<Order> pagedResourcesAssembler;
 
     @CheckSecurity.Orders.CanList
     @GetMapping
-    public PagedModel<OrderSummaryModel> search(OrderFilter orderFilter, Pageable pageable) {
+    public Page<OrderSummaryModel> search(OrderFilter orderFilter, Pageable pageable) {
         Pageable translatedPageable = translatePageable(pageable);
         Page<Order> ordersPage = orderService.findAll(OrderSpecs.withFilter(orderFilter), translatedPageable);
         ordersPage = new PageWrapper<>(ordersPage, pageable);
-
-        return pagedResourcesAssembler.toModel(ordersPage, orderSummaryModelAssembler);
+        return ordersPage.map(orderSummaryModelAssembler::toModel);
     }
 
     @CheckSecurity.Orders.CanSearch

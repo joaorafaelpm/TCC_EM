@@ -4,19 +4,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Relation(collectionRelation = "orders")
 @Getter
 @Setter
 @AllArgsConstructor
-public class OrderModel extends RepresentationModel<OrderModel> {
+public class OrderModel{
 
     @Schema(example = "936dc9ec-05bf-44e5-8c07-7e51adc6083d")
     private UUID id;

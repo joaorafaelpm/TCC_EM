@@ -9,8 +9,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.UUID;
 
@@ -18,15 +20,18 @@ import java.util.UUID;
 public interface GroupControllerOpenApi {
 
     @Operation(summary = "Lista  de  Grupos")
-    CollectionModel<GroupModel> all();
+    ResponseEntity<Page<GroupModel>> all(
+            @Parameter(hidden = true) Pageable pageable,
+            @Parameter(hidden = true) ServletWebRequest request);
 
     @Operation(summary = "Busca um Grupo por id", responses = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "404",
                     description = "Grupo não  encontrado",
                     content = @Content(schema = @Schema(ref = "ApiError")))})
-    GroupModel findById(
-            @Parameter(description = "Id de um grupo", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID groupId);
+    ResponseEntity<GroupModel> findById(
+            @Parameter(description = "Id de um grupo", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID groupId,
+            @Parameter(hidden = true) ServletWebRequest request);
 
     @Operation(summary = "Cadastro de um grupo", responses = {
             @ApiResponse(responseCode = "201", description = "Grupo cadastrado"),

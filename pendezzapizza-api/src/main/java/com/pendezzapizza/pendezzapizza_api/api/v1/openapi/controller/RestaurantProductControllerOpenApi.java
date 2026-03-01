@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.hateoas.CollectionModel;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @Tag(name = "Produtos")
@@ -21,8 +21,8 @@ public interface RestaurantProductControllerOpenApi {
             @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(ref = "ApiError"))),
             @ApiResponse(responseCode = "400", description = "Erro no id do restaurante", content = @Content(schema = @Schema(ref = "ApiError")))
     })
-    CollectionModel<ProductModel> findAllByRestaurant(@Parameter(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", description = "Id do restaurante", required = true) UUID restaurantId,
-                                                      @Parameter(example = "false", description = "Incluir inativos", required = false) Boolean includeInactive);
+    Collection<ProductModel> findAllByRestaurant(@Parameter(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", description = "Id do restaurante", required = true) UUID restaurantId,
+                                                 @Parameter(example = "false", description = "Incluir inativos", required = false) Boolean includeInactive);
 
     @Operation(summary = "Pega um produto por id de um restaurante por id", responses = {
             @ApiResponse(responseCode = "200"),

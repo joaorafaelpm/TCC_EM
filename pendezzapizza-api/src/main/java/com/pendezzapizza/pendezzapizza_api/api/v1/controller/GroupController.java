@@ -10,13 +10,19 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Group;
 import com.pendezzapizza.pendezzapizza_api.domain.service.GroupService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping(path = "/v1/groups", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -30,14 +36,45 @@ public class GroupController implements GroupControllerOpenApi {
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public CollectionModel<GroupModel> all() {
-        return groupAssembler.toCollectionModel(groupService.findAll());
+    public ResponseEntity<Page<GroupModel>> all(Pageable pageable, ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = groupService.getLastUpdateDate();
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
+        Page<Group> groups = groupService.findAll(pageable);
+        Page<GroupModel> cityModels = groups.map(groupAssembler::toModel);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(cityModels);
+
     }
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping("/{groupId}")
-    public GroupModel findById(@PathVariable UUID groupId) {
-        return groupAssembler.toModel(groupService.findById(groupId));
+    public ResponseEntity<GroupModel> findById(@PathVariable UUID groupId, ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = groupService.getLastUpdateDate();
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+        GroupModel model = groupAssembler.toModel(groupService.findById(groupId));
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(model);
     }
 
     @CheckSecurity.UsersGroupsPermissions.CanEdit
