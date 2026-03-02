@@ -62,7 +62,7 @@ public class GroupController implements GroupControllerOpenApi {
     public ResponseEntity<GroupModel> findById(@PathVariable UUID groupId, ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
-        OffsetDateTime lastUpdateDate = groupService.getLastUpdateDate();
+        OffsetDateTime lastUpdateDate = groupService.getLastUpdateDateById(groupId);
         if (lastUpdateDate != null) {
             eTag = String.valueOf(lastUpdateDate.toEpochSecond());
         }
@@ -70,6 +70,7 @@ public class GroupController implements GroupControllerOpenApi {
         if (request.checkNotModified(eTag)) {
             return null;
         }
+
         GroupModel model = groupAssembler.toModel(groupService.findById(groupId));
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())

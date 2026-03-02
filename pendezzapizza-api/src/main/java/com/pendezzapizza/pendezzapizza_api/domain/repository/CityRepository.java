@@ -19,16 +19,10 @@ public interface CityRepository extends CustomJPARepository<City, UUID> {
 
     // CityRepository
     @Query("select max(c.updateDate) from City c")
-    OffsetDateTime getLastCityUpdateDate();
-
-    @Query("select max(s.updateDate) from State s")
-    OffsetDateTime getLastStateUpdateDate();
+    OffsetDateTime getLastUpdateDate();
 
     @Query("select max(c.updateDate) from City c where c.id = :cityId")
-    OffsetDateTime getLastCityUpdateDateById(UUID cityId);
-
-    @Query("select max(s.updateDate) from State s where s.id = :stateId")
-    OffsetDateTime getLastStateUpdateDateById(UUID stateId);
+    OffsetDateTime getLastUpdateDateById(UUID cityId);
 
 
 

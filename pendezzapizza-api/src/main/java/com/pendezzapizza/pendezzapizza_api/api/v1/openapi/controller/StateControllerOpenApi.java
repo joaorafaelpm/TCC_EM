@@ -9,23 +9,29 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.ServletWebRequest;
 
-import java.util.Collection;
 import java.util.UUID;
 
 @Tag(name = "Estados")
 public interface StateControllerOpenApi {
 
     @Operation(summary = "Lista de estados")
-    Collection<StateModel> all();
+    ResponseEntity<Page<StateModel>> all(
+            @Parameter(hidden = true) Pageable pageable,
+            @Parameter(hidden = true) ServletWebRequest request
+    );
 
     @Operation(summary = "Busca um estado por id", responses = {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "404", description = "Estado não encontrado", content = @Content(schema = @Schema(ref = "ApiError"))),
             @ApiResponse(responseCode = "400", description = "Erro no id do estado", content = @Content(schema = @Schema(ref = "ApiError")))
     })
-    StateModel findById(@Parameter(description = "Id de um estado", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID stateId);
+    ResponseEntity<StateModel> findById(@Parameter(description = "Id de um estado", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID stateId,
+                                        @Parameter(hidden = true) ServletWebRequest request);
 
     @Operation(summary = "Cadastra um novo estado", responses = {
             @ApiResponse(responseCode = "201", description = "Estado cadastrado")

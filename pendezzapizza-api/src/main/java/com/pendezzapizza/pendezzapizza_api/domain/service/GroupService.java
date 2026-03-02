@@ -5,7 +5,9 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Group;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.GroupRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +31,7 @@ public class GroupService {
         return groupRepository.findAll(pageable);
     }
 
-    @Cacheable("groups")
+    @Cacheable(value = "group", key = "#id")
     public Group findById (UUID id ) {
         return groupRepository.findByIdOrThrowException(id);
     }
@@ -39,16 +41,28 @@ public class GroupService {
         return groupRepository.getLastGroupUpdateDate();
     }
 
-    @Cacheable("groupsLastUpdate")
+    @Cacheable(value = "groupsLastUpdateById", key = "#id")
     public OffsetDateTime getLastUpdateDateById(UUID groupId) {
         return groupRepository.getLastGroupUpdateDateById(groupId);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "groups",            allEntries = true),
+            @CacheEvict(value = "group",             key = "#group.id"),
+            @CacheEvict(value = "groupsLastUpdate",  allEntries = true),
+            @CacheEvict(value = "groupsLastUpdateById", key = "#group.id")
+    })
     @Transactional
     public Group save (Group group) {
         return groupRepository.save(group);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "groups",            allEntries = true),
+            @CacheEvict(value = "groups",             key = "#group.id"),
+            @CacheEvict(value = "groupsLastUpdate",  allEntries = true),
+            @CacheEvict(value = "groupsLastUpdateById", key = "#group.id")
+    })
     @Transactional
     public void deleteById (UUID id) {
         try {
@@ -59,21 +73,45 @@ public class GroupService {
         }
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "groups",            allEntries = true),
+            @CacheEvict(value = "groups",             key = "#group.id"),
+            @CacheEvict(value = "groupsLastUpdate",  allEntries = true),
+            @CacheEvict(value = "groupsLastUpdateById", key = "#group.id")
+    })
     @Transactional
     public void associatePermission (UUID groupId , UUID permissionId) {
         Group group = findById(groupId);
         group.associatePermission(permissionService.findById(permissionId));
     }
+    @Caching(evict = {
+            @CacheEvict(value = "groups",            allEntries = true),
+            @CacheEvict(value = "groups",             key = "#group.id"),
+            @CacheEvict(value = "groupsLastUpdate",  allEntries = true),
+            @CacheEvict(value = "groupsLastUpdateById", key = "#group.id")
+    })
     @Transactional
     public void disassociatePermission (UUID groupId , UUID permissionId) {
         Group group = findById(groupId);
         group.disassociatePermission(permissionService.findById(permissionId));
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "groups",            allEntries = true),
+            @CacheEvict(value = "groups",             key = "#group.id"),
+            @CacheEvict(value = "groupsLastUpdate",  allEntries = true),
+            @CacheEvict(value = "groupsLastUpdateById", key = "#group.id")
+    })
     @Transactional
     public void associateGroup (UUID userId , UUID groupId) {
         userService.findById(userId).associate(findById(groupId));
     }
+    @Caching(evict = {
+            @CacheEvict(value = "groups",            allEntries = true),
+            @CacheEvict(value = "groups",             key = "#group.id"),
+            @CacheEvict(value = "groupsLastUpdate",  allEntries = true),
+            @CacheEvict(value = "groupsLastUpdateById", key = "#group.id")
+    })
     @Transactional
     public void disassociateGroup (UUID userId , UUID groupId) {
         userService.findById(userId).dissociate(findById(groupId));

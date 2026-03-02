@@ -27,15 +27,15 @@ public class CityService {
         return cityRepository.findAll(pageable);
     }
 
-    @Cacheable("cities")
+    @Cacheable("city")
     public City findById(UUID id) {
         return cityRepository.findByIdOrThrowException(id);
     }
 
     @Cacheable("citiesLastUpdate")
     public OffsetDateTime getLastUpdateDate() {
-        OffsetDateTime lastCityUpdateDate = cityRepository.getLastCityUpdateDate();
-        OffsetDateTime lastStateUpdateDate = cityRepository.getLastStateUpdateDate();
+        OffsetDateTime lastCityUpdateDate = cityRepository.getLastUpdateDate();
+        OffsetDateTime lastStateUpdateDate = stateService.getLastUpdateDate();
 
         if (lastCityUpdateDate == null) return lastStateUpdateDate;
         if (lastStateUpdateDate == null) return lastCityUpdateDate;
@@ -45,11 +45,11 @@ public class CityService {
                 : lastStateUpdateDate;
     }
 
-    @Cacheable("citiesLastUpdate")
+    @Cacheable("citiesLastUpdateById")
     public OffsetDateTime getLastUpdateDateById(UUID cityId) {
         City byId = findById(cityId);
-        OffsetDateTime lastCityUpdateDate = cityRepository.getLastCityUpdateDateById(cityId);
-        OffsetDateTime lastStateUpdateDate = cityRepository.getLastStateUpdateDateById(byId.getState().getId());
+        OffsetDateTime lastCityUpdateDate = cityRepository.getLastUpdateDateById(cityId);
+        OffsetDateTime lastStateUpdateDate = stateService.getLastUpdateDateById(byId.getState().getId());
 
         if (lastCityUpdateDate == null) return lastStateUpdateDate;
         if (lastStateUpdateDate == null) return lastCityUpdateDate;
@@ -60,8 +60,10 @@ public class CityService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "cities",           allEntries = true),
-            @CacheEvict(value = "citiesLastUpdate", allEntries = true)
+            @CacheEvict(value = "cities",            allEntries = true),
+            @CacheEvict(value = "city",             key = "#city.id"),
+            @CacheEvict(value = "citiesLastUpdate",  allEntries = true),
+            @CacheEvict(value = "citiesLastUpdateById", key = "#city.id")
     })
     @Transactional
     public City save(City city) {
@@ -73,8 +75,10 @@ public class CityService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "cities",           allEntries = true),
-            @CacheEvict(value = "citiesLastUpdate", allEntries = true)
+            @CacheEvict(value = "cities",            allEntries = true),
+            @CacheEvict(value = "city",             key = "#city.id"),
+            @CacheEvict(value = "citiesLastUpdate",  allEntries = true),
+            @CacheEvict(value = "citiesLastUpdateById", key = "#city.id")
     })
     @Transactional
     public City save(UUID id, City updatedCity) {
@@ -89,8 +93,10 @@ public class CityService {
     }
 
     @Caching(evict = {
-            @CacheEvict(value = "cities",           allEntries = true),
-            @CacheEvict(value = "citiesLastUpdate", allEntries = true)
+            @CacheEvict(value = "cities",            allEntries = true),
+            @CacheEvict(value = "city",             key = "#city.id"),
+            @CacheEvict(value = "citiesLastUpdate",  allEntries = true),
+            @CacheEvict(value = "citiesLastUpdateById", key = "#city.id")
     })
     @Transactional
     public void delete(UUID id) {
