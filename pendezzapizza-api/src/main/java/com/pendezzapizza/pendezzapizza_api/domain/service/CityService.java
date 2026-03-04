@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
+import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
 import com.pendezzapizza.pendezzapizza_api.domain.model.City;
 import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
@@ -21,6 +22,7 @@ public class CityService {
 
     private final CityRepository cityRepository;
     private final StateService stateService;
+    private CacheInvalidatorUtil cacheInvalidatorUtil;
 
     @Cacheable("cities")
     public Page<City> findAll(Pageable pageable) {
@@ -53,15 +55,18 @@ public class CityService {
         UUID stateId = city.getState().getId();
         State state = stateService.findById(stateId);
 
+        cacheInvalidatorUtil.publishCacheInvalidation("cities" , "city" , "citiesLastUpdate" , "citiesLastUpdateById");
+
+
         city.setState(state);
         return cityRepository.save(city);
     }
 
     @Caching(evict = {
             @CacheEvict(value = "cities",            allEntries = true),
-            @CacheEvict(value = "city",             key = "#city.id"),
+            @CacheEvict(value = "city",             key = "#id"),
             @CacheEvict(value = "citiesLastUpdate",  allEntries = true),
-            @CacheEvict(value = "citiesLastUpdateById", key = "#city.id")
+            @CacheEvict(value = "citiesLastUpdateById", key = "#id")
     })
     @Transactional
     public City save(UUID id, City updatedCity) {
@@ -72,18 +77,24 @@ public class CityService {
 
         existingCity.setState(state);
 
+        cacheInvalidatorUtil.publishCacheInvalidation("cities" , "city" , "citiesLastUpdate" , "citiesLastUpdateById");
+
+
         return cityRepository.save(existingCity);
     }
 
     @Caching(evict = {
             @CacheEvict(value = "cities",            allEntries = true),
-            @CacheEvict(value = "city",             key = "#city.id"),
+            @CacheEvict(value = "city",             key = "#id"),
             @CacheEvict(value = "citiesLastUpdate",  allEntries = true),
-            @CacheEvict(value = "citiesLastUpdateById", key = "#city.id")
+            @CacheEvict(value = "citiesLastUpdateById", key = "#id")
     })
     @Transactional
     public void delete(UUID id) {
         cityRepository.delete(findById(id));
         cityRepository.flush();
+
+        cacheInvalidatorUtil.publishCacheInvalidation("cities" , "city" , "citiesLastUpdate" , "citiesLastUpdateById");
+
     }
 }

@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
+import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Group;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.GroupRepository;
@@ -25,6 +26,7 @@ public class GroupService {
 
     private final PermissionService permissionService;
     private final UserService userService;
+    private CacheInvalidatorUtil cacheInvalidatorUtil;
 
     @Cacheable("groups")
     public Page<Group> findAll (Pageable pageable) {
@@ -54,6 +56,8 @@ public class GroupService {
     })
     @Transactional
     public Group save (Group group) {
+        cacheInvalidatorUtil.publishCacheInvalidation("groups" , "group" , "groupsLastUpdate" , "groupsLastUpdateById");
+
         return groupRepository.save(group);
     }
 
@@ -66,6 +70,8 @@ public class GroupService {
     @Transactional
     public void deleteById (UUID id) {
         try {
+            cacheInvalidatorUtil.publishCacheInvalidation("groups" , "group" , "groupsLastUpdate" , "groupsLastUpdateById");
+
             groupRepository.delete(findById(id));
             groupRepository.flush();
         }catch (DataIntegrityViolationException e) {
@@ -81,6 +87,8 @@ public class GroupService {
     })
     @Transactional
     public void associatePermission (UUID groupId , UUID permissionId) {
+        cacheInvalidatorUtil.publishCacheInvalidation("groups" , "group" , "groupsLastUpdate" , "groupsLastUpdateById");
+
         Group group = findById(groupId);
         group.associatePermission(permissionService.findById(permissionId));
     }
@@ -92,6 +100,8 @@ public class GroupService {
     })
     @Transactional
     public void disassociatePermission (UUID groupId , UUID permissionId) {
+        cacheInvalidatorUtil.publishCacheInvalidation("groups" , "group" , "groupsLastUpdate" , "groupsLastUpdateById");
+
         Group group = findById(groupId);
         group.disassociatePermission(permissionService.findById(permissionId));
     }
@@ -104,6 +114,8 @@ public class GroupService {
     })
     @Transactional
     public void associateGroup (UUID userId , UUID groupId) {
+        cacheInvalidatorUtil.publishCacheInvalidation("groups" , "group" , "groupsLastUpdate" , "groupsLastUpdateById");
+
         userService.findById(userId).associate(findById(groupId));
     }
     @Caching(evict = {
@@ -114,6 +126,8 @@ public class GroupService {
     })
     @Transactional
     public void disassociateGroup (UUID userId , UUID groupId) {
+        cacheInvalidatorUtil.publishCacheInvalidation("groups" , "group" , "groupsLastUpdate" , "groupsLastUpdateById");
+
         userService.findById(userId).dissociate(findById(groupId));
     }
 }
