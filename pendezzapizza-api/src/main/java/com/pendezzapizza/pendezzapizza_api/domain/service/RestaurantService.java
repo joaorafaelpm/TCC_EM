@@ -9,8 +9,11 @@ import com.pendezzapizza.pendezzapizza_api.domain.repository.RestaurantRepositor
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +26,11 @@ public class RestaurantService {
     PaymentMethodService paymentMethodService ;
     UserService userService ;
 
-    public List<Restaurant> findAll() {
-        return restaurantRepository.findAll();
+    public Page<Restaurant> findAll(Pageable pageable) {
+        return restaurantRepository.findAll(pageable);
+    }
+    public Page<User> findResponsibleUsersByRestaurantId(UUID restaurantId , Pageable pageable) {
+        return restaurantRepository.findResponsibleUsersByRestaurantId(restaurantId , pageable);
     }
 
     public Restaurant findById (UUID id ) {
@@ -35,7 +41,13 @@ public class RestaurantService {
                 new RestaurantNotFoundException(id));
     }
 
+    public OffsetDateTime getLastUpdateDate() {
+        return restaurantRepository.getLastUpdateDate();
+    }
 
+    public OffsetDateTime getLastUpdateDateById(UUID userId) {
+        return restaurantRepository.getLastUpdateDateById(userId);
+    }
 
     @Transactional
     public Restaurant save (Restaurant restaurant) {

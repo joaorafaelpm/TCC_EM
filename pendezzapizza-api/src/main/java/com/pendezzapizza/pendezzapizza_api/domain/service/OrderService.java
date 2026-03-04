@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -21,18 +21,17 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
-    private  final RestaurantService restaurantService;
-    private  final UserService userService;
-    private  final PaymentMethodService paymentMethodService;
-    private  final OrderItemService orderItemService;
-
-    public List<Order> findAll () {
-            return orderRepository.findAll();
-        }
     public Page<Order> findAll (Specification<Order> specification , Pageable pageable) {
             return orderRepository.findAll(specification , pageable);
         }
 
+    public OffsetDateTime getLastUpdateDate() {
+        return orderRepository.getLastUpdateDate();
+    }
+
+    public OffsetDateTime getLastUpdateDateById(UUID orderId) {
+        return orderRepository.getLastUpdateDateById(orderId );
+    }
     public Order findById(UUID id) {
             return orderRepository.findByIdOrThrowException(id);
             }
@@ -45,7 +44,7 @@ public class OrderService {
     public Order save(Order order) {
             orderRepository.saveAndFlush(order);
             return findByIdMapperSolver(order.getId()) ;
-            }
+        }
 
     @Transactional
     public void remove (UUID id) {

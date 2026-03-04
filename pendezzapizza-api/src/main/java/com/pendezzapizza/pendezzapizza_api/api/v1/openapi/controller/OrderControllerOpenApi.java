@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.util.UUID;
 
@@ -24,8 +26,9 @@ public interface OrderControllerOpenApi {
     @PageableParameter
     @PedidoFilterAnnotation
     @Operation(summary = "Lista de pedidos")
-    Page<OrderSummaryModel> search(@Parameter(hidden = true) OrderFilter orderFilter,
-                                   @Parameter(hidden = true) Pageable pageable);
+    ResponseEntity<Page<OrderSummaryModel>> search(@Parameter(hidden = true) OrderFilter orderFilter,
+                                                   @Parameter(hidden = true) Pageable pageable,
+                                                   @Parameter(hidden = true) ServletWebRequest request);
 
     @Operation(summary = "Cadastra um novo pedido", responses = {
             @ApiResponse(responseCode = "201", description = "Pedido cadastrado")
@@ -36,5 +39,6 @@ public interface OrderControllerOpenApi {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content(schema = @Schema(ref = "ApiError")))
     })
-    OrderModel findById(@Parameter(description = "Id de um pedido", example = "936dc9ec-05bf-44e5-8c07-7e51adc6083d", required = true) UUID orderId);
+    ResponseEntity<OrderModel> findById(@Parameter(description = "Id de um pedido", example = "936dc9ec-05bf-44e5-8c07-7e51adc6083d", required = true) UUID orderId,
+                        @Parameter(hidden = true) ServletWebRequest request);
 }

@@ -4,7 +4,6 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantModelAssem
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantSummaryModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.RestaurantDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
@@ -14,14 +13,20 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
-import java.util.Collection;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @AllArgsConstructor
@@ -36,14 +41,43 @@ public class RestaurantController implements RestaurantControllerOpenApi {
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
-    public Collection<RestaurantSummaryModel> list() {
-        return restaurantSummaryAssembler.toCollectionModel(restaurantService.findAll());
+    public ResponseEntity<Page<RestaurantModel>> list(Pageable pageable , ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = restaurantService.getLastUpdateDate();
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
+        Page<Restaurant> restaurants = restaurantService.findAll(pageable);
+        Page<RestaurantModel> restaurantsModel = restaurants.map(restaurantAssembler::toModel);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(restaurantsModel);
     }
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping("/{restaurantId}")
-    public RestaurantModel findById(@PathVariable UUID restaurantId) {
-        return restaurantAssembler.toModel(restaurantService.findById(restaurantId));
+    public ResponseEntity<RestaurantModel> findById(@PathVariable UUID restaurantId , ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = restaurantService.getLastUpdateDate();
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(restaurantAssembler.toModel(restaurantService.findById(restaurantId)));
     }
 
     @CheckSecurity.Restaurants.CanManageRegistration

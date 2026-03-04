@@ -6,8 +6,11 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,11 +25,27 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+
+
     public List<Product> findByRestaurant (Restaurant restaurant) {
         return productRepository.findByRestaurant(restaurant);
     }
     public List<Product> findActiveByRestaurant (Restaurant restaurant) {
         return productRepository.findActivesByRestaurant(restaurant);
+    }
+
+    public Page<Product> findByRestaurant (Restaurant restaurant , Pageable pageable) {
+        return productRepository.findByRestaurant(restaurant , pageable);
+    }
+    public Page<Product> findActiveByRestaurant (Restaurant restaurant , Pageable pageable) {
+        return productRepository.findActivesByRestaurant(restaurant , pageable);
+    }
+
+    public OffsetDateTime findLastUpdateDateAndActivesByRestaurantId (UUID restaurantId) {
+        return productRepository.getLastUpdateDateById(restaurantId);
+    }
+    public OffsetDateTime findLastUpdateDateByRestaurantId (UUID restaurantId) {
+        return productRepository.getLastUpdateDateByIdGetAll(restaurantId);
     }
 
     public Product findById (UUID restaurantId , UUID productId ) {

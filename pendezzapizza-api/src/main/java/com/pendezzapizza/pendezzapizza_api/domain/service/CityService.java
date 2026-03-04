@@ -34,29 +34,12 @@ public class CityService {
 
     @Cacheable("citiesLastUpdate")
     public OffsetDateTime getLastUpdateDate() {
-        OffsetDateTime lastCityUpdateDate = cityRepository.getLastUpdateDate();
-        OffsetDateTime lastStateUpdateDate = stateService.getLastUpdateDate();
-
-        if (lastCityUpdateDate == null) return lastStateUpdateDate;
-        if (lastStateUpdateDate == null) return lastCityUpdateDate;
-
-        return lastCityUpdateDate.isAfter(lastStateUpdateDate)
-                ? lastCityUpdateDate
-                : lastStateUpdateDate;
+        return cityRepository.getLastUpdateDate();
     }
 
     @Cacheable("citiesLastUpdateById")
     public OffsetDateTime getLastUpdateDateById(UUID cityId) {
-        City byId = findById(cityId);
-        OffsetDateTime lastCityUpdateDate = cityRepository.getLastUpdateDateById(cityId);
-        OffsetDateTime lastStateUpdateDate = stateService.getLastUpdateDateById(byId.getState().getId());
-
-        if (lastCityUpdateDate == null) return lastStateUpdateDate;
-        if (lastStateUpdateDate == null) return lastCityUpdateDate;
-
-        return lastCityUpdateDate.isAfter(lastStateUpdateDate)
-                ? lastCityUpdateDate
-                : lastStateUpdateDate;
+        return cityRepository.getLastUpdateDateById(cityId);
     }
 
     @Caching(evict = {

@@ -1,9 +1,12 @@
 package com.pendezzapizza.pendezzapizza_api.domain.repository;
 
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,5 +21,15 @@ public interface UserRepository extends CustomJPARepository<User, UUID> {
     where u.email = :email
     """)
     Optional<User> findByEmail(String email);
+
+    @Override
+    @Query("select u from User u JOIN FETCH u.groups")
+    Page<User> findAll (Pageable pageable);
+
+    @Query("select max(u.updateDate) from User u")
+    OffsetDateTime getLastUpdateDate();
+
+    @Query("select max(u.updateDate) from User u where u.id = :userId")
+    OffsetDateTime getLastUpdateDateById(UUID userId);
 
 }

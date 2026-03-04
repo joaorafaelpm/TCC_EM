@@ -1,7 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
-import com.pendezzapizza.pendezzapizza_api.domain.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,14 +13,12 @@ public class OrderFlowService {
 
     private final OrderService orderService;
 
-    private final OrderRepository orderRepository;
-
     @Transactional
     public void confirm(UUID orderId) {
         Order order = orderService.findById(orderId);
         order.confirm();
 
-        orderRepository.save(order);
+        orderService.save(order);
     }
 
     @Transactional
@@ -35,6 +32,6 @@ public class OrderFlowService {
         Order order = orderService.findById(id);
         order.cancel();
 
-        orderRepository.save(order);
+        orderService.save(order);
     }
 }

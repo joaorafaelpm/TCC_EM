@@ -7,12 +7,17 @@ import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @AllArgsConstructor
@@ -25,9 +30,25 @@ public class RestaurantPaymentMethodController implements RestaurantPaymentMetho
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
-    public Collection<PaymentMethodModel> all(@PathVariable UUID restaurantId) {
+    public ResponseEntity<Collection<PaymentMethodModel>> all(@PathVariable UUID restaurantId, ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = restaurantService.getLastUpdateDateById(restaurantId);
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
         Restaurant restaurant = restaurantService.findById(restaurantId);
-        return paymentMethodAssembler.toCollectionModel(restaurant.getPaymentMethods());
+        Collection<PaymentMethodModel> collectionModel = paymentMethodAssembler.toCollectionModel(restaurant.getPaymentMethods());
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(collectionModel);
     }
 
     @CheckSecurity.Restaurants.CanManageOperation

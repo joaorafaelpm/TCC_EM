@@ -8,9 +8,12 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,9 +30,20 @@ public class UserService  {
     public List<User> findAll() {
         return userRepository.findAll();
     }
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
 
     public User findById(UUID id) {
         return userRepository.findByIdOrThrowException(id);
+    }
+
+    public OffsetDateTime getLastUpdateDate() {
+        return userRepository.getLastUpdateDate();
+    }
+
+    public OffsetDateTime getLastUpdateDateById(UUID userId) {
+        return userRepository.getLastUpdateDateById(userId);
     }
 
     @Transactional

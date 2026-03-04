@@ -1,11 +1,13 @@
 package com.pendezzapizza.pendezzapizza_api.domain.repository;
 
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,10 +24,16 @@ public interface OrderRepository extends CustomJPARepository<Order, UUID> ,
     """)
     Optional<Order> findByIdMapperResolved(UUID id);
 
+    @Override
     @Query("from Order p join fetch p.customer")
-    List<Order> findAll ();
+    Page<Order> findAll (Pageable pageable);
 
     boolean isOrderManagedBy (UUID orderId , UUID userId);
 
+    @Query("select max(o.updateDate) from Order o")
+    OffsetDateTime getLastUpdateDate();
+
+    @Query("select max(o.updateDate) from Order o where o.id = :orderId")
+    OffsetDateTime getLastUpdateDateById(UUID orderId);
 
 }

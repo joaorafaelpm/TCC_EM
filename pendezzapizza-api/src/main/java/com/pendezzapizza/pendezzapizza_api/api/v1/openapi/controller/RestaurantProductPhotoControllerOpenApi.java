@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -42,8 +43,9 @@ public interface RestaurantProductPhotoControllerOpenApi {
             }),
             @ApiResponse(responseCode = "404", description = "Restaurante ou produto não encontrado", content = @Content(schema = @Schema(ref = "ApiError")))
     })
-    ProductPhotoModel findPhoto(@Parameter(description = "Id  do restaurante", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID restaurantId,
-                               @Parameter(description = "Id  do produto", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID productId);
+    ResponseEntity<ProductPhotoModel> findPhoto(@Parameter(description = "Id  do restaurante", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID restaurantId,
+                               @Parameter(description = "Id  do produto", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID productId,
+                               @Parameter(hidden = true) ServletWebRequest request);
 
     @Operation(hidden = true)
     ResponseEntity<?> servePhoto(UUID restaurantId, UUID productId, String acceptHeader) throws HttpMediaTypeNotAcceptableException;

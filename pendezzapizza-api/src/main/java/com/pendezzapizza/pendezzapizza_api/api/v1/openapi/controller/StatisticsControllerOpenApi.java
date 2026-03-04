@@ -1,6 +1,5 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.StatisticsModel;
 import com.pendezzapizza.pendezzapizza_api.core.springdoc.annotations.DailySalesFilterAnnotation;
 import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.dto.DailySale;
@@ -19,9 +18,6 @@ import java.util.List;
 @Tag(name = "Estatísticas")
 @SecurityRequirement(name = "security_auth")
 public interface StatisticsControllerOpenApi {
-
-    @Operation(hidden = true)
-    StatisticsModel statistics();
 
     @DailySalesFilterAnnotation
     @Operation(summary = "Consulta as vendas diárias", responses = {

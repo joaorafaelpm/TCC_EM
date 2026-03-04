@@ -1,6 +1,5 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.model.StatisticsModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.StatisticsControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
@@ -25,13 +24,6 @@ public class StatisticsController implements StatisticsControllerOpenApi {
 
     private final SaleQueryService saleQueryService;
     private final SaleReportService saleReportService;
-
-    @CheckSecurity.Statistics.CanConsult
-    @GetMapping
-    public StatisticsModel statistics() {
-        StatisticsModel statisticsModel = new StatisticsModel();
-        return statisticsModel;
-    }
 
     @CheckSecurity.Statistics.CanConsult
     @GetMapping(path = "/daily-sales", produces = MediaType.APPLICATION_JSON_VALUE)

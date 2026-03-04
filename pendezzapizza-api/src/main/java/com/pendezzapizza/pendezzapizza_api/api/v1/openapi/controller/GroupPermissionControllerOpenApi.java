@@ -8,8 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.context.request.ServletWebRequest;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Tag(name = "Grupos")
@@ -19,7 +20,8 @@ public interface GroupPermissionControllerOpenApi {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "404", description = "Grupo não encontrado", content = @Content(schema = @Schema(ref = "ApiError")))
     })
-    Collection<PermissionModel> listPermissions(@Parameter(description = "Id do grupo", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID groupId);
+    ResponseEntity<List<PermissionModel>> listPermissions(@Parameter(description = "Id do grupo", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID groupId ,
+                                                          @Parameter(hidden = true) ServletWebRequest request);
 
     @Operation(summary = "Desassocia uma permissão por id de um grupo por id", responses = {
             @ApiResponse(responseCode = "204", description = "Permissão desassociada"),
