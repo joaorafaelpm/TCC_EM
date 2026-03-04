@@ -1,17 +1,16 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
+import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.StatesCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.StateRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -22,65 +21,42 @@ import java.util.UUID;
 public class StateService {
 
     private final StateRepository stateRepository;
-    private StringRedisTemplate redisTemplate;
+    private CacheInvalidatorUtil cacheInvalidatorUtil;
 
     @Cacheable("states")
     public Page<State> findAll(Pageable pageable) {
         return stateRepository.findAll(pageable);
     }
-    @Cacheable(value = "state", key = "#id")
-    public State findById(UUID id) {
-        return stateRepository.findByIdOrThrowException(id);
+    @Cacheable(value = "state", key = "#stateId")
+    public State findById(UUID stateId) {
+        return stateRepository.findByIdOrThrowException(stateId);
     }
 
     @Cacheable("statesLastUpdate")
     public OffsetDateTime getLastUpdateDate () {
         return stateRepository.getLastStateUpdateDate();
     }
-    @Cacheable(value = "statesLastUpdateById", key = "#id")
-    public OffsetDateTime getLastUpdateDateById (UUID id) {
-        return stateRepository.getLastStateUpdateDateById(id);
+
+    @Cacheable(value = "statesLastUpdateById", key = "#stateId")
+    public OffsetDateTime getLastUpdateDateById (UUID stateId) {
+        return stateRepository.getLastStateUpdateDateById(stateId);
     }
 
 
-    @Caching(evict = {
-            @CacheEvict(value = "states",            allEntries = true),
-            @CacheEvict(value = "state",             key = "#state.id"),
-            @CacheEvict(value = "statesLastUpdate",  allEntries = true),
-            @CacheEvict(value = "statesLastUpdateById", key = "#state.id")
-    })
+    @StatesCacheEvict
     @Transactional
     public State save(State state) {
-
-        redisTemplate.convertAndSend("cache:invalidate", "states");
-        redisTemplate.convertAndSend("cache:invalidate", "state");
-        redisTemplate.convertAndSend("cache:invalidate", "statesLastUpdate");
-        redisTemplate.convertAndSend("cache:invalidate", "statesLastUpdateById");
-
         return stateRepository.save(state);
     }
 
-    @Caching(evict = {
-            @CacheEvict(value = "states",            allEntries = true),
-            @CacheEvict(value = "state",             key = "#id"),
-            @CacheEvict(value = "statesLastUpdate",  allEntries = true),
-            @CacheEvict(value = "statesLastUpdateById", key = "#id")
-    })
+    @StatesCacheEvict
     @Transactional
-    public void delete(UUID id) {
+    public void delete(UUID stateId) {
         try {
-
-            redisTemplate.convertAndSend("cache:invalidate", "states");
-            redisTemplate.convertAndSend("cache:invalidate", "state");
-            redisTemplate.convertAndSend("cache:invalidate", "statesLastUpdate");
-            redisTemplate.convertAndSend("cache:invalidate", "statesLastUpdateById");
-
-            stateRepository.delete(findById(id));
+            stateRepository.delete(findById(stateId));
             stateRepository.flush();
-
-
         } catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(id);
+            throw new EntityInUseException(stateId);
         }
     }
 }
