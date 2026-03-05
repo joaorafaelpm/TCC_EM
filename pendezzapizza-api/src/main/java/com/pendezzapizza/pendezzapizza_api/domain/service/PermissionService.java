@@ -2,7 +2,7 @@ package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.domain.model.Permission;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.PermissionRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -13,8 +13,8 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
-@Transactional
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class PermissionService {
 
     private final PermissionRepository permissionRepository;

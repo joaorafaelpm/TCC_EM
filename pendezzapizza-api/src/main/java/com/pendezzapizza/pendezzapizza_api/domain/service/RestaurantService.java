@@ -1,24 +1,28 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.RestaurantsCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.RestaurantNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.PaymentMethod;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.RestaurantRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class RestaurantService {
 
     RestaurantRepository restaurantRepository;
@@ -26,29 +30,41 @@ public class RestaurantService {
     PaymentMethodService paymentMethodService ;
     UserService userService ;
 
+    @Cacheable(value = "restaurants")
     public Page<Restaurant> findAll(Pageable pageable) {
         return restaurantRepository.findAll(pageable);
     }
+
+    @Cacheable(value = "restaurantsResponsibleUsers" , key = "#restaurantId")
     public Page<User> findResponsibleUsersByRestaurantId(UUID restaurantId , Pageable pageable) {
         return restaurantRepository.findResponsibleUsersByRestaurantId(restaurantId , pageable);
     }
-
-    public Restaurant findById (UUID id ) {
-        return restaurantRepository.findByIdOrThrowException(id);
-    }
-    public Restaurant findByIdWithAllDependencies (UUID id ) {
-        return restaurantRepository.findByIdMapperResolved(id).orElseThrow(() ->
-                new RestaurantNotFoundException(id));
+    @Cacheable(value = "restaurantsPaymentMethods" , key = "#restaurantId")
+    public Collection<PaymentMethod> findPaymentMethodsByRestaurantId(UUID restaurantId) {
+        Restaurant restaurant = findById(restaurantId);
+        return restaurant.getPaymentMethods();
     }
 
+    @Cacheable(value = "restaurant" , key = "#restaurantId")
+    public Restaurant findById (UUID restaurantId ) {
+        return restaurantRepository.findByIdOrThrowException(restaurantId);
+    }
+    public Restaurant findByIdWithAllDependencies (UUID restaurantId ) {
+        return restaurantRepository.findByIdMapperResolved(restaurantId).orElseThrow(() ->
+                new RestaurantNotFoundException(restaurantId));
+    }
+
+    @Cacheable("restaurantsLastUpdate")
     public OffsetDateTime getLastUpdateDate() {
         return restaurantRepository.getLastUpdateDate();
     }
 
-    public OffsetDateTime getLastUpdateDateById(UUID userId) {
-        return restaurantRepository.getLastUpdateDateById(userId);
+    @Cacheable(value = "restaurantsLastUpdateById" , key = "#restaurantId")
+    public OffsetDateTime getLastUpdateDateById(UUID restaurantId) {
+        return restaurantRepository.getLastUpdateDateById(restaurantId);
     }
 
+    @RestaurantsCacheEvict
     @Transactional
     public Restaurant save (Restaurant restaurant) {
         UUID cityId = restaurant.getAddress().getCity().getId();
@@ -59,52 +75,58 @@ public class RestaurantService {
 
     }
 
+    @RestaurantsCacheEvict
     @Transactional
-    public void remove (UUID id) {
+    public void remove (UUID restaurantId) {
         try {
-            restaurantRepository.delete(findById(id));
+            restaurantRepository.delete(findById(restaurantId));
         }
         catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(
-                    String.format("Restaurante de código %d tem produtos ativos, logo, não pode ser removida!" , id)
+                    String.format("Restaurante de código %d tem produtos ativos, logo, não pode ser removida!" , restaurantId)
             ) ;
         }
     }
 
-
-
+    @RestaurantsCacheEvict
     @Transactional
-    public void activate (UUID id) {
-        Restaurant restaurant = findById(id);
+    public void activate (UUID restaurantId) {
+        Restaurant restaurant = findById(restaurantId);
         restaurant.activate();
     }
+    @RestaurantsCacheEvict
     @Transactional
-    public void deactivate (UUID id) {
-        Restaurant restaurant = findById(id);
+    public void deactivate (UUID restaurantId) {
+        Restaurant restaurant = findById(restaurantId);
         restaurant.deactivate();
     }
 
+    @RestaurantsCacheEvict
     @Transactional
     public void activate (List<UUID> restaurantIds) {
         restaurantIds.forEach(this::activate);
     }
 
+    @RestaurantsCacheEvict
     @Transactional
     public void deactivate (List<UUID> restaurantIds) {
         restaurantIds.forEach(this::deactivate);
     }
 
+    @RestaurantsCacheEvict
     @Transactional
-    public void open (UUID id) {
-        Restaurant restaurant = findById(id);
+    public void open (UUID restaurantId) {
+        Restaurant restaurant = findById(restaurantId);
         restaurant.open();
     }
+    @RestaurantsCacheEvict
     @Transactional
-    public void close (UUID id) {
-        Restaurant restaurant = findById(id);
+    public void close (UUID restaurantId) {
+        Restaurant restaurant = findById(restaurantId);
         restaurant.close();
     }
 
+    @RestaurantsCacheEvict
     @Transactional
     public void disassociatePaymentMethod(UUID restaurantId , UUID paymentMethodId) {
         Restaurant restaurant = findById(restaurantId);
@@ -112,6 +134,7 @@ public class RestaurantService {
 
         restaurant.disassociatePaymentMethod(paymentMethod);
     }
+    @RestaurantsCacheEvict
     @Transactional
     public void associatePaymentMethod(UUID restaurantId , UUID paymentMethodId) {
         Restaurant restaurant = findById(restaurantId);
@@ -120,6 +143,7 @@ public class RestaurantService {
         restaurant.associatePaymentMethod(paymentMethod);
     }
 
+    @RestaurantsCacheEvict
     @Transactional
     public void disassociateResponsibleUser(UUID restaurantId , UUID userId) {
         Restaurant restaurant = findById(restaurantId);
@@ -127,6 +151,7 @@ public class RestaurantService {
 
         restaurant.disassociateResponsibleUser(user);
     }
+    @RestaurantsCacheEvict
     @Transactional
     public void associateResponsibleUser(UUID restaurantId , UUID userId) {
         Restaurant restaurant = findById(restaurantId);

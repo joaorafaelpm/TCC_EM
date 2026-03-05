@@ -4,7 +4,6 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.PaymentMethodModelAs
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.PaymentMethodModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantPaymentMethodControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
-import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.CacheControl;
@@ -42,9 +41,7 @@ public class RestaurantPaymentMethodController implements RestaurantPaymentMetho
             return null;
         }
 
-        Restaurant restaurant = restaurantService.findById(restaurantId);
-        Collection<PaymentMethodModel> collectionModel = paymentMethodAssembler.toCollectionModel(restaurant.getPaymentMethods());
-
+        Collection<PaymentMethodModel> collectionModel = paymentMethodAssembler.toCollectionModel(restaurantService.findPaymentMethodsByRestaurantId(restaurantId));
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
                 .eTag(eTag)

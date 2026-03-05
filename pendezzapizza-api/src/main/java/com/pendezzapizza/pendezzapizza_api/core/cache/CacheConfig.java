@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.core.cache;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -20,114 +21,53 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         CaffeineCacheManager manager = new CaffeineCacheManager();
 
-        manager.registerCustomCache("cities",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
+        // Definimos os nomes base de todas as entidades
+        String[] entities = {
+                "city", "state", "paymentMethod", "permission", "group", "user", "order",  "restaurant"
+        };
 
-        manager.registerCustomCache("states",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(60, TimeUnit.MINUTES)
-                        .maximumSize(100)
-                        .build());
+        for (String entity : entities) {
+            // regra específica para palavras que terminam com y
+            String plural = entity.endsWith("y") ? entity.substring(0, entity.length() - 1) + "ies" : entity + "s";
 
-        manager.registerCustomCache("paymentMethods",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(50)
-                        .build());
+            // regra específica do plural de paymentMethods
+            if (entity.equals("paymentMethod")) plural = "paymentMethods";
 
-        manager.registerCustomCache("permissions",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(60, TimeUnit.MINUTES)
-                        .maximumSize(100)
-                        .build());
+            // Cache Individual (ex: "user")
+            manager.registerCustomCache(entity, buildCache(200, 30));
 
-        manager.registerCustomCache("groups",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(60, TimeUnit.MINUTES)
-                        .maximumSize(100)
-                        .build());
+            // Cache de Coleção (ex: "users")
+            manager.registerCustomCache(plural, buildCache(100, 60));
 
-        manager.registerCustomCache("citiesLastUpdate",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(1)
-                        .build());
-        manager.registerCustomCache("groupsLastUpdate",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(1)
-                        .build());
-        manager.registerCustomCache("permissionsLastUpdate",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(1)
-                        .build());
-        manager.registerCustomCache("paymentMethodsLastUpdate",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(1)
-                        .build());
-        manager.registerCustomCache("statesMethodsLastUpdate",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(1)
-                        .build());
+            // Cache de Última Atualização Global (ex: "usersLastUpdate")
+            manager.registerCustomCache(plural + "LastUpdate", buildCache(1, 30));
 
-        manager.registerCustomCache("paymentMethod",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
-        manager.registerCustomCache("city",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
-        manager.registerCustomCache("state",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
-        manager.registerCustomCache("permission",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
-        manager.registerCustomCache("group",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
+            // Cache de Última Atualização por ID (ex: "usersLastUpdateById")
+            manager.registerCustomCache(plural + "LastUpdateById", buildCache(200, 30));
+        }
 
-        manager.registerCustomCache("permissionsLastUpdateById",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
-        manager.registerCustomCache("citiesLastUpdateById",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
-        manager.registerCustomCache("statesLastUpdateById",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
-        manager.registerCustomCache("paymentMethodsLastUpdateById",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
-        manager.registerCustomCache("groupsLastUpdateById",
-                Caffeine.newBuilder()
-                        .expireAfterWrite(30, TimeUnit.MINUTES)
-                        .maximumSize(200)
-                        .build());
+//        Algumas configurações de cache mais personalizadas:
+
+//        Restaurants:
+        manager.registerCustomCache("restaurantsResponsibleUsers", buildCache(200, 30));
+        manager.registerCustomCache("restaurantsPaymentMethods", buildCache(200, 30));
+
+//        Products
+        manager.registerCustomCache("product", buildCache(200, 30));
+        manager.registerCustomCache("productsByRestaurant", buildCache(200, 30));
+        manager.registerCustomCache("productsActivesByRestaurant", buildCache(200, 30));
+        manager.registerCustomCache("productsLastUpdateDateActivesByRestaurantId", buildCache(1, 30));
+        manager.registerCustomCache("productsLastUpdateDateByRestaurantId", buildCache(1, 30));
+
         return manager;
+    }
+
+    // Método auxiliar para fazer o build sem se repetir tanto
+    private Cache<Object, Object> buildCache(int size, int minutes) {
+        return Caffeine.newBuilder()
+                .maximumSize(size)
+                .expireAfterWrite(minutes, TimeUnit.MINUTES)
+                .build();
     }
 
     @Bean
