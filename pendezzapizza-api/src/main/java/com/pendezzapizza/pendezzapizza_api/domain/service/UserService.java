@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,9 +26,6 @@ public class UserService  {
     private final UserRepository userRepository;
     private PasswordEncoder passwordEncoder ;
 
-    public List<User> findAll() {
-        return userRepository.findAll();
-    }
     @Cacheable("users")
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);

@@ -44,7 +44,7 @@ public class UserGroupController implements UserGroupControllerOpenApi {
             return null;
         }
 
-        Set<Group> groups = userService.findById(userId).getGroups();
+        Set<Group> groups = groupService.findById(userId).getGroups();
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())

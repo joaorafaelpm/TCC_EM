@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Caching(evict = {
         @CacheEvict(value = "users", allEntries = true),
+        @CacheEvict(value = "userGroup", allEntries = true),
         @CacheEvict(value = "usersLastUpdate", allEntries = true),
         @CacheEvict(value = "user", key = "#id ?: #userId ?: #user?.id"),
         @CacheEvict(value = "usersLastUpdateById", key = "#id ?: #userId ?: #user?.id")

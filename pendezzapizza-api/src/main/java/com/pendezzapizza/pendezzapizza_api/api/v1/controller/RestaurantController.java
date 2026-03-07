@@ -1,14 +1,11 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantSummaryModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.RestaurantDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
-import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
-import com.pendezzapizza.pendezzapizza_api.domain.exception.RestaurantNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import jakarta.validation.Valid;
@@ -24,7 +21,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class RestaurantController implements RestaurantControllerOpenApi {
 
     private final RestaurantService restaurantService;
-    private final RestaurantSummaryModelAssembler restaurantSummaryAssembler;
     private final RestaurantModelAssembler restaurantAssembler;
     private final RestaurantDisassembler restaurantDisassembler;
 
@@ -108,28 +103,6 @@ public class RestaurantController implements RestaurantControllerOpenApi {
     public ResponseEntity<Void> deactivate(@PathVariable UUID restaurantId) {
         restaurantService.deactivate(restaurantId);
         return ResponseEntity.noContent().build();
-    }
-
-    @CheckSecurity.Restaurants.CanManageRegistration
-    @PutMapping("/activations")
-    public ResponseEntity<Void> activateMultiple(@RequestBody List<UUID> restaurantIds) {
-        try {
-            restaurantService.activate(restaurantIds);
-            return ResponseEntity.noContent().build();
-        } catch (RestaurantNotFoundException e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
-    }
-
-    @CheckSecurity.Restaurants.CanManageRegistration
-    @DeleteMapping("/activations")
-    public ResponseEntity<Void> deactivateMultiple(@RequestBody List<UUID> restaurantIds) {
-        try {
-            restaurantService.deactivate(restaurantIds);
-            return ResponseEntity.noContent().build();
-        } catch (RestaurantNotFoundException e) {
-            throw new BusinessException(e.getMessage(), e);
-        }
     }
 
     @CheckSecurity.Restaurants.CanManageOperation

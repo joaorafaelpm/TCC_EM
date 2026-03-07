@@ -59,6 +59,18 @@ public class CacheConfig {
         manager.registerCustomCache("productsLastUpdateDateActivesByRestaurantId", buildCache(1, 30));
         manager.registerCustomCache("productsLastUpdateDateByRestaurantId", buildCache(1, 30));
 
+        //        Users
+        manager.registerCustomCache("userGroup", buildCache(1, 30));
+//        manager.registerCustomCache("users", buildCache(200, 30));
+//        manager.registerCustomCache("user", buildCache(200, 30));
+//        manager.registerCustomCache("usersLastUpdate", buildCache(1, 30));
+//        manager.registerCustomCache("usersLastUpdateById", buildCache(1, 30));
+////        Groups
+//        manager.registerCustomCache("groups", buildCache(200, 30));
+//        manager.registerCustomCache("group", buildCache(200, 30));
+//        manager.registerCustomCache("groupsLastUpdate", buildCache(1, 30));
+//        manager.registerCustomCache("groupsLastUpdateById", buildCache(1, 30));
+
         return manager;
     }
 

@@ -43,7 +43,7 @@ public class OrderIssuanceService {
         UUID customerId = pendezzaPizzaSecurity.getUserId();
 
         City city = cityService.findById(cityId);
-        Restaurant restaurant = restaurantService.findById(restaurantId);
+        Restaurant restaurant = restaurantService.findByIdWithAllDependencies(restaurantId);
         PaymentMethod paymentMethod = paymentMethodService.findById(paymentMethodId);
         User user = userService.findById(customerId);
 
@@ -60,7 +60,10 @@ public class OrderIssuanceService {
 
     public void assignUnitPriceAndProductToOrderItem(Order order) {
         order.getItems().forEach(item -> {
-            Product product = productService.findById(order.getRestaurant().getId(), item.getProduct().getId());
+            UUID restaurantId = order.getRestaurant().getId();
+            UUID productId = item.getProduct().getId();
+
+            Product product = productService.findById(restaurantId, productId);
             item.setOrder(order);
             item.setProduct(product);
             item.setUnitPrice(product.getPrice());

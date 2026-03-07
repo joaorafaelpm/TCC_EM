@@ -59,16 +59,6 @@ public interface RestaurantControllerOpenApi {
     })
     ResponseEntity<Void> deactivate(@Parameter(description = "Id de um restaurante", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID restaurantId);
 
-    @Operation(summary = "Ativa multiplos restaurante por uma lista de ids", responses = {
-            @ApiResponse(responseCode = "204", description = "Restaurantes ativados")
-    })
-    ResponseEntity<Void> activateMultiple(@RequestBody(description = "Lista de id dos restaurantes", required = true) List<UUID> restaurantIds);
-
-    @Operation(summary = "Inativa multiplos restaurante por uma lista de ids", responses = {
-            @ApiResponse(responseCode = "204", description = "Restaurantes inativados")
-    })
-    ResponseEntity<Void> deactivateMultiple(@RequestBody(description = "Lista de id dos restaurantes", required = true) List<UUID> restaurantIds);
-
     @Operation(summary = "Abre um restaurante por id", responses = {
             @ApiResponse(responseCode = "204", description = "Restaurantes aberto"),
             @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(schema = @Schema(ref = "ApiError")))

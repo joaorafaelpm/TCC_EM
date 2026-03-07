@@ -4,6 +4,7 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,8 +21,8 @@ public interface RestaurantRepository
         extends CustomJPARepository<Restaurant , UUID> , RestaurantRepositoryQueries,
         JpaSpecificationExecutor<Restaurant> {
 
-    @Query("from Restaurant r join fetch r.paymentMethods")
-    List<Restaurant> findAll ();
+    @EntityGraph(attributePaths = "paymentMethods")
+    Page<Restaurant> findAll (Pageable pageable);
 
     @Query("""
     SELECT r FROM Restaurant r

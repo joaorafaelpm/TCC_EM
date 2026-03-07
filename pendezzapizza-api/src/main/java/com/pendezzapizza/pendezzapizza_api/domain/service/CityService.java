@@ -22,7 +22,6 @@ public class CityService {
 
     private final CityRepository cityRepository;
     private final StateService stateService;
-    private CacheInvalidatorUtil cacheInvalidatorUtil;
 
     @Cacheable("cities")
     public Page<City> findAll(Pageable pageable) {

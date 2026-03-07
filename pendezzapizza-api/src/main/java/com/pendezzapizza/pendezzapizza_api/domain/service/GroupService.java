@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
+import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.GroupsCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.PermissionsCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.UsersCacheEvict;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -27,6 +29,8 @@ public class GroupService {
     private final PermissionService permissionService;
     private final UserService userService;
 
+    private CacheInvalidatorUtil cacheInvalidatorUtil;
+
     @Cacheable("groups")
     public Page<Group> findAll (Pageable pageable) {
         return groupRepository.findAll(pageable);
@@ -35,6 +39,12 @@ public class GroupService {
     @Cacheable(value = "group", key = "#groupId")
     public Group findById (UUID groupId ) {
         return groupRepository.findByIdOrThrowException(groupId);
+    }
+
+    @Cacheable(value = "userGroup", key = "#userId")
+    public Set<Group> findGroupsByUserId (UUID userId) {
+        return userService.findById(userId).getGroups();
+
     }
 
     @Cacheable("groupsLastUpdate")
@@ -79,13 +89,11 @@ public class GroupService {
         group.disassociatePermission(permissionService.findById(permissionId));
     }
 
-    @GroupsCacheEvict
     @UsersCacheEvict
     @Transactional
     public void associateGroup (UUID userId , UUID groupId) {
         userService.findById(userId).associate(findById(groupId));
     }
-    @GroupsCacheEvict
     @UsersCacheEvict
     @Transactional
     public void disassociateGroup (UUID userId , UUID groupId) {

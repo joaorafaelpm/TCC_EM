@@ -63,7 +63,7 @@ public class UserController implements UserControllerOpenApi {
     public ResponseEntity<UserModel> findById(@PathVariable UUID userId , ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
-        OffsetDateTime lastUpdateDate = userService.getLastUpdateDate();
+        OffsetDateTime lastUpdateDate = userService.getLastUpdateDateById(userId);
         if (lastUpdateDate != null) {
             eTag = String.valueOf(lastUpdateDate.toEpochSecond());
         }

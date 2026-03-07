@@ -103,18 +103,6 @@ public class RestaurantService {
 
     @RestaurantsCacheEvict
     @Transactional
-    public void activate (List<UUID> restaurantIds) {
-        restaurantIds.forEach(this::activate);
-    }
-
-    @RestaurantsCacheEvict
-    @Transactional
-    public void deactivate (List<UUID> restaurantIds) {
-        restaurantIds.forEach(this::deactivate);
-    }
-
-    @RestaurantsCacheEvict
-    @Transactional
     public void open (UUID restaurantId) {
         Restaurant restaurant = findById(restaurantId);
         restaurant.open();

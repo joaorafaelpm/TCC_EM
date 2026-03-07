@@ -41,7 +41,7 @@ public class ProductService {
         return productRepository.getLastUpdateDateByIdGetAll(restaurantId);
     }
 
-    @Cacheable(value = "product" , key = "#restaurantId,#productId")
+    @Cacheable(value = "product", key="#restaurantId.toString().concat('-').concat(#productId.toString())")
     public Product findById (UUID restaurantId , UUID productId ) {
         Restaurant restaurant = restaurantService.findById(restaurantId);
         restaurantService.findById(restaurantId);
