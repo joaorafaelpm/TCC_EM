@@ -6,8 +6,11 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.pendezzapizza.pendezzapizza_api.core.security.SecurityController;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Permission;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,8 +48,12 @@ import java.security.KeyStore;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Configuration
+@AllArgsConstructor
 public class AuthorizationServerConfig {
+
+    private final SecurityController securityController ;
 
     @Value("${pendezzapizza.auth.rsa-key-size:2048}")
     private static int rsaKeySize;
@@ -221,7 +228,7 @@ public class AuthorizationServerConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
-                .issuer("http://localhost")
+                .issuer(securityController.getUrlIssuer())
                 .build();
     }
 }

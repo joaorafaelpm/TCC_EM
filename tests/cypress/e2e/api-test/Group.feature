@@ -3,29 +3,29 @@ Feature: GroupTest
   Scenario: LifeCycle of a Group
   # POST
     Given I make a POST request to endpoint groups with a valid body
-    Then I should receive a response with status code from endpoint groups "201"
-    Then I should receive a response body with name from endpoint groups "Cafetão"
+    Then I should receive a response with status code "201"
+    Then I should receive a response body with name "Cafetão"
   # GET
-    When I make a GET request to endpoint groups with a valid id
-    Then I should receive a response with status code from endpoint groups "200"
-    Then I should receive a response body with name from endpoint groups "Cafetão"
+    When I make a GET request to endpoint "/v1/groups" with id "4a3fdd17-542f-4f6c-b450-871ff0f21092"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "Tester"
   # PUT
     When I make a PUT request to endpoint groups with a valid body and id
-    Then I should receive a response with status code from endpoint groups "200"
-    Then I should receive a response body with name from endpoint groups "Cafetão Atualizado"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "Cafetão Atualizado"
   # DELETE
     When I make a DELETE request to endpoint groups with a valid id
-    Then I should receive a response with status code from endpoint groups "204"
-    Then I should receive a response with statusText from endpoint groups "No Content"
+    Then I should receive a response with status code "204"
+    Then I should receive a response with statusText "No Content"
   # Checando se o delete funcionou 
     When I make a GET request to endpoint groups with a deleted id
-    Then I should receive a response with status code from endpoint groups "404"
-    Then I should receive a response body with title from endpoint groups "Recurso não encontrado."
+    Then I should receive a response with status code "404"
+    Then I should receive a response body with title "Recurso não encontrado."
 
   Scenario Outline: All Get Requests for Groups
     Given I make a GET request to endpoint groups with a <id>
-    Then I should receive a response with status code from endpoint groups <statusCode>
-    Then I should receive a response body with detail from endpoint groups <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | id                                     | statusCode | detail                                                                                                                                 |
@@ -34,20 +34,20 @@ Feature: GroupTest
 
   Scenario: I make a group POST with an empty name and check the response
     Given I make a POST request to endpoint groups with empty name
-    Then I should receive a response with status code from endpoint groups "400"
-    Then I should receive a response body with objects name from endpoint groups "name"
-    Then I should receive a response body with objects userMessage from endpoint groups "Nome do grupo contém caracteres inválidos."
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name "name"
+    Then I should receive a response body with objects userMessage "Nome do grupo contém caracteres inválidos."
 
   Scenario: I make a group PUT with an empty name and check the response
     Given I make a PUT request to endpoint groups with id "0e0362cc-db84-4484-9909-d6977b96b619" and name " "
-    Then I should receive a response with status code from endpoint groups "400"
-    Then I should receive a response body with objects name from endpoint groups "name"
-    Then I should receive a response body with objects userMessage from endpoint groups "Nome do grupo contém caracteres inválidos."
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name "name"
+    Then I should receive a response body with objects userMessage "Nome do grupo contém caracteres inválidos."
 
   Scenario Outline: Check a lot of PUT responses for Groups
     Given I make a PUT request to endpoint groups with id <id> and name <name>
-    Then I should receive a response with status code from endpoint groups <statusCode>
-    Then I should receive a response body with detail from endpoint groups <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | id                                     | name        | statusCode | detail                                                                                                                                  |
@@ -56,20 +56,20 @@ Feature: GroupTest
 
   Scenario: Error 406
     Given I make a GET request to endpoint groups with a valid id and accept header "application/pdf"
-    Then I should receive a response with status code from endpoint groups "406"
-    Then I should receive a response with statusText from endpoint groups "Not Acceptable"
+    Then I should receive a response with status code "406"
+    Then I should receive a response with statusText "Not Acceptable"
 
   Scenario: Associate a Group to a Permission
     Given I make a PUT request to endpoint groups with a valid id and valid permissionId
-    Then I should receive a response with status code from endpoint groups "204"
+    Then I should receive a response with status code "204"
 
   Scenario: Disassociate a Group to a Permission
     Given I make a DELETE request to endpoint groups with a valid id and valid permissionId
-    Then I should receive a response with status code from endpoint groups "204"
+    Then I should receive a response with status code "204"
 
   Scenario Outline: Associate and Disassociate Group to a Permission badends
     Given I make a <request> request to endpoint groups with id <groupId> and permissionId <permissionId>
-    Then I should receive a response with status code from endpoint groups <statusCode>
+    Then I should receive a response with status code <statusCode>
     Then I should receive a response with detail containing the message <message>
 
     Examples:

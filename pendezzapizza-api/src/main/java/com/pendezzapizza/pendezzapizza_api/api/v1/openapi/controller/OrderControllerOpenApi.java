@@ -39,6 +39,5 @@ public interface OrderControllerOpenApi {
             @ApiResponse(responseCode = "200"),
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado", content = @Content(schema = @Schema(ref = "ApiError")))
     })
-    ResponseEntity<OrderModel> findById(@Parameter(description = "Id de um pedido", example = "936dc9ec-05bf-44e5-8c07-7e51adc6083d", required = true) UUID orderId,
-                        @Parameter(hidden = true) ServletWebRequest request);
+    OrderModel findById(@Parameter(description = "Id de um pedido", example = "936dc9ec-05bf-44e5-8c07-7e51adc6083d", required = true) UUID orderId);
 }

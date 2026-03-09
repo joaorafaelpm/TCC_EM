@@ -5,29 +5,29 @@ Feature: UserTest
   Scenario: LifeCycle of a User
   # POST
     Given I make a POST request to endpoint users with a valid body
-    Then I should receive a response with status code from endpoint users "201"
-    Then I should receive a response body with name from endpoint users "João Teste"
+    Then I should receive a response with status code "201"
+    Then I should receive a response body with name "João Teste"
   # GET
     When I make a GET request to endpoint users with a valid id
-    Then I should receive a response with status code from endpoint users "200"
-    Then I should receive a response body with name from endpoint users "João Teste"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "João Teste"
   # PUT
     When I make a PUT request to endpoint users with a valid body and id
-    Then I should receive a response with status code from endpoint users "200"
-    Then I should receive a response body with name from endpoint users "João Teste Atualizado"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "João Teste Atualizado"
   # DELETE
     When I make a DELETE request to endpoint users with a valid id
-    Then I should receive a response with status code from endpoint users "204"
-    Then I should receive a response with statusText from endpoint users "No Content"
+    Then I should receive a response with status code "204"
+    Then I should receive a response with statusText "No Content"
   # Checando se o delete funcionou
     When I make a GET request to endpoint users with a deleted id
-    Then I should receive a response with status code from endpoint users "404"
-    Then I should receive a response body with title from endpoint users "Recurso não encontrado."
+    Then I should receive a response with status code "404"
+    Then I should receive a response body with title "Recurso não encontrado."
 
   Scenario Outline: All Get Requests for Users
     Given I make a GET request to endpoint users with a <id>
-    Then I should receive a response with status code from endpoint users <statusCode>
-    Then I should receive a response body with detail from endpoint users <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | id                                     | statusCode | detail                                                                                                                                |
@@ -36,9 +36,9 @@ Feature: UserTest
 
   Scenario Outline: I make a POST in endpoint user with an invalid name and should see a bad request
     Given I make a POST request to endpoint users with a <name> , <email> and <password>
-    Then I should receive a response with status code from endpoint users "400"
-    Then I should receive a response body with objects name from endpoint users <objectName>
-    Then I should receive a response body with objects userMessage from endpoint users <userMessage>
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name <objectName>
+    Then I should receive a response body with objects userMessage <userMessage>
 
     Examples:
       | name                   | email                           | password              | objectName | userMessage                                    |
@@ -50,9 +50,9 @@ Feature: UserTest
 
   Scenario Outline: I make a PUT in endpoint user with an invalid name and should see a bad request
     Given I make a PUT request to endpoint users with a valid id, <name> and <email>
-    Then I should receive a response with status code from endpoint users "400"
-    Then I should receive a response body with objects name from endpoint users <objectName>
-    Then I should receive a response body with objects userMessage from endpoint users <userMessage>
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name <objectName>
+    Then I should receive a response body with objects userMessage <userMessage>
 
     Examples:
       | name                   | email                           | objectName | userMessage                                    |
@@ -63,8 +63,8 @@ Feature: UserTest
 
   Scenario Outline: Check a lot of PUT responses for Users
     Given I make a PUT request to endpoint users with an id <id> and name <name>
-    Then I should receive a response with status code from endpoint users <statusCode>
-    Then I should receive a response body with detail from endpoint users <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | id                                     | name               | statusCode | detail                                                                                                                                 |
@@ -73,20 +73,20 @@ Feature: UserTest
 
   Scenario: Error 406
     Given I make a GET request to endpoint users with a valid id and accept header "application/pdf"
-    Then I should receive a response with status code from endpoint users "406"
-    Then I should receive a response with statusText from endpoint users "Not Acceptable"
+    Then I should receive a response with status code "406"
+    Then I should receive a response with statusText "Not Acceptable"
 
   Scenario: Associate a User to a Group
     Given I make a PUT request to endpoint users with a valid id and valid groupId
-    Then I should receive a response with status code from endpoint users "204"
+    Then I should receive a response with status code "204"
 
   Scenario: Disassociate a User to a Group
     Given I make a DELETE request to endpoint users with a valid id and valid groupId
-    Then I should receive a response with status code from endpoint users "204"
+    Then I should receive a response with status code "204"
 
   Scenario Outline: Associate and Disassociate User to a Group badends
     Given I make a <request> request to endpoint users with id <userId> and groupId <groupId>
-    Then I should receive a response with status code from endpoint users <statusCode>
+    Then I should receive a response with status code <statusCode>
     Then I should receive a response with detail containing the message from users <message>
 
     Examples:

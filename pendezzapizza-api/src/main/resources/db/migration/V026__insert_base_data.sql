@@ -1,5 +1,19 @@
 -- Geralmente  eu faria isso com o afterMigrate, porém como eu estou usando 2 instâncias da api e desta vez eu uso UUID não da pra fazer isso de forma eficiente sem usar uma migrate específica pra isso
-
+DELETE FROM oauth2_registered_client;
+DELETE FROM order_item;
+DELETE FROM `order`;
+DELETE FROM restaurant_user_responsible;
+DELETE FROM restaurant_payment_method;
+DELETE FROM product;
+DELETE FROM user_group;
+DELETE FROM group_permission;
+DELETE FROM restaurant;
+DELETE FROM `user`;
+DELETE FROM `group`;
+DELETE FROM permission;
+DELETE FROM payment_method;
+DELETE FROM city;
+DELETE FROM state;
 -- 1. ESTADOS
 
 INSERT INTO state (id, name, update_date) VALUES
@@ -27,7 +41,6 @@ INSERT INTO payment_method (id, description, update_date) VALUES
 (UUID_TO_BIN(UUID()), 'Cartão de Débito',  UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'Pix',               UTC_TIMESTAMP()),
 (UUID_TO_BIN("3ee42ee7-3d35-4680-afe0-e01a24e649dc"), 'Dinheiro',          UTC_TIMESTAMP());
-
 
 -- 4. PERMISSÕES
 

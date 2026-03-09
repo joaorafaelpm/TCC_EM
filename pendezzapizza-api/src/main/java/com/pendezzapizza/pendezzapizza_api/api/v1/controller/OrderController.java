@@ -70,21 +70,8 @@ public class OrderController implements OrderControllerOpenApi {
 
     @CheckSecurity.Orders.CanSearch
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderModel> findById(@PathVariable UUID orderId, ServletWebRequest request) {
-        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
-        String eTag = "0";
-        OffsetDateTime lastUpdateDate = orderService.getLastUpdateDateById(orderId);
-        if (lastUpdateDate != null) {
-            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
-        }
-
-        if (request.checkNotModified(eTag)) {
-            return null;
-        }
-        return ResponseEntity.ok()
-                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
-                .eTag(eTag)
-                .body(orderModelAssembler.toModel(orderService.findById(orderId)));
+    public OrderModel findById(@PathVariable UUID orderId) {
+        return orderModelAssembler.toModel(orderService.findById(orderId));
     }
 
     @CheckSecurity.Orders.CanCreate

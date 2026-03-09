@@ -3,54 +3,54 @@ Feature: ProductTest
   Scenario: LifeCycle of a Product
   # Setup - Criar restaurante para ser dono
     Given I make a POST request to create a restaurant for product tests
-    Then I should receive a response with status code from endpoint products "201"
+    Then I should receive a response with status code "201"
 
   # POST - Criar produto
     Given I make a POST request to endpoint products with a valid body
-    Then I should receive a response with status code from endpoint products "201"
-    Then I should receive a response body with name from endpoint products "Pizza Margherita"
+    Then I should receive a response with status code "201"
+    Then I should receive a response body with name "Pizza Margherita"
 
   # GET - Buscar produto criado
     When I make a GET request to endpoint products with a valid id
-    Then I should receive a response with status code from endpoint products "200"
-    Then I should receive a response body with name from endpoint products "Pizza Margherita"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "Pizza Margherita"
 
   # Ativar produto
     When I make a PUT request to activate the product
-    Then I should receive a response with status code from endpoint products "204"
+    Then I should receive a response with status code "204"
 
   # GET ALL - Listar produtos do restaurante
     When I make a GET request to list all products from the restaurant
-    Then I should receive a response with status code from endpoint products "200"
+    Then I should receive a response with status code "200"
     Then I should receive an array in endpoint products
 
   # PUT - Atualizar produto
     When I make a PUT request to endpoint products with a valid body and id
-    Then I should receive a response with status code from endpoint products "200"
-    Then I should receive a response body with name from endpoint products "Pizza Margherita Atualizada"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "Pizza Margherita Atualizada"
 
     When I make a PUT request to endpoint products with a valid restaurantId and productId in endpoint photo
-    Then I should receive a response with status code from endpoint products "200"
-    Then I should receive a response body with description from endpoint products "Descrição"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with description "Descrição"
 
     When I make a GET request to endpoint products with a valid restaurantId and productId in endpoint photo
-    Then I should receive a response body with description from endpoint products "Descrição"
+    Then I should receive a response body with description "Descrição"
 
     When I make a DELETE request to endpoint products with a valid restaurantId and productId in endpoint photo 
-    Then I should receive a response with status code from endpoint products "204"
+    Then I should receive a response with status code "204"
 
   # Desativar produto
     When I make a DELETE request to deactivate the product
-    Then I should receive a response with status code from endpoint products "204"
+    Then I should receive a response with status code "204"
 
   # Teardown - Desativar restaurante ao final
     When I make a DELETE request to deactivate the restaurant in endpoint products
-    Then I should receive a response with status code from endpoint products "204"
+    Then I should receive a response with status code "204"
 
   Scenario Outline: I make a GET in endpoint product with restaurantId and productId and should recieve bad request
     Given I make a GET request to endpoint products to get a photo with <restaurantId> and <productId>
-    Then I should receive a response with status code from endpoint products <statusCode>
-    Then I should receive a response body with detail from endpoint products <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
     
     Examples:
       | restaurantId                           | productId                              | statusCode | detail                                                                                                                                        |
@@ -61,13 +61,13 @@ Feature: ProductTest
 
   Scenario: I make a PUT in endpoint product with valid restaurantId and productId with a not PNG or JPG file and should recieve bad request
     Given I make a PUT request to endpoint products to get a photo with an invalid file type
-    Then I should receive a response with status code from endpoint products "400"
-    Then I should receive a response body with objects userMessage from endpoint products "Formato da imagem inválido, deve corresponder aos tipos jpeg ou png"
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects userMessage "Formato da imagem inválido, deve corresponder aos tipos jpeg ou png"
     
   Scenario Outline: All Get Requests for Products - invalid ids
     Given I make a GET request to endpoint products with restaurantId <restaurantId> and productId <productId>
-    Then I should receive a response with status code from endpoint products <statusCode>
-    Then I should receive a response body with detail from endpoint products <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | restaurantId                           | productId                              | statusCode | detail                                                                                                                                        |
@@ -77,8 +77,8 @@ Feature: ProductTest
 
   Scenario Outline: Check PUT responses for Products with invalid ids
     Given I make a PUT request to endpoint products with restaurantId <restaurantId> and productId <productId> and name <name>
-    Then I should receive a response with status code from endpoint products <statusCode>
-    Then I should receive a response body with detail from endpoint products <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | restaurantId                           | productId                              | name        | statusCode | detail                                                                                                                                        |
@@ -89,9 +89,9 @@ Feature: ProductTest
   Scenario Outline: I make a POST in endpoint product with invalid fields and should see a bad request
     Given I make a POST request to create a restaurant for product tests
     Given I make a POST request to endpoint products with a <name>, <description> and <price>
-    Then I should receive a response with status code from endpoint products "400"
-    Then I should receive a response body with objects name from endpoint products <objectName>
-    Then I should receive a response body with objects userMessage from endpoint products <userMessage>
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name <objectName>
+    Then I should receive a response body with objects userMessage <userMessage>
     When I make a DELETE request to deactivate the restaurant in endpoint products
 
     Examples:
@@ -103,9 +103,9 @@ Feature: ProductTest
   Scenario Outline: I make a POST in endpoint product with null fields and should see a bad request
     Given I make a POST request to create a restaurant for product tests
     Given I make a POST request to endpoint products with a null <field>
-    Then I should receive a response with status code from endpoint products "400"
-    Then I should receive a response body with objects name from endpoint products <objectName>
-    Then I should receive a response body with objects userMessage from endpoint products <userMessage>
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name <objectName>
+    Then I should receive a response body with objects userMessage <userMessage>
     When I make a DELETE request to deactivate the restaurant in endpoint products
 
     Examples:
@@ -118,9 +118,9 @@ Feature: ProductTest
     Given I make a POST request to create a restaurant for product tests
     Given I make a POST request to endpoint products with a valid body
     Given I make a PUT request to endpoint products with a <name>, <description> and <price>
-    Then I should receive a response with status code from endpoint products "400"
-    Then I should receive a response body with objects name from endpoint products <objectName>
-    Then I should receive a response body with objects userMessage from endpoint products <userMessage>
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name <objectName>
+    Then I should receive a response body with objects userMessage <userMessage>
     When I make a DELETE request to deactivate the restaurant in endpoint products
 
     Examples:

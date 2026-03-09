@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.pendezzapizza.pendezzapizza_api.api.exceptionhandler.enuns.ProblemType;
 import com.pendezzapizza.pendezzapizza_api.core.validation.ValidationException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.*;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
@@ -42,12 +43,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
-    public static final String SYSTEM_ERROR_MESSAGE = String.format("Ocorreu um erro interno inesperado no sistema. Tente novamente mais tarde ou contate o administrador do sistema.");
+    public static final String SYSTEM_ERROR_MESSAGE = "Ocorreu um erro interno inesperado no sistema. Tente novamente mais tarde ou contate o administrador do sistema.";
 
     @Autowired
     private MessageSource messageSource ;
 
-    private ResponseEntity<Object> handleMultipleErrorsValidation(Exception ex ,BindingResult bindingResult , HttpHeaders headers,HttpStatus status , WebRequest request) {
+    private ResponseEntity<Object> handleMultipleErrorsValidation(Exception ex , BindingResult bindingResult , HttpHeaders headers, WebRequest request) {
         String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
 //        A gente faz um mapeamento simples para pegar cada campo e passar para a nossa classe
         List<ApiError.Object> problemObjects = bindingResult.getAllErrors()
@@ -61,17 +62,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                             .name(name)
                             .userMessage(message)
                             .build() ;
-                }).collect(Collectors.toList());
-        ApiError apiError = createAPIErrorBuilder(status, ProblemType.INVALID_DATA, detail, detail)
+                }).toList();
+        ApiError apiError = createAPIErrorBuilder(HttpStatus.BAD_REQUEST, ProblemType.INVALID_DATA, detail, detail)
                 .objects(problemObjects)
                 .build();
-        return handleExceptionInternal(ex , apiError , headers ,status , request);
+        return handleExceptionInternal(ex , apiError , headers , HttpStatus.BAD_REQUEST, request);
     }
 
     //    Vamos capturar e mapear todas as violações das especificações do BeanValidation e mostrar ao usuário
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        return handleMultipleErrorsValidation(ex, ex.getBindingResult() , headers ,HttpStatus.BAD_REQUEST, request);
+        return handleMultipleErrorsValidation(ex, ex.getBindingResult() , headers , request);
     }
 
 
@@ -79,7 +80,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<?> handleValidacao(
             ValidationException ex , WebRequest request) {
-        return handleMultipleErrorsValidation(ex , ex.getBindingResult() , new HttpHeaders(),HttpStatus.BAD_REQUEST , request );
+        return handleMultipleErrorsValidation(ex , ex.getBindingResult() , new HttpHeaders(), request );
     }
 
 
@@ -183,13 +184,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     //    Nós sobrescrevemos essa exception para não lançar nenhum json de volta ao consumidor, fazemos isso por que se o corpo da menssagem não for aceito (se a Media Type for diferente da passada) ele não deve receber nada no body de qualquer forma, e é um erro se nós passarmos algo no body, por isso tratamos para passar só os status
     @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(@NonNull HttpMediaTypeNotAcceptableException ex, @NonNull HttpHeaders headers, @NonNull HttpStatusCode status,@NonNull WebRequest request) {
         return ResponseEntity.status(status).headers(headers).build();
     }
 
     //    Verificando se o consumidor digitou o parâmetro da URL corretamente
     @Override
-    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, @NonNull  HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
 
         String detail = String.format("O parâmetro da URL '%s' recebeu o valor de '%s', que é um tipo inválido. Corrija e informe um valor compatível ao tipo '%s'." , ex.getPropertyName() , ex.getValue() , ex.getRequiredType().getSimpleName());
 
@@ -198,7 +199,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, @NonNull HttpHeaders headers,@NonNull HttpStatusCode status,@NonNull WebRequest request) {
         String detail = String.format("O recurso '%s' que você tentou acessar, é inexistente." , ex.getResourcePath());
 
         ApiError apiError = createAPIErrorBuilder(status, ProblemType.RESOURCE_NOT_FOUND , detail).build();

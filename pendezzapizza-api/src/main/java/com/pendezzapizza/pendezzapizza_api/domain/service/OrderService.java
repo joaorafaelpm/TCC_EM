@@ -39,13 +39,13 @@ public class OrderService {
         return orderRepository.getLastUpdateDateById(orderId );
     }
     @Cacheable(value = "order", key = "#orderId")
-    public Order findById(UUID id) {
-        return orderRepository.findByIdOrThrowException(id);
+    public Order findById(UUID orderId) {
+        return orderRepository.findByIdOrThrowException(orderId);
     }
 
-    public Order findByIdMapperSolver (UUID id) {
-        return orderRepository.findByIdMapperResolved(id).orElseThrow(
-            () -> new OrderNotFoundException(id));
+    public Order findByIdMapperSolver (UUID orderId) {
+        return orderRepository.findByIdMapperResolved(orderId).orElseThrow(
+            () -> new OrderNotFoundException(orderId));
     }
 
     @OrdersCacheEvict
@@ -57,13 +57,13 @@ public class OrderService {
 
     @OrdersCacheEvict
     @Transactional
-    public void remove (UUID id) {
+    public void remove (UUID orderId) {
         try {
-            orderRepository.delete(findById(id));
+            orderRepository.delete(findById(orderId));
             orderRepository.flush();
         }
         catch (DataIntegrityViolationException e) {
-            throw new EntityInUseException(id);
+            throw new EntityInUseException(orderId);
         }
     }
 }

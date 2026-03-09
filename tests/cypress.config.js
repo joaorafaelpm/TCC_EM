@@ -64,7 +64,7 @@ module.exports = defineConfig({
     trashAssetsBeforeRuns: true,
     failOnStatusCode: false,
     video: true,
-    baseUrl:"http://localhost:80",
+    baseUrl:"http://localhost:8080",
     reporter: "cypress-multi-reporters",
     reporterOptions: {
       configFile: "reporter-config.json",

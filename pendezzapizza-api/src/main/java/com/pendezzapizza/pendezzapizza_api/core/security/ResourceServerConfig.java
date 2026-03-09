@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.core.security;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -22,7 +23,10 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class ResourceServerConfig {
+
+    private final SecurityController securityController;
 
     @Bean
     public SecurityFilterChain resourceServerFilterChain(HttpSecurity http) throws Exception {
@@ -55,7 +59,7 @@ public class ResourceServerConfig {
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder
-                .withJwkSetUri("http://pendezzapizza-api:8080/oauth2/jwks")
+                .withJwkSetUri(securityController.getUrl())
                 .build();
     }
 

@@ -21,7 +21,6 @@ services:
 
   pendezzapizza-redis:
     image: redis:8.4.0-alpine
-
     networks:
       - pendezzapizza-network
 
@@ -42,12 +41,11 @@ services:
         condition: service_healthy
     volumes:
       - ${CONTAINER_VOLUME}
+    
 
   pendezzapizza-proxy:
     build: ./nginx
     image: pendezzapizza-proxy
-    extra_hosts:
-    - "host.docker.internal:host-gateway"
     ports:
       - ${NGNIX_PORT}
     networks:

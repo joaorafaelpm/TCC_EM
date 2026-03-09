@@ -3,29 +3,29 @@ Feature: StateTest
   Scenario: LifeCycle of a State
   # POST
     Given I make a POST request to endpoint states with a valid body
-    Then I should receive a response with status code from endpoint states "201"
-    Then I should receive a response body with name from endpoint states "São Paulo"
+    Then I should receive a response with status code "201"
+    Then I should receive a response body with name "São Paulo"
   # GET
     When I make a GET request to endpoint states with a valid id
-    Then I should receive a response with status code from endpoint states "200"
-    Then I should receive a response body with name from endpoint states "São Paulo"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "São Paulo"
   # PUT
     When I make a PUT request to endpoint states with a valid body and id
-    Then I should receive a response with status code from endpoint states "200"
-    Then I should receive a response body with name from endpoint states "São Paulo Atualizada"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "São Paulo Atualizada"
   # DELETE
     When I make a DELETE request to endpoint states with a valid id
-    Then I should receive a response with status code from endpoint states "204"
-    Then I should receive a response with statusText from endpoint states "No Content"
+    Then I should receive a response with status code "204"
+    Then I should receive a response with statusText "No Content"
   # Checando se o delete funcionou 
     When I make a GET request to endpoint states with a deleted id
-    Then I should receive a response with status code from endpoint states "404"
-    Then I should receive a response body with title from endpoint states "Recurso não encontrado."
+    Then I should receive a response with status code "404"
+    Then I should receive a response body with title "Recurso não encontrado."
 
   Scenario Outline: All Get Requests for States
     Given I make a GET request to endpoint states with a <id>
-    Then I should receive a response with status code from endpoint states <statusCode>
-    Then I should receive a response body with detail from endpoint states <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | id                                     | statusCode | detail                                                                                                                                 |
@@ -34,20 +34,20 @@ Feature: StateTest
 
   Scenario: All Post Requests for States
     Given I make a POST request to endpoint states with empty name
-    Then I should receive a response with status code from endpoint states "400"
-    Then I should receive a response body with objects name from endpoint states "name"
-    Then I should receive a response body with objects userMessage from endpoint states "Nome do estado contém caracteres inválidos."
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name "name"
+    Then I should receive a response body with objects userMessage "Nome do estado contém caracteres inválidos."
 
   Scenario: Check PUT request to return especific userMessage
     Given I make a PUT request to endpoint states with id "0e0362cc-db84-4484-9909-d6977b96b619" and name " "
-    Then I should receive a response with status code from endpoint states "400"
-    Then I should receive a response body with objects name from endpoint states "name"
-    Then I should receive a response body with objects userMessage from endpoint states "Nome do estado contém caracteres inválidos."
+    Then I should receive a response with status code "400"
+    Then I should receive a response body with objects name "name"
+    Then I should receive a response body with objects userMessage "Nome do estado contém caracteres inválidos."
 
   Scenario Outline: All Put Requests for States
     Given I make a PUT request to endpoint states with id <id> and name <name>
-    Then I should receive a response with status code from endpoint states <statusCode>
-    Then I should receive a response body with detail from endpoint states <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | id                                     | name        | statusCode | detail                                                                                                                                  |
@@ -56,8 +56,8 @@ Feature: StateTest
 
   Scenario Outline: All Delete Requests for States
     Given I make a DELETE request to endpoint states with an id <id>
-    Then I should receive a response with status code from endpoint states <statusCode>
-    Then I should receive a response body with detail from endpoint states <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | id                                     | statusCode | detail                                                                                                                                  |
@@ -66,12 +66,12 @@ Feature: StateTest
 
   Scenario: Error 409
     Given I make a DELETE request to endpoint states with a using state
-    Then I should receive a response with status code from endpoint states "409"
-    Then I should receive a response body with userMessage from endpoint states "Entidade com id 'ac3bb31f-4c4f-44ff-88e8-92646ba56240' já está sendo usada!"
-    Then I should receive a response with statusText from endpoint states "Conflict"
+    Then I should receive a response with status code "409"
+    Then I should receive a response body with userMessage "Entidade com id 'ac3bb31f-4c4f-44ff-88e8-92646ba56240' já está sendo usada!"
+    Then I should receive a response with statusText "Conflict"
 
   Scenario: Error 406
     Given I make a GET request to endpoint states with a valid id and accept header "application/pdf"
-    Then I should receive a response with status code from endpoint states "406"
-    Then I should receive a response with statusText from endpoint states "Not Acceptable"
+    Then I should receive a response with status code "406"
+    Then I should receive a response with statusText "Not Acceptable"
 

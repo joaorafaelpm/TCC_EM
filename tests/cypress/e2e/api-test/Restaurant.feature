@@ -3,56 +3,56 @@ Feature: RestaurantTest
   Scenario: LifeCycle of a Restaurant
   # POST
     Given I make a POST request to endpoint restaurants with a valid body
-    Then I should receive a response with status code from endpoint restaurants "201"
-    Then I should receive a response body with name from endpoint restaurants "Pizzaria Fredbear"
+    Then I should receive a response with status code "201"
+    Then I should receive a response body with name "Pizzaria Fredbear"
   # GET by id
     When I make a GET request to endpoint restaurants with a valid id
-    Then I should receive a response with status code from endpoint restaurants "200"
-    Then I should receive a response body with name from endpoint restaurants "Pizzaria Fredbear"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "Pizzaria Fredbear"
   # GET list
     When I make a GET request to list all restaurants
-    Then I should receive a response with status code from endpoint restaurants "200"
+    Then I should receive a response with status code "200"
     Then I should receive an array of "restaurants" in endpoint restaurants
   # PUT
     When I make a PUT request to endpoint restaurants with a valid body and id
-    Then I should receive a response with status code from endpoint restaurants "200"
-    Then I should receive a response body with name from endpoint restaurants "Pizzaria Fredbear Atualizada"
+    Then I should receive a response with status code "200"
+    Then I should receive a response body with name "Pizzaria Fredbear Atualizada"
   # Activate / Deactivate
     When I make a PUT request to activate the restaurant
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
     When I make a DELETE request to deactivate the restaurant
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
   # Activate multiple / Deactivate multiple
     When I make a PUT request to activate multiple restaurants
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
     When I make a DELETE request to deactivate multiple restaurants
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
   # Open / Close
     When I make a PUT request to activate the restaurant
     When I make a PUT request to open the restaurant
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
     When I make a PUT request to close the restaurant
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
 
   # PUT Associate users and payment-methods 
     Given I make a PUT request to endpoint restaurants with a valid id and valid userId
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
 
     Given I make a PUT request to endpoint restaurants with a valid id and valid paymentMethodId
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
 
   # GET responsible-users e payment-methods
     When I make a GET request to list responsible users of the restaurant
-    Then I should receive a response with status code from endpoint restaurants "200"
+    Then I should receive a response with status code "200"
     Then I should receive an array of "users" in endpoint restaurants
     When I make a GET request to list payment methods of the restaurant
-    Then I should receive a response with status code from endpoint restaurants "200"
+    Then I should receive a response with status code "200"
     Then I should receive an array of "paymentMethods" in endpoint restaurants
 
   Scenario Outline: All Get Requests for Restaurants - invalid ids
     Given I make a GET request to endpoint restaurants with id <id>
-    Then I should receive a response with status code from endpoint restaurants <statusCode>
-    Then I should receive a response body with detail from endpoint restaurants <detail>
+    Then I should receive a response with status code <statusCode>
+    Then I should receive a response body with detail <detail>
 
     Examples:
       | id                                     | statusCode | detail                                                                                                                                      |
@@ -62,22 +62,22 @@ Feature: RestaurantTest
   Scenario: Error 406 for Restaurants
     Given I make a POST request to endpoint restaurants with a valid body
     Given I make a GET request to endpoint restaurants with a valid id and accept header "application/pdf"
-    Then I should receive a response with status code from endpoint restaurants "406"
-    Then I should receive a response with statusText from endpoint restaurants "Not Acceptable"
+    Then I should receive a response with status code "406"
+    Then I should receive a response with statusText "Not Acceptable"
 
   Scenario: Associate a responsible user to a Restaurant
     Given I make a POST request to endpoint restaurants with a valid body
     Given I make a PUT request to endpoint restaurants with a valid id and valid userId
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
 
   Scenario: Disassociate a responsible user from a Restaurant
     Given I make a POST request to endpoint restaurants with a valid body
     Given I make a DELETE request to endpoint restaurants with a valid id and valid userId
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
 
   Scenario Outline: Associate and Disassociate responsible users - badends
     Given I make a <request> request to endpoint restaurants responsible-users with restaurantId <restaurantId> and userId <userId>
-    Then I should receive a response with status code from endpoint restaurants <statusCode>
+    Then I should receive a response with status code <statusCode>
     Then I should receive a response with detail containing the message from restaurants <message>
 
     Examples:
@@ -94,16 +94,16 @@ Feature: RestaurantTest
   Scenario: Associate a payment method to a Restaurant
     Given I make a POST request to endpoint restaurants with a valid body
     Given I make a PUT request to endpoint restaurants with a valid id and valid paymentMethodId
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
 
   Scenario: Disassociate a payment method from a Restaurant
     Given I make a POST request to endpoint restaurants with a valid body
     Given I make a DELETE request to endpoint restaurants with a valid id and valid paymentMethodId
-    Then I should receive a response with status code from endpoint restaurants "204"
+    Then I should receive a response with status code "204"
 
   Scenario Outline: Associate and Disassociate payment methods - badends
     Given I make a <request> request to endpoint restaurants payment-methods with restaurantId <restaurantId> and paymentMethodId <paymentMethodId>
-    Then I should receive a response with status code from endpoint restaurants <statusCode>
+    Then I should receive a response with status code <statusCode>
     Then I should receive a response with detail containing the message from restaurants <message>
 
     Examples:
