@@ -22,7 +22,7 @@ Feature: ProductTest
   # GET ALL - Listar produtos do restaurante
     When I make a GET request to list all products from the restaurant
     Then I should receive a response with status code "200"
-    Then I should receive an array in endpoint products
+    Then I should receive an array
 
   # PUT - Atualizar produto
     When I make a PUT request to endpoint products with a valid body and id

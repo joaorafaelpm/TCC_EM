@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.repository;
 
+import com.pendezzapizza.pendezzapizza_api.domain.model.PaymentMethod;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import org.springframework.data.domain.Page;
@@ -44,5 +45,8 @@ public interface RestaurantRepository
 
     @Query("SELECT u FROM Restaurant r JOIN r.responsibleUsers u WHERE r.id = :restaurantId")
     Page<User> findResponsibleUsersByRestaurantId(@Param("restaurantId") UUID restaurantId, Pageable pageable);
+
+    @Query("SELECT u FROM Restaurant r JOIN r.paymentMethods u WHERE r.id = :restaurantId")
+    Page<PaymentMethod> findPaymentMethodsByRestaurantId(@Param("restaurantId") UUID restaurantId, Pageable pageable);
 
 }

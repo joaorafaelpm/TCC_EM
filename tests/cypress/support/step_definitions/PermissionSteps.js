@@ -36,33 +36,3 @@ Given(
     });
   },
 );
-
-// ================= ASSERTIONS (THEN) =================
-Then(
-  "I should receive a response with status code from endpoint permissions {string}",
-  (statusCode) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.status).to.eq(parseInt(statusCode));
-    });
-  },
-);
-
-Then(
-  "I should receive a response body from endpoint permissions as an array",
-  () => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body._embedded.permissions).to.be.an("array");
-    });
-  },
-);
-
-Then(
-  "I should receive a response with statusText from endpoint permissions {string}",
-  (statusText) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.statusText).to.include(statusText);
-    });
-  },
-);
-
-

@@ -1,7 +1,8 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.ProductsCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.ProductsActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.ProductsSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Product;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.ProductRepository;
@@ -23,13 +24,50 @@ public class ProductService {
     RestaurantService restaurantService ;
     ProductRepository productRepository;
 
-    @Cacheable(value = "productsByRestaurant" , key = "#restaurant")
-    public Page<Product> findByRestaurant (Restaurant restaurant , Pageable pageable) {
-        return productRepository.findByRestaurant(restaurant , pageable);
+    @Cacheable(value = "productsByRestaurant", key = "{#restaurant.id, #pageable.pageNumber, #pageable.pageSize}")
+    public Page<Product> findByRestaurant(Restaurant restaurant, Pageable pageable) {
+        return productRepository.findByRestaurant(restaurant, pageable);
     }
-    @Cacheable(value = "productsActivesByRestaurant" , key = "#restaurant")
-    public Page<Product> findActiveByRestaurant (Restaurant restaurant , Pageable pageable) {
-        return productRepository.findActivesByRestaurant(restaurant , pageable);
+
+    @Cacheable(value = "productsActivesByRestaurant", key = "{#restaurant.id, #pageable.pageNumber, #pageable.pageSize}")
+    public Page<Product> findActiveByRestaurant(Restaurant restaurant, Pageable pageable) {
+        return productRepository.findActivesByRestaurant(restaurant, pageable);
+    }
+
+    @Cacheable(value = "product", key = "#productId")
+    public Product findById(UUID restaurantId, UUID productId) {
+        Restaurant restaurant = restaurantService.findById(restaurantId);
+        return productRepository.findByIdOrThrowException(restaurant, restaurantId, productId);
+    }
+
+    @ProductsSaveCacheEvict // Resolve o ID nulo via #result.id
+    @Transactional
+    public Product save(UUID restaurantId, Product product) {
+        Restaurant restaurant = restaurantService.findById(restaurantId);
+        product.setRestaurant(restaurant);
+        return productRepository.save(product);
+    }
+
+    @ProductsActionCacheEvict
+    @Transactional
+    public void remove(UUID restaurantId, UUID productId) {
+        Product product = findById(restaurantId, productId);
+        productRepository.delete(product);
+        productRepository.flush();
+    }
+
+    @ProductsActionCacheEvict
+    @Transactional
+    public void active(UUID restaurantId, UUID productId) {
+        Product product = findById(restaurantId, productId);
+        if (product.canActivate()) product.activate();
+    }
+
+    @ProductsActionCacheEvict
+    @Transactional
+    public void deactivate(UUID restaurantId, UUID productId) {
+        Product product = findById(restaurantId, productId);
+        if (product.canDeactivate()) product.deactivate();
     }
 
     @Cacheable(value = "productsLastUpdateDateActivesByRestaurantId" , key = "#restaurantId")
@@ -39,50 +77,6 @@ public class ProductService {
     @Cacheable(value = "productsLastUpdateDateByRestaurantId" , key = "#restaurantId")
     public OffsetDateTime findLastUpdateDateByRestaurantId (UUID restaurantId) {
         return productRepository.getLastUpdateDateByIdGetAll(restaurantId);
-    }
-
-    @Cacheable(value = "product", key="#restaurantId.toString().concat('-').concat(#productId.toString())")
-    public Product findById (UUID restaurantId , UUID productId ) {
-        Restaurant restaurant = restaurantService.findById(restaurantId);
-        restaurantService.findById(restaurantId);
-        return productRepository.findByIdOrThrowException(restaurant ,restaurantId , productId);
-    }
-
-    @ProductsCacheEvict
-    @Transactional
-    public Product save (UUID restaurantId , Product product) {
-        Restaurant restaurant = restaurantService.findById(restaurantId);
-        product.setRestaurant(restaurant);
-        restaurant.addProduct(product);
-        return productRepository.save(product) ;
-    }
-
-    @ProductsCacheEvict
-    @Transactional
-    public void remove (UUID restaurantId , UUID productId) {
-        Restaurant restaurant = restaurantService.findById(restaurantId);
-        Product product = findById(restaurantId , productId);
-
-        restaurant.removeProduct(product);
-        productRepository.delete(product);
-        productRepository.flush();
-    }
-
-    @ProductsCacheEvict
-    @Transactional
-    public void active (UUID restaurantId , UUID productId) {
-        Product product = findById(restaurantId, productId);
-        if (product.canActivate()) {
-            product.activate();
-        }
-    }
-    @ProductsCacheEvict
-    @Transactional
-    public void deactivate (UUID restaurantId, UUID productId) {
-        Product product = findById(restaurantId, productId);
-        if (product.canDeactivate()) {
-            product.deactivate();
-        }
     }
 
 }

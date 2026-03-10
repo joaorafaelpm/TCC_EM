@@ -1,6 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.ProductsCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.ProductsActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.ProductsSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.ProductPhotoNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.ProductPhoto;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.ProductRepository;
@@ -21,14 +22,12 @@ public class ProductPhotoCatalogService {
 
     private PhotoStorageService photoStorageService;
 
-    @Cacheable("product")
     @Transactional
     public ProductPhoto findById (UUID restaurantId , UUID productId) {
         return productRepository.findProductPhotoById(restaurantId , productId).orElseThrow(() ->
                 new ProductPhotoNotFoundException(restaurantId , productId));
     }
 
-    @ProductsCacheEvict
     @Transactional
     public ProductPhoto save (ProductPhoto photo , InputStream fileData) {
         UUID restaurantId = photo.getRestaurantId();
@@ -58,7 +57,6 @@ public class ProductPhotoCatalogService {
         return savedPhoto;
     }
 
-    @ProductsCacheEvict
     @Transactional
     public void delete (UUID restaurantId , UUID productId) {
         ProductPhoto existingPhoto = findById(restaurantId, productId);

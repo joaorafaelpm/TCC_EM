@@ -54,6 +54,17 @@ Then("I should receive a response body with detail {string}", (detail) => {
     expect(response.body.detail).to.include(detail);
   });
 });
+
+// Date
+// TODO: Consertar isso aqui
+// Then("I should receive a response body with specific date",
+//   () => {
+//     const dataFormatada = new Date().toISOString().split("T")[0];
+//     cy.get("@apiResponse").then((response) => {
+//       expect(response.body[0].dataFormatada).to.include(dataFormatada);
+//     });
+// });
+
 // StatusText
 Then("I should receive a response with statusText {string}", (statusText) => {
   cy.get("@apiResponse").then((response) => {
@@ -66,6 +77,28 @@ Then(
   (status) => {
     cy.get("@apiResponse").then((response) => {
       expect(response.body.status).to.include(status);
+    });
+  },
+);
+
+// USerMessage
+
+Then(
+  "I should receive a response body with userMessage {string}",
+  (msg) => {
+    cy.get("@apiResponse").then((response) => {
+      expect(response.body.userMessage).to.include(msg);
+    });
+  },
+);
+
+// Description
+
+Then(
+  "I should receive a response body with description {string}",
+  (desc) => {
+    cy.get("@apiResponse").then((response) => {
+      expect(response.body.description).to.include(desc);
     });
   },
 );
@@ -84,5 +117,17 @@ Then("I should receive a response body with objects userMessage {string}", (obje
   });
 });
 
+// Array
 
+Then("I should receive an array", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.body.content).to.be.an("array");
+  });
+});
+
+Then("I should receive an array but not as a page", () => {
+  cy.get("@apiResponse").then((response) => {
+    expect(response.body).to.be.an("array");
+  });
+});
 

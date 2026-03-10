@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,9 +38,8 @@ public class RestaurantService {
         return restaurantRepository.findResponsibleUsersByRestaurantId(restaurantId , pageable);
     }
     @Cacheable(value = "restaurantsPaymentMethods" , key = "#restaurantId")
-    public Collection<PaymentMethod> findPaymentMethodsByRestaurantId(UUID restaurantId) {
-        Restaurant restaurant = findById(restaurantId);
-        return restaurant.getPaymentMethods();
+    public Page<PaymentMethod> findPaymentMethodsByRestaurantId(UUID restaurantId , Pageable pageable) {
+        return restaurantRepository.findPaymentMethodsByRestaurantId(restaurantId , pageable);
     }
 
     @Cacheable(value = "restaurant" , key = "#restaurantId")

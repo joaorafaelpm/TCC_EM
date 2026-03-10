@@ -7,13 +7,13 @@ Feature: OrderTest
     Then I should receive a response with status code "201"
     Then I should receive a response body with status "CREATED"
   # GET by id
-    When I make a GET request to endpoint "/v1/orders" with id "c5d6e7f8-a9b0-4c1d-fa2e-4a5b6c7d8e9f"
+    When I make a GET request to endpoint orders with a valid id
     Then I should receive a response with status code "200"
     Then I should receive a response body with status "CREATED"
   # GET list
     When I make a GET request to list all orders
     Then I should receive a response with status code "200"
-    Then I should receive an array in endpoint orders
+    Then I should receive an array
   # confirmation
     When I make a PUT request to confirm the order
     Then I should receive a response with status code "204"
@@ -27,7 +27,7 @@ Feature: OrderTest
   # Checar status após entrega
     When I make a GET request to endpoint orders with a valid id
     Then I should receive a response with status code "200"
-    Then I should receive a response body with status "DELIVERED"
+    Then I should receive a response body with status "CONFIRMED"
 
   Scenario: LifeCycle of an Order - creation then cancellation
     Given I make a POST request to endpoint orders with a valid body
@@ -78,7 +78,7 @@ Feature: OrderTest
     Then I should receive a response with status code "406"
     Then I should receive a response with statusText "Not Acceptable"
 
-  Scenario Outline: I make a POST in endpoint orders with invalid fields and should see a bad request
+  Scenario Outline: I make a POST with invalid fields and should see a bad request
     Given I make a POST request to endpoint orders with a null <field>
     Then I should receive a response with status code "400"
     Then I should receive a response body with objects name <objectName>

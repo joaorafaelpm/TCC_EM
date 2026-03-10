@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.CitiesCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.CitiesActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.CitiesSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.model.City;
 import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
@@ -23,11 +23,10 @@ public class CityService {
     private final CityRepository cityRepository;
     private final StateService stateService;
 
-    @Cacheable("cities")
+    @Cacheable(value = "cities", key = "{#pageable.pageNumber, #pageable.pageSize}")
     public Page<City> findAll(Pageable pageable) {
         return cityRepository.findAll(pageable);
     }
-
     @Cacheable(value = "city", key = "#cityId")
     public City findById(UUID cityId) {
         return cityRepository.findByIdOrThrowException(cityId);
@@ -43,7 +42,7 @@ public class CityService {
         return cityRepository.getLastUpdateDateById(cityId);
     }
 
-    @CitiesCacheEvict
+    @CitiesSaveCacheEvict
     @Transactional
     public City save(City city) {
         UUID stateId = city.getState().getId();
@@ -52,18 +51,17 @@ public class CityService {
         return cityRepository.save(city);
     }
 
-    @CitiesCacheEvict
+    @CitiesSaveCacheEvict
     @Transactional
     public City save(UUID cityId, City updatedCity) {
         City existingCity = findById(cityId);
         UUID stateId = updatedCity.getState().getId();
         State state = stateService.findById(stateId);
         existingCity.setState(state);
-
         return cityRepository.save(existingCity);
     }
 
-    @CitiesCacheEvict
+    @CitiesActionCacheEvict
     @Transactional
     public void delete(UUID cityId) {
         cityRepository.delete(findById(cityId));

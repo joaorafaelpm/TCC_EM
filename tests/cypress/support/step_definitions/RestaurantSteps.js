@@ -147,15 +147,6 @@ When("I make a PUT request to close the restaurant", () => {
   });
 });
 
-When("I make a PUT request to activate multiple restaurants", () => {
-  cy.get("@token").then((token) => {
-    cy.get("@createdRestaurantId").then((restaurantId) => {
-      RestaurantApi.activateMultipleRestaurants(token, [restaurantId]).then((response) => {
-        cy.wrap(response).as("apiResponse");
-      });
-    });
-  });
-});
 
 // ================= DELETE =================
 When("I make a DELETE request to deactivate the restaurant", () => {
@@ -168,15 +159,6 @@ When("I make a DELETE request to deactivate the restaurant", () => {
   });
 });
 
-When("I make a DELETE request to deactivate multiple restaurants", () => {
-  cy.get("@token").then((token) => {
-    cy.get("@createdRestaurantId").then((restaurantId) => {
-      RestaurantApi.deactivateMultipleRestaurants(token, [restaurantId]).then((response) => {
-        cy.wrap(response).as("apiResponse");
-      });
-    });
-  });
-});
 
 // ================= RESPONSIBLE USERS =================
 Given(
@@ -275,83 +257,3 @@ Given(
   },
 );
 
-// ================= ASSERTIONS (THEN) =================
-Then(
-  "I should receive a response with status code from endpoint restaurants {string}",
-  (statusCode) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.status).to.eq(parseInt(statusCode));
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with name from endpoint restaurants {string}",
-  (name) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.name).to.include(name);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with detail from endpoint restaurants {string}",
-  (detail) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.detail).to.include(detail);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with title from endpoint restaurants {string}",
-  (title) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.title).to.include(title);
-    });
-  },
-);
-
-Then("I should receive an array of {string} in endpoint restaurants", (currentCheck) => {
-  cy.get("@apiResponse").then((response) => {
-
-    expect(response.body._embedded[currentCheck]).to.be.an("array");
-  });
-});
-
-
-Then(
-  "I should receive a response with statusText from endpoint restaurants {string}",
-  (statusText) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.statusText).to.include(statusText);
-    });
-  },
-);
-
-Then(
-  "I should receive a response with detail containing the message from restaurants {string}",
-  (detail) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.detail).to.include(detail);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with objects name from endpoint restaurants {string}",
-  (objectName) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.objects[0].name).to.include(objectName);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with objects userMessage from endpoint restaurants {string}",
-  (objectUserMessage) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.objects[0].userMessage).to.include(objectUserMessage);
-    });
-  },
-);

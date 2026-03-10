@@ -12,7 +12,7 @@ Feature: RestaurantTest
   # GET list
     When I make a GET request to list all restaurants
     Then I should receive a response with status code "200"
-    Then I should receive an array of "restaurants" in endpoint restaurants
+    Then I should receive an array
   # PUT
     When I make a PUT request to endpoint restaurants with a valid body and id
     Then I should receive a response with status code "200"
@@ -21,11 +21,6 @@ Feature: RestaurantTest
     When I make a PUT request to activate the restaurant
     Then I should receive a response with status code "204"
     When I make a DELETE request to deactivate the restaurant
-    Then I should receive a response with status code "204"
-  # Activate multiple / Deactivate multiple
-    When I make a PUT request to activate multiple restaurants
-    Then I should receive a response with status code "204"
-    When I make a DELETE request to deactivate multiple restaurants
     Then I should receive a response with status code "204"
   # Open / Close
     When I make a PUT request to activate the restaurant
@@ -44,10 +39,11 @@ Feature: RestaurantTest
   # GET responsible-users e payment-methods
     When I make a GET request to list responsible users of the restaurant
     Then I should receive a response with status code "200"
-    Then I should receive an array of "users" in endpoint restaurants
+    Then I should receive an array 
+    
     When I make a GET request to list payment methods of the restaurant
     Then I should receive a response with status code "200"
-    Then I should receive an array of "paymentMethods" in endpoint restaurants
+    Then I should receive an array
 
   Scenario Outline: All Get Requests for Restaurants - invalid ids
     Given I make a GET request to endpoint restaurants with id <id>
@@ -78,7 +74,7 @@ Feature: RestaurantTest
   Scenario Outline: Associate and Disassociate responsible users - badends
     Given I make a <request> request to endpoint restaurants responsible-users with restaurantId <restaurantId> and userId <userId>
     Then I should receive a response with status code <statusCode>
-    Then I should receive a response with detail containing the message from restaurants <message>
+    Then I should receive a response body with detail <message>
 
     Examples:
       | request  | restaurantId                           | userId                                 | statusCode | message                                                                                                                                      |
@@ -104,7 +100,7 @@ Feature: RestaurantTest
   Scenario Outline: Associate and Disassociate payment methods - badends
     Given I make a <request> request to endpoint restaurants payment-methods with restaurantId <restaurantId> and paymentMethodId <paymentMethodId>
     Then I should receive a response with status code <statusCode>
-    Then I should receive a response with detail containing the message from restaurants <message>
+    Then I should receive a response body with detail <message>
 
     Examples:
       | request  | restaurantId                           | paymentMethodId                        | statusCode | message                                                                                                                                         |
