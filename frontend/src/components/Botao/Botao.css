@@ -1,0 +1,42 @@
+:root {
+  --button-color: #b43e3e;
+  
+}
+
+.botao-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -80px;
+}
+
+
+.botao{
+    background-color: var(--button-color);
+    color: white;
+    font-size: max(0.9vw, 1.1rem);
+    font-weight: 500;
+    padding: 1vw 2.6vw;
+    margin: 55px auto;
+    background-size: cover;
+    background-position: center;
+    border-radius: 25px;      
+    overflow: hidden;   
+    cursor: pointer;
+    transition: background-color 0.4s ease;
+    transition: 0.4s;
+   
+    
+   
+}
+.botao:hover{
+   
+    filter: brightness(1.6);
+    transition: background-color 0.4s ease;
+    transition: 0.4s;
+  
+    
+    
+}
+
+

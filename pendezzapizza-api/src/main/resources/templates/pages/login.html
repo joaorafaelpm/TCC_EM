@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Pendezza Pizza</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-popup-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .login-popup-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .login-popup-title h2 {
+            font-size: 1.4rem;
+        }
+
+        .login-popup-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .login-popup-inputs input {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .login-popup-inputs input:focus {
+            border-color: #f0522b;
+        }
+
+        button[type=submit] {
+            background: #f0522b;
+            color: white;
+            border: none;
+            padding: 0.85rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button[type=submit]:hover {
+            background: #d4421e;
+        }
+
+        .login-popup-condition {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 0.85rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<form class="login-popup-container" action="/login" method="POST">
+    <div class="login-popup-title">
+        <h2>Login</h2>
+    </div>
+
+    <div class="login-popup-inputs">
+        <!-- Spring Security exige exatamente name="username" e name="password" -->
+        <input type="email" name="username" placeholder="Seu Email" required />
+        <input type="password" name="password" placeholder="Senha" required />
+    </div>
+
+    <!-- Mostra erro se o Spring redirecionar com ?error -->
+    <p class="error-msg" id="erroMsg">Email ou senha inválidos.</p>
+
+    <button type="submit" id = "LoginButton">Entrar</button>
+
+    <div class="login-popup-condition">
+        <input type="checkbox" required />
+        <span>Concordo com os <strong>Termos de Serviço</strong></span>
+    </div>
+</form>
+
+<script>
+    // Mostra mensagem de erro se o Spring redirecionou com ?error
+    if (window.location.search.includes("error")) {
+        document.getElementById("erroMsg").style.display = "block";
+    }
+</script>
+</body>
+</html>

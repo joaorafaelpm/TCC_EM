@@ -1,0 +1,11 @@
+# backend/Dockerfile
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+COPY catalogo catalogo
+
+EXPOSE ${API_PORT}
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

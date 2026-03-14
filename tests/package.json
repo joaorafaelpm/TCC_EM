@@ -1,0 +1,31 @@
+{
+  "name": "tests",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "triggerAllTests-login": "npx cypress run --spec cypress/e2e --browser chrome --env tags=\"@login\"",
+    "triggerAllTests-statistics": "npx cypress run --spec cypress/e2e --browser chrome --env tags=\"@statistics\"",
+    "triggerAllTests-normal": "npx cypress run --spec cypress/e2e --browser chrome --env tags=\"not @login and not @statistics\"",
+    "triggerAllTests": "npm run triggerAllTests-login && npm run triggerAllTests-statistics && npm run triggerAllTests-normal"
+  },
+  "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^24.0.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.2.8",
+    "@cypress/grep": "^6.0.0",
+    "@cypress/xpath": "^2.0.3",
+    "axios": "^1.13.5",
+    "cypress": "^15.9.0",
+    "cypress-multi-reporters": "^2.0.5",
+    "dotenv": "^17.3.1",
+    "fs": "^0.0.1-security",
+    "mocha-junit-reporter": "^2.2.1",
+    "mochawesome": "^7.1.4",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2",
+    "serialize-anything": "^1.2.3"
+  }
+}

@@ -1,37 +1,55 @@
 
-services:
-  # backend:
-  #   build: ./backend
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
-  #   env_file:
-  #     - backend/.env
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:mysql://mysql:${DATABASE_PORT}/${DATABASE_NAME}
-  #     SPRING_DATASOURCE_USERNAME: ${DATABASE_USERNAME}
-  #     SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
-  #   networks:
-  #     - backend
+networks:
+  pendezzapizza-network:
+    driver: bridge
 
-  mysql:
+services:
+  pendezzapizza-mysql:
     image: mysql:8.3.0
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
       MYSQL_DATABASE: ${DATABASE_NAME}
     ports:
-      - "3307:${DATABASE_PORT}"
+      - ${DATABASE_PORT}
     networks:
-      - backend
+      - pendezzapizza-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
-networks:
-  backend:
+  pendezzapizza-redis:
+    image: redis:8.4.0-alpine
+    networks:
+      - pendezzapizza-network
 
+  pendezzapizza-api:
+    # image: jrfifipi/pendezzapizza:v1
+
+    image: pendezzapizza-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://pendezzapizza-mysql/${DATABASE_NAME}?createDatabaseIfNotExists=true&serverTimeZone=UTC
+      SPRING_SESSION_STORE_TYPE: redis
+      SPRING_DATA_REDIS_HOST: pendezzapizza-redis
+    networks:
+      - pendezzapizza-network
+    env_file:
+      - ./pendezzapizza-api/.env
+    depends_on:
+      pendezzapizza-mysql:
+        condition: service_healthy
+    volumes:
+      - ${CONTAINER_VOLUME}
+    
+
+  pendezzapizza-proxy:
+    build: ./nginx
+    image: pendezzapizza-proxy
+    ports:
+      - ${NGNIX_PORT}
+    networks:
+      - pendezzapizza-network
+    depends_on:
+      - pendezzapizza-api
 
