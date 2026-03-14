@@ -1,0 +1,89 @@
+package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
+
+
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.OrderModelAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.OrderSummaryModelAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.OrderDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.DTO.OrderDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderSummaryModel;
+import com.pendezzapizza.pendezzapizza_api.core.data.PageWrapper;
+import com.pendezzapizza.pendezzapizza_api.core.data.PageableTranslator;
+import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
+import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityNotFoundException;
+import com.pendezzapizza.pendezzapizza_api.domain.filter.OrderFilter;
+import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
+import com.pendezzapizza.pendezzapizza_api.domain.service.OrderIssuanceService;
+import com.pendezzapizza.pendezzapizza_api.domain.service.OrderService;
+import com.pendezzapizza.pendezzapizza_api.infrastructure.repository.spec.OrderSpecs;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/v1/orders")
+@AllArgsConstructor
+public class OrderController {
+
+    private OrderService orderService;
+    private OrderIssuanceService orderIssuanceService;
+
+    private OrderModelAssembler orderModelAssembler;
+    private OrderSummaryModelAssembler orderSummaryModelAssembler;
+    private OrderDisassembler orderDisassembler;
+    private PagedResourcesAssembler<Order> pagedResourcesAssembler;
+
+    @GetMapping
+    public PagedModel<OrderSummaryModel> search(
+            OrderFilter orderFilter, Pageable pageable) {
+
+        Pageable translatedPageable = translatePageable(pageable);
+
+        Page<Order> orderPage =
+                orderService.findAll(OrderSpecs.withFilter(orderFilter), translatedPageable);
+
+        orderPage = new PageWrapper<>(orderPage, pageable);
+
+        return pagedResourcesAssembler.toModel(orderPage, orderSummaryModelAssembler);
+    }
+
+    @GetMapping("/{id}")
+    public OrderModel getOne(@PathVariable UUID id) {
+        return orderModelAssembler.toModel(orderService.findByIdMapperSolver(id));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public OrderModel save(@RequestBody @Valid OrderDTO orderDTO) {
+        try {
+            Order order = orderDisassembler.orderDTOToOrder(orderDTO);
+            return orderModelAssembler.toModel(orderIssuanceService.issueOrder(order));
+        } catch (EntityNotFoundException e) {
+            throw new BusinessException(e.getMessage(), e);
+        }
+    }
+
+    private Pageable translatePageable(Pageable apiPageable) {
+        var mapping = Map.of(
+                "id", "id",
+                "subtotal", "subtotal",
+                "shippingFee", "shippingFee",
+                "totalValue", "totalValue",
+                "creationDate", "creationDate",
+                "restaurant.name", "restaurant.name",
+                "restaurant.id", "restaurant.id",
+                "client.id", "client.id",
+                "client.name", "client.name"
+        );
+
+        return PageableTranslator.translate(apiPageable, mapping);
+    }
+}

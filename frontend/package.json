@@ -15,7 +15,7 @@
     "@svgr/webpack": "^8.1.0",
     "cookie": "^1.0.2",
     "iron-session": "^8.0.4",
-    "next": "^15.1.4",
+    "next": "^15.5.10",
     "next-cookies": "^2.0.3",
     "next-iron-session": "^4.2.0",
     "react": "^19.0.0",

@@ -1,0 +1,18 @@
+package com.pendezzapizza.pendezzapizza_api.domain.exception;
+
+import java.io.Serial;
+import java.util.UUID;
+
+public class CityNotFoundException extends EntityNotFoundException {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+
+    public CityNotFoundException(String message) {
+        super(message);
+    }
+    public CityNotFoundException(UUID id) {
+        super(String.format("Cidade com id '%s' não encontrada!" , id));
+    }
+}
