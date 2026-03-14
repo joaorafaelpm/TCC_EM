@@ -36,7 +36,7 @@
 		<commons-lang3.version>3.18.0</commons-lang3.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<guava.version>33.5.0-jre</guava.version>
-		<jasperreports.version>6.21.3</jasperreports.version>
+		<jasperreports.version>7.0.4</jasperreports.version>
 		<hateoas.version>2.6.4</hateoas.version>
 		<loggly.version>0.1.5</loggly.version>
 		<spring-security.version>6.5.0</spring-security.version>
