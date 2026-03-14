@@ -1,19 +1,23 @@
+# Cypress
+cypress/screenshots/
+cypress/videos/
+cypress/results/
+**/screenshots/
+**/videos/
+**/results/
+
+# Pasta Personalizada
+catalogo/
+**/catalogo/
+
 # Node.js
 node_modules/
 **/node_modules/
 
-results/
-**/results
-catalogo/
-**/catalogo
-screenshots/
-**/screenshots
-videos/
-**/videos
 # Env
 .env
 .env.test
-./**/.env
+.env.*
 
 # Maven
 target/
