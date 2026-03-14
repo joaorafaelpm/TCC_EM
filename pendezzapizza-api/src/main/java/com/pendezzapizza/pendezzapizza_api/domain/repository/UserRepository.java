@@ -32,4 +32,6 @@ public interface UserRepository extends CustomJPARepository<User, UUID> {
     @Query("select max(u.updateDate) from User u where u.id = :userId")
     OffsetDateTime getLastUpdateDateById(UUID userId);
 
+    @Query("SELECT u FROM User u left join fetch u.groups g WHERE u.id = :userId")
+    Optional<User> findByIdGroupLazy (UUID userId) ;
 }

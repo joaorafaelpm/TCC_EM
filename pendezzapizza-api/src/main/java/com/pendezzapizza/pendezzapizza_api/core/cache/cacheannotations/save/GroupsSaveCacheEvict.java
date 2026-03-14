@@ -1,4 +1,4 @@
-package com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations;
+package com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -12,8 +12,7 @@ import java.lang.annotation.Target;
 @Caching(evict = {
         @CacheEvict(value = "groups", allEntries = true),
         @CacheEvict(value = "groupsLastUpdate", allEntries = true),
-        @CacheEvict(value = "group", key = "#id ?: #groupId ?: #group?.id"),
-        @CacheEvict(value = "groupsLastUpdateById", key = "#id ?: #groupId ?: #group?.id")
+        @CacheEvict(value = "group", key = "#result.id"),
+        @CacheEvict(value = "groupsLastUpdateById", key = "#result.id")
 })
-public @interface GroupsCacheEvict {
-}
+public @interface GroupsSaveCacheEvict {}

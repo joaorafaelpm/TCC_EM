@@ -8,16 +8,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-// Para (POST/PUT)
+//// Para (POST/PUT)
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Caching(evict = {
-        // Limpa o cache do item específico
         @CacheEvict(value = "product", key = "#result.id"),
         // Limpa TODAS as páginas de produtos daquele restaurante
         @CacheEvict(value = "productsByRestaurant", allEntries = true),
         @CacheEvict(value = "productsActivesByRestaurant", allEntries = true),
-        // Limpa as datas de última atualização
         @CacheEvict(value = "productsLastUpdateDateActivesByRestaurantId", key = "#restaurantId"),
         @CacheEvict(value = "productsLastUpdateDateByRestaurantId", key = "#restaurantId")
 })

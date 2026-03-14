@@ -1,3 +1,4 @@
+@statistics
 Feature: StatisticsTest
 
   Scenario: I make a get in statistics and I receive a response
@@ -9,7 +10,7 @@ Feature: StatisticsTest
     Given I make a GET request to endpoint statistics with a valid id
     Then I should receive a response with status code "200"
     Then I should receive a response body with specific date
-    Then I should receive a response body with totalBilled "725.5"
+    Then I should receive a response body with totalBilled "61.5"
     Then I should receive a response body with totalSales "1"
 
   

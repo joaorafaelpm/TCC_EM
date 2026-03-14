@@ -1,3 +1,4 @@
+    @login
 Feature: Login 
 
     Scenario: Invalid Login
@@ -6,7 +7,7 @@ Feature: Login
     And I type a registered password: "wrong_password"
     And I click submit button
     Then I should see a error page
-
+    
     Scenario: Valid Login as an Admin
     Given I'm on the login page
     When I type a registered email and password

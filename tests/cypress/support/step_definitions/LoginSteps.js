@@ -7,7 +7,7 @@ const CLIENT_USERNAME = Cypress.env("CLIENT_USERNAME");
 const CLIENT_PASSWORD = Cypress.env("CLIENT_PASSWORD");
 
 Before(() => {
-  cy.task("unSerializeData").then((token) => {
+  cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
 })

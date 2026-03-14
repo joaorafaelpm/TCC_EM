@@ -30,7 +30,7 @@ class LoginPage {
 
   static makeAccessTokenRequest() {
     cy.getAccessTokenRequestEnv().then((env) => {
-      cy.makeAccessTokenRequestAndWriteIt(env);
+      cy.makeAccessTokenRequestAndWriteIt(env , "admin_access_token");
     });
   }
 }

@@ -9,7 +9,7 @@ import PaymentMethodApi from "../pageObjects/PaymentMethodApi";
 const usingPaymentId = "3ee42ee7-3d35-4680-afe0-e01a24e649dc";
 
 Before(() => {
-  cy.task("unSerializeData").then((token) => {
+  cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
 });

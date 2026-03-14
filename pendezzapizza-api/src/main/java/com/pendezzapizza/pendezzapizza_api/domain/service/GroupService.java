@@ -1,9 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.GroupsCacheEvict;
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.PermissionsCacheEvict;
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.UsersCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.GroupsActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.PermissionsActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.UsersActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.GroupsSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Group;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.GroupRepository;
@@ -57,13 +58,13 @@ public class GroupService {
         return groupRepository.getLastGroupUpdateDateById(groupId);
     }
 
-    @GroupsCacheEvict
+    @GroupsSaveCacheEvict
     @Transactional
     public Group save (Group group) {
         return groupRepository.save(group);
     }
 
-    @GroupsCacheEvict
+    @GroupsActionCacheEvict
     @Transactional
     public void deleteById (UUID groupId) {
         try {
@@ -74,29 +75,29 @@ public class GroupService {
         }
     }
 
-    @PermissionsCacheEvict
-    @GroupsCacheEvict
+    @PermissionsActionCacheEvict
+    @GroupsActionCacheEvict
     @Transactional
     public void associatePermission (UUID groupId , UUID permissionId) {
         Group group = findById(groupId);
         group.associatePermission(permissionService.findById(permissionId));
     }
-    @PermissionsCacheEvict
-    @GroupsCacheEvict
+    @PermissionsActionCacheEvict
+    @GroupsActionCacheEvict
     @Transactional
     public void disassociatePermission (UUID groupId , UUID permissionId) {
         Group group = findById(groupId);
         group.disassociatePermission(permissionService.findById(permissionId));
     }
 
-    @UsersCacheEvict
+    @UsersActionCacheEvict
     @Transactional
     public void associateGroup (UUID userId , UUID groupId) {
-        userService.findById(userId).associate(findById(groupId));
+        userService.findByIdGroupLazy(userId).associate(findById(groupId));
     }
-    @UsersCacheEvict
+    @UsersActionCacheEvict
     @Transactional
     public void disassociateGroup (UUID userId , UUID groupId) {
-        userService.findById(userId).dissociate(findById(groupId));
+        userService.findByIdGroupLazy(userId).dissociate(findById(groupId));
     }
 }

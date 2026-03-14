@@ -1,4 +1,4 @@
-package com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations;
+package com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -13,8 +13,7 @@ import java.lang.annotation.Target;
 @Caching(evict = {
         @CacheEvict(value = "permissions", allEntries = true),
         @CacheEvict(value = "permissionsLastUpdate", allEntries = true),
-        @CacheEvict(value = "permission", key = "#id ?: #permissionId ?: #permission?.id"),
-        @CacheEvict(value = "permissionsLastUpdateById", key = "#id ?: #permissionId ?: #permission?.id")
+        @CacheEvict(value = "permission", key = "#permissionId"),
+        @CacheEvict(value = "permissionsLastUpdateById", key = "#permissionId")
 })
-public @interface PermissionsCacheEvict {
-}
+public @interface PermissionsActionCacheEvict {}

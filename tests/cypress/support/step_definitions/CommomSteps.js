@@ -9,7 +9,7 @@ import CommomApi from "../pageObjects/CommomApi";
 // ------------------------ Access Token ------------------------
 
 Before(() => {
-  cy.task("unSerializeData").then((token) => {
+  cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
 });
@@ -55,15 +55,37 @@ Then("I should receive a response body with detail {string}", (detail) => {
   });
 });
 
+// TotalBilled
+
+Then(
+  "I should receive a response body with totalBilled {string}",
+  (totalBilled) => {
+    cy.get("@apiResponse").then((response) => {
+      expect(response.body[0].totalBilled).to.eq(parseFloat(totalBilled));
+    });
+  },
+);
+
+// TotalSales
+Then(
+  "I should receive a response body with totalSales {string}",
+  (totalSales) => {
+    cy.get("@apiResponse").then((response) => {
+      expect(response.body[0].totalSales).to.eq(parseInt(totalSales));
+    });
+  },
+);
+
 // Date
-// TODO: Consertar isso aqui
-// Then("I should receive a response body with specific date",
-//   () => {
-//     const dataFormatada = new Date().toISOString().split("T")[0];
-//     cy.get("@apiResponse").then((response) => {
-//       expect(response.body[0].dataFormatada).to.include(dataFormatada);
-//     });
-// });
+Then("I should receive a response body with specific date",
+  () => {
+    cy.formatSpecificDate().then(date => {
+      cy.get("@apiResponse").then((response) => {
+        expect(response.body[0].date).to.include(date);
+      });
+    });
+    
+});
 
 // StatusText
 Then("I should receive a response with statusText {string}", (statusText) => {

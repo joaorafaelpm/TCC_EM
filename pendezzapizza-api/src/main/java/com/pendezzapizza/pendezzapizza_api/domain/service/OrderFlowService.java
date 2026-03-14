@@ -1,6 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.OrdersCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.OrdersActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ public class OrderFlowService {
 
     private final OrderService orderService;
 
-    @OrdersCacheEvict
+    @OrdersActionCacheEvict
     @Transactional
     public void confirm(UUID orderId) {
         Order order = orderService.findById(orderId);
@@ -23,14 +23,14 @@ public class OrderFlowService {
         orderService.save(order);
     }
 
-    @OrdersCacheEvict
+    @OrdersActionCacheEvict
     @Transactional
     public void deliver(UUID orderId) {
         Order order = orderService.findById(orderId);
         order.deliver();
     }
 
-    @OrdersCacheEvict
+    @OrdersActionCacheEvict
     @Transactional
     public void cancel(UUID orderId) {
         Order order = orderService.findById(orderId);

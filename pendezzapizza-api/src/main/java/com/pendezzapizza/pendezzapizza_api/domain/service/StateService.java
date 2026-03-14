@@ -1,17 +1,18 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.StatesCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.StatesActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.StatesSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.StateRepository;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -44,13 +45,13 @@ public class StateService {
     }
 
 
-    @StatesCacheEvict
+    @StatesSaveCacheEvict
     @Transactional
     public State save(State state) {
         return stateRepository.save(state);
     }
 
-    @StatesCacheEvict
+    @StatesActionCacheEvict
     @Transactional
     public void delete(UUID stateId) {
         try {

@@ -10,7 +10,7 @@ const userId = "a6162eb1-df44-471b-aef3-9feee0d9d267";
 const groupId = "4a3fdd17-542f-4f6c-b450-871ff0f21092";
 
 Before(() => {
-  cy.task("unSerializeData").then((token) => {
+  cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
 });
@@ -200,94 +200,6 @@ Given(
           cy.wrap(response).as("apiResponse");
         },
       );
-    });
-  },
-);
-
-// ================= ASSERTIONS (THEN) =================
-Then(
-  "I should receive a response with status code from endpoint users {string}",
-  (statusCode) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.status).to.eq(parseInt(statusCode));
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with title from endpoint users {string}",
-  (title) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.title).to.include(title);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with name from endpoint users {string}",
-  (name) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.name).to.include(name);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with detail from endpoint users {string}",
-  (detail) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.detail).to.include(detail);
-    });
-  },
-);
-
-Then("I should receive an array in endpoint users", () => {
-  cy.get("@apiResponse").then((response) => {
-    expect(response.body).to.be.an("array");
-  });
-});
-
-Then(
-  "I should receive a response with statusText from endpoint users {string}",
-  (statusText) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.statusText).to.include(statusText);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with objects name from endpoint users {string}",
-  (objectName) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.objects[0].name).to.include(objectName);
-    });
-  },
-);
-
-Then(
-  "I should receive a response with detail containing the message from users {string}",
-  (detail) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.detail).to.include(detail);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with objects userMessage from endpoint users {string}",
-  (objectUserMessage) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.objects[0].userMessage).to.include(objectUserMessage);
-    });
-  },
-);
-
-Then(
-  "I should receive a response body with userMessage from endpoint users {string}",
-  (objectUserMessage) => {
-    cy.get("@apiResponse").then((response) => {
-      expect(response.body.userMessage).to.include(objectUserMessage);
     });
   },
 );

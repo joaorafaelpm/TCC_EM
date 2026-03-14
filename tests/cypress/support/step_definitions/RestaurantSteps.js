@@ -6,13 +6,12 @@ import {
 } from "@badeball/cypress-cucumber-preprocessor";
 import RestaurantApi from "../pageObjects/RestaurantApi";
 
-// ⚠️ Substitua pelos IDs reais do seu banco antes de rodar
 const USER_ID = "a6162eb1-df44-471b-aef3-9feee0d9d267";
 const PAYMENT_METHOD_ID = "3ee42ee7-3d35-4680-afe0-e01a24e649dc";
 const RESTAURANT_ID = "52ec094f-3e34-42d4-845a-bc1c178259c1";
 
 Before(() => {
-  cy.task("unSerializeData").then((token) => {
+  cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
 });

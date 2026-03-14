@@ -83,7 +83,7 @@ Cypress.Commands.add("getAccessTokenRequestEnv", () => {
       })
   );
 });
-Cypress.Commands.add("makeAccessTokenRequestAndWriteIt", ({ redirectUrl, apiUrl, clientId, clientSecret, codeVerifier }) => {
+Cypress.Commands.add("makeAccessTokenRequestAndWriteIt", ({ redirectUrl, apiUrl, clientId, clientSecret, codeVerifier } , fileName) => {
    cy.location("search").then((search) => {
       const urlParams = new URLSearchParams(search);
       const capturedCode = urlParams.get("code");
@@ -105,6 +105,18 @@ Cypress.Commands.add("makeAccessTokenRequestAndWriteIt", ({ redirectUrl, apiUrl,
         },
       });
     }).then((response) => {
-      cy.task("serializeData", response.body.access_token);
+      cy.task("serializeData", {
+        token: response.body.access_token,
+        fileName: fileName,
+      });
     });
 });
+
+
+// Date
+Cypress.Commands.add(
+  "formatSpecificDate",
+  () => {
+    return new Date().toISOString().split("T")[0];
+  },
+);

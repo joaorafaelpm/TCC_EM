@@ -10,7 +10,7 @@ const groupId = "4a3fdd17-542f-4f6c-b450-871ff0f21092";
 const permissionId = "1925eff2-a761-49ff-ab2a-fd471828cb9d";
 
 Before(() => {
-  cy.task("unSerializeData").then((token) => {
+  cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
 });

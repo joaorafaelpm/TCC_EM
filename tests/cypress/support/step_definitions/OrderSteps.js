@@ -12,7 +12,7 @@ const PRODUCT_ID = "72e58c00-e73f-41ee-bdd7-acf75341a7a7";
 const CITY_ID = "0e0362cc-db84-4484-9909-d6977b96b619";
 
 Before(() => {
-  cy.task("unSerializeData").then((token) => {
+  cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
 });

@@ -4,15 +4,15 @@ const { fileExists } = require("./fileExists");
 const { ERROR } = require("./ERROR");
 
 const changelogPath = "cypress/.cache";
-function serialize(info) {
+function serialize(info, filename) {
   let jstr = ser.serialize(info);
   removeChangelogSerializedFileIfExist();
   fs.mkdirSync(changelogPath, { recursive: true });
-  fs.writeFileSync(`${changelogPath}/changelog.obj`, jstr);
+  fs.writeFileSync(`${changelogPath}/${filename}.obj`, jstr);
 }
 
-function unSerialize() {
-  const path = `${changelogPath}/changelog.obj`;
+function unSerialize(filename) {
+  const path = `${changelogPath}/${filename}.obj`;
 
   if (!fileExists(path)) {
     ERROR(

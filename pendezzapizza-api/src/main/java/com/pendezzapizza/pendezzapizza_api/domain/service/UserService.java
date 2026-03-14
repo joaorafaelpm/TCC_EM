@@ -1,8 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.UsersCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.UsersActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.UsersSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
+import com.pendezzapizza.pendezzapizza_api.domain.exception.UserNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -36,6 +38,11 @@ public class UserService  {
         return userRepository.findByIdOrThrowException(userId);
     }
 
+    public User findByIdGroupLazy (UUID userId) {
+        return userRepository.findByIdGroupLazy(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+    }
+
     @Cacheable("usersLastUpdate")
     public OffsetDateTime getLastUpdateDate() {
         return userRepository.getLastUpdateDate();
@@ -46,7 +53,7 @@ public class UserService  {
         return userRepository.getLastUpdateDateById(userId);
     }
 
-    @UsersCacheEvict
+    @UsersSaveCacheEvict
     @Transactional
     public User save(User user) {
 
@@ -62,7 +69,7 @@ public class UserService  {
         return userRepository.save(user);
     }
 
-    @UsersCacheEvict
+    @UsersActionCacheEvict
     @Transactional
     public void delete(UUID userId) {
         try {
@@ -74,7 +81,7 @@ public class UserService  {
         }
     }
 
-    @UsersCacheEvict
+    @UsersActionCacheEvict
     @Transactional
     public void changePassword(UUID userId , String oldPassword , String newPassword) {
         User user = findById(userId);

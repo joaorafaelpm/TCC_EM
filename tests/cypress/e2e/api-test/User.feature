@@ -87,7 +87,7 @@ Feature: UserTest
   Scenario Outline: Associate and Disassociate User to a Group badends
     Given I make a <request> request to endpoint users with id <userId> and groupId <groupId>
     Then I should receive a response with status code <statusCode>
-    Then I should receive a response with detail containing the message from users <message>
+    Then I should receive a response body with detail <message>
 
     Examples:
       | request  | userId                                 | groupId                                | statusCode | message                                                                                                                                 |

@@ -1,4 +1,4 @@
-package com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations;
+package com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -13,8 +13,7 @@ import java.lang.annotation.Target;
 @Caching(evict = {
         @CacheEvict(value = "orders", allEntries = true),
         @CacheEvict(value = "ordersLastUpdate", allEntries = true),
-        @CacheEvict(value = "order", key = "#id ?: #orderId ?: #order?.id"),
-        @CacheEvict(value = "ordersLastUpdateById", key = "#id ?: #orderId ?: #order?.id")
+        @CacheEvict(value = "order", key = "#result.id"),
+        @CacheEvict(value = "ordersLastUpdateById", key = "#result.id")
 })
-public @interface OrdersCacheEvict {
-}
+public @interface OrdersSaveCacheEvict {}

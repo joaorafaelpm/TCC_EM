@@ -1,6 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.RestaurantsCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.RestaurantsActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.RestaurantsSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.RestaurantNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.PaymentMethod;
@@ -61,7 +62,7 @@ public class RestaurantService {
         return restaurantRepository.getLastUpdateDateById(restaurantId);
     }
 
-    @RestaurantsCacheEvict
+    @RestaurantsSaveCacheEvict
     @Transactional
     public Restaurant save (Restaurant restaurant) {
         UUID cityId = restaurant.getAddress().getCity().getId();
@@ -72,7 +73,7 @@ public class RestaurantService {
 
     }
 
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void remove (UUID restaurantId) {
         try {
@@ -85,33 +86,33 @@ public class RestaurantService {
         }
     }
 
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void activate (UUID restaurantId) {
         Restaurant restaurant = findById(restaurantId);
         restaurant.activate();
     }
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void deactivate (UUID restaurantId) {
         Restaurant restaurant = findById(restaurantId);
         restaurant.deactivate();
     }
 
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void open (UUID restaurantId) {
         Restaurant restaurant = findById(restaurantId);
         restaurant.open();
     }
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void close (UUID restaurantId) {
         Restaurant restaurant = findById(restaurantId);
         restaurant.close();
     }
 
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void disassociatePaymentMethod(UUID restaurantId , UUID paymentMethodId) {
         Restaurant restaurant = findById(restaurantId);
@@ -119,7 +120,7 @@ public class RestaurantService {
 
         restaurant.disassociatePaymentMethod(paymentMethod);
     }
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void associatePaymentMethod(UUID restaurantId , UUID paymentMethodId) {
         Restaurant restaurant = findById(restaurantId);
@@ -128,7 +129,7 @@ public class RestaurantService {
         restaurant.associatePaymentMethod(paymentMethod);
     }
 
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void disassociateResponsibleUser(UUID restaurantId , UUID userId) {
         Restaurant restaurant = findById(restaurantId);
@@ -136,7 +137,7 @@ public class RestaurantService {
 
         restaurant.disassociateResponsibleUser(user);
     }
-    @RestaurantsCacheEvict
+    @RestaurantsActionCacheEvict
     @Transactional
     public void associateResponsibleUser(UUID restaurantId , UUID userId) {
         Restaurant restaurant = findById(restaurantId);

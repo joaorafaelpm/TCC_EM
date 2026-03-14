@@ -9,7 +9,7 @@ import PermissionApi from "../pageObjects/PermissionApi";
 
 
 Before(() => {
-  cy.task("unSerializeData").then((token) => {
+  cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
 });

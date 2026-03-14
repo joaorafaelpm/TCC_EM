@@ -1,13 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.ProductsActionCacheEvict;
-import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.ProductsSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.ProductPhotoNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.ProductPhoto;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;

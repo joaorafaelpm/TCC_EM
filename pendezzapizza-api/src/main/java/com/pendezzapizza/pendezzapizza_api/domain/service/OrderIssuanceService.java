@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.OrdersSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.*;
@@ -21,6 +22,7 @@ public class OrderIssuanceService {
     private final UserService userService;
     private final PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
+    @OrdersSaveCacheEvict
     @Transactional
     public Order issueOrder(Order order) {
 

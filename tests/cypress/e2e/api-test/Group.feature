@@ -70,7 +70,7 @@ Feature: GroupTest
   Scenario Outline: Associate and Disassociate Group to a Permission badends
     Given I make a <request> request to endpoint groups with id <groupId> and permissionId <permissionId>
     Then I should receive a response with status code <statusCode>
-    Then I should receive a response with detail containing the message <message>
+    Then I should receive a response body with detail <message>
 
     Examples:
       | request  | groupId                                | permissionId                           | statusCode | message                                                                                                                                      |
