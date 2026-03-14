@@ -1,6 +1,5 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.ResourceUriHelper;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.CityModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.CityDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.CityModel;
@@ -89,11 +88,8 @@ public class CityController implements CityControllerOpenApi {
     public CityModel add(@RequestBody @Valid CityDTO cityDTO) {
         try {
             City city = cityDisassembler.cityDTOToCity(cityDTO);
-            CityModel cityModel = cityAssembler.toModel(cityService.save(city));
 
-            ResourceUriHelper.addUriResponseHeader(cityModel.getId());
-
-            return cityModel;
+            return cityAssembler.toModel(cityService.save(city));
         } catch (StateNotFoundException e) {
             throw new BusinessException(e.getMessage(), e);
         }
