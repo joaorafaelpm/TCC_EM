@@ -1,6 +1,6 @@
 @bussinessFeatures
-Feature: BussinessLogin
 # Regras de negócio genéricas para auxiliar os testes mais específicos e complexos, como a alteração de senha ou de dados de um objeto de outro usuário
+Feature: BussinessLogin
 
   Scenario: Valid Login as owner of restaurant
     Given I'm on the login page
