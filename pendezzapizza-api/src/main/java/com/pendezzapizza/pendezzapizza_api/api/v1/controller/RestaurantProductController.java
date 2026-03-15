@@ -68,8 +68,8 @@ public class RestaurantProductController implements RestaurantProductControllerO
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping("/{productId}")
     public ResponseEntity<ProductModel> findById(@PathVariable UUID restaurantId,
-                                                 @PathVariable UUID productId,
-                                                 ServletWebRequest request) {
+            @PathVariable UUID productId,
+            ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = productService.findLastUpdateDateAndActivesByRestaurantId(restaurantId);

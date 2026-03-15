@@ -8,11 +8,7 @@ import CityApi from "../pageObjects/CityApi";
 
 const stateID = "ac3bb31f-4c4f-44ff-88e8-92646ba56240";
 
-Before(() => {
-  cy.task("unSerializeData", "admin_access_token").then((token) => {
-    cy.wrap(token).as("token");
-  });
-});
+
 
 // ================= POST =================
 Given(

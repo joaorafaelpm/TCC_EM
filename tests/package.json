@@ -9,8 +9,9 @@
   "scripts": {
     "triggerAllTests-login": "npx cypress run --spec cypress/e2e --browser chrome --env tags=\"@login\"",
     "triggerAllTests-statistics": "npx cypress run --spec cypress/e2e --browser chrome --env tags=\"@statistics\"",
-    "triggerAllTests-normal": "npx cypress run --spec cypress/e2e --browser chrome --env tags=\"not @login and not @statistics\"",
-    "triggerAllTests": "npm run triggerAllTests-login && npm run triggerAllTests-statistics && npm run triggerAllTests-normal"
+    "triggerAllTests-bussiness": "npx cypress run --spec cypress/e2e --browser chrome --env tags=\"@bussinessFeatures\"",
+    "triggerAllTests-normal": "npx cypress run --spec cypress/e2e --browser chrome --env tags=\"not @login and not @statistics and not @bussinessFeatures\"",
+    "triggerAllTests": "npm run triggerAllTests-bussiness && npm run triggerAllTests-login && npm run triggerAllTests-statistics && npm run triggerAllTests-normal"
   },
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^24.0.0",

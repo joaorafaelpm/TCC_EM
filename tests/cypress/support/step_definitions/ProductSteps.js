@@ -11,11 +11,6 @@ import RestaurantApi from "../pageObjects/RestaurantApi";
 const restaurantId = "52ec094f-3e34-42d4-845a-bc1c178259c1";
 const productId = "72e58c00-e73f-41ee-bdd7-acf75341a7a7";
 
-Before(() => {
-  cy.task("unSerializeData", "admin_access_token").then((token) => {
-    cy.wrap(token).as("token");
-  });
-});
 
 // ================= RESTAURANT SETUP =================
 Given("I make a POST request to create a restaurant for product tests", () => {

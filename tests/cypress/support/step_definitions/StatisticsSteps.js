@@ -9,12 +9,6 @@ import StatisticsApi from "../pageObjects/StatisticsApi";
 
 const restaurantId = "52ec094f-3e34-42d4-845a-bc1c178259c1";
 
-Before(() => {
-  cy.task("unSerializeData").then((token) => {
-    cy.wrap(token).as("token");
-  });
-});
-
 // ================= GET =================
 Given("I make a GET request to endpoint statistics", () => {
   cy.get("@token").then((token) => {
