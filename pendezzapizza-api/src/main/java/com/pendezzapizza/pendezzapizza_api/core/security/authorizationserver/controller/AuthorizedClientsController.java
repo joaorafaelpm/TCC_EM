@@ -6,7 +6,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Controller;
@@ -25,7 +24,6 @@ public class AuthorizedClientsController {
     private final OAuth2AuthorizationQueryService oAuth2AuthorizationQueryService;
     private final RegisteredClientRepository clientRepository;
     private final OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService;
-    private final OAuth2AuthorizationService auth2AuthorizationService;
 
     @GetMapping("/oauth2/authorized-clients")
     public String clientList(Principal principal, Model model) {

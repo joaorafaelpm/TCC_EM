@@ -44,10 +44,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 )
 public class SpringDocConfig {
 
-    private static final String badRequestResponse = "BadRequestResponse";
-    private static final String notFoundResponse = "NotFoundResponse";
-    private static final String internalSystemErrorResponse = "InternalSystemErrorResponse";
-    private static final String notAcceptableResponse = "NotAcceptableResponse";
+    private static final String BAD_REQUEST_RESPONSE = "BadRequestResponse";
+    private static final String NOT_FOUND_REQUEST_RESPONSE = "NotFoundResponse";
+    private static final String INTERNAL_SYSTEM_ERROR_RESPONSE = "InternalSystemErrorResponse";
+    private static final String NOT_ACCEPTABLE_RESPONSE = "NotAcceptableResponse";
 
     @Bean
     public OpenAPI openApi () {
@@ -98,31 +98,30 @@ public class SpringDocConfig {
                         ApiResponses responses = operation.getResponses();
                         switch (httpMethod) {
                             case  GET ->  {
-                                responses.addApiResponse("500" , new ApiResponse().$ref(internalSystemErrorResponse));
-                                responses.addApiResponse("406" , new ApiResponse().$ref(notAcceptableResponse));
+                                responses.addApiResponse("500" , new ApiResponse().$ref(INTERNAL_SYSTEM_ERROR_RESPONSE));
+                                responses.addApiResponse("406" , new ApiResponse().$ref(NOT_ACCEPTABLE_RESPONSE));
                             }
                             case  POST  -> {
-                                responses.addApiResponse("400" , new ApiResponse().$ref(badRequestResponse));
-                                responses.addApiResponse("500" , new ApiResponse().$ref(internalSystemErrorResponse));
+                                responses.addApiResponse("400" , new ApiResponse().$ref(BAD_REQUEST_RESPONSE));
+                                responses.addApiResponse("500" , new ApiResponse().$ref(INTERNAL_SYSTEM_ERROR_RESPONSE));
                             }
                             case  PUT  -> {
-                                responses.addApiResponse("400" , new ApiResponse().$ref(badRequestResponse));
-                                responses.addApiResponse("500" , new ApiResponse().$ref(internalSystemErrorResponse));
+                                responses.addApiResponse("400" , new ApiResponse().$ref(BAD_REQUEST_RESPONSE));
+                                responses.addApiResponse("500" , new ApiResponse().$ref(INTERNAL_SYSTEM_ERROR_RESPONSE));
                             }
-                            case  DELETE ->  {
-                                responses.addApiResponse("500" , new ApiResponse().$ref(internalSystemErrorResponse));
-                            }
-                        }
+                            case  DELETE -> responses.addApiResponse("500" , new ApiResponse().$ref(INTERNAL_SYSTEM_ERROR_RESPONSE));
+                          }
                     })
                 );
         };
     }
 
+// Preciso adicionar isso por que a classe Schema não precisa de um objeto para representar, porém o compilador acha que precisa, então eu deixo isso explícito
+    @SuppressWarnings("rawtypes")
     private Map<String  , Schema> gerarSchemas ()  {
-        final  Map<String  , Schema> schemaMap =  new HashMap<>();
-
+        final Map<String  , Schema> schemaMap =  new HashMap<>();
         Map<String, Schema> apiErrorSchema = ModelConverters.getInstance().read(ApiError.class);
-        Map<String, Schema> apiErrorObjectSchema = ModelConverters.getInstance().read(ApiError.Object.class);
+        Map<String,Schema> apiErrorObjectSchema = ModelConverters.getInstance().read(ApiError.Object.class);
 
         schemaMap.putAll(apiErrorSchema);
         schemaMap.putAll(apiErrorObjectSchema);
@@ -138,16 +137,16 @@ public class SpringDocConfig {
                 .addMediaType(APPLICATION_JSON_VALUE ,
                     new MediaType().schema(new Schema<ApiError>().$ref("ApiError")));
 
-        apiResponseMap.put(badRequestResponse , new ApiResponse()
+        apiResponseMap.put(BAD_REQUEST_RESPONSE , new ApiResponse()
                 .description("Requisição invalida")
                 .content(content));
-        apiResponseMap.put(notFoundResponse , new ApiResponse()
+        apiResponseMap.put(NOT_FOUND_REQUEST_RESPONSE , new ApiResponse()
                 .description("Recurso não encontrado")
                 .content(content));
-        apiResponseMap.put(internalSystemErrorResponse , new ApiResponse()
+        apiResponseMap.put(INTERNAL_SYSTEM_ERROR_RESPONSE , new ApiResponse()
                 .description("Erro interno no servidor")
                 .content(content));
-        apiResponseMap.put(notAcceptableResponse, new ApiResponse()
+        apiResponseMap.put(NOT_ACCEPTABLE_RESPONSE, new ApiResponse()
                 .description("Recurso não possui representação que poderia ser aceita  pelo  consumidor")
                 .content(content));
 

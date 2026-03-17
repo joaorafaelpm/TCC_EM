@@ -6,9 +6,11 @@ cypress/results/
 **/videos/
 **/results/
 
+# act secrets
+.secrets
+
 # Pasta Personalizada
-catalogo/
-**/catalogo/
+**/catalogo/*
 
 # Node.js
 node_modules/

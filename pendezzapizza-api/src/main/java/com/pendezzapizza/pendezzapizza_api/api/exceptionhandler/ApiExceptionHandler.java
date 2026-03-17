@@ -6,11 +6,12 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.pendezzapizza.pendezzapizza_api.api.exceptionhandler.enuns.ProblemType;
 import com.pendezzapizza.pendezzapizza_api.core.validation.ValidationException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.*;
+
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
@@ -41,11 +42,11 @@ import java.util.stream.Collectors;
  */
 @ControllerAdvice
 @Slf4j
+@AllArgsConstructor
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     public static final String SYSTEM_ERROR_MESSAGE = "Ocorreu um erro interno inesperado no sistema. Tente novamente mais tarde ou contate o administrador do sistema.";
 
-    @Autowired
     private MessageSource messageSource ;
 
     private ResponseEntity<Object> handleMultipleErrorsValidation(Exception ex , BindingResult bindingResult , HttpHeaders headers, WebRequest request) {
@@ -55,8 +56,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .stream().map(objectError -> {
                     String message = messageSource.getMessage(objectError , LocaleContextHolder.getLocale());
                     String name = objectError.getObjectName() ;
-                    if (objectError instanceof FieldError) {
-                        name = ((FieldError) objectError).getField() ;
+                    if (objectError instanceof FieldError fieldError) {
+                        name = fieldError.getField() ;
                     }
                     return ApiError.Object.builder()
                             .name(name)
@@ -71,14 +72,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     //    Vamos capturar e mapear todas as violações das especificações do BeanValidation e mostrar ao usuário
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<@NonNull Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return handleMultipleErrorsValidation(ex, ex.getBindingResult() , headers , request);
     }
 
 
     //    Este erro é o mesmo erro acima, porém, neste caso, essas violações se dizem respeito à minhas próprias validações do BeanValidation, nesse caso, o PositivoOuZero
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<?> handleValidacao(
+    public ResponseEntity<@NonNull Object> handleValidacao(
             ValidationException ex , WebRequest request) {
         return handleMultipleErrorsValidation(ex , ex.getBindingResult() , new HttpHeaders(), request );
     }
@@ -87,7 +88,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     //    Definindo um padrão de respostas para o tratamento de erro, seguindo o padrão do ResponseEntityExceptionHandler
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+    protected ResponseEntity<@NonNull Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
 //        Se não tiver nenhum corpo de resposta disponível, a gente padroniza um.
         if (body == null) {
             body = ApiError.builder()
@@ -97,11 +98,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                     .build();
         }
 //        Se existir um corpo e for um texto vindo diretamente da exceção, a gente passa ele como corpo.
-        else if (body instanceof String) {
+        else if (body instanceof String string) {
             body = ApiError.builder()
                     .timestamp(OffsetDateTime.now())
                     .userMessage(SYSTEM_ERROR_MESSAGE)
-                    .title((String) body)
+                    .title(string)
                     .status(statusCode.value())
                     .build();
         }
@@ -111,7 +112,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     //    Erro sobre quando algum parâmetro da url é obrigatório e não está presente!
     @Override
-    protected ResponseEntity<Object> handleMissingServletRequestParameter(
+    protected ResponseEntity<@NonNull Object> handleMissingServletRequestParameter(
             MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
         String detail = String.format(
@@ -130,7 +131,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @Override
-    protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<@NonNull Object> handleServletRequestBindingException(ServletRequestBindingException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         String detail = "Falha na ligação de parâmetros de requisição";
 
         ApiError apiError = createAPIErrorBuilder(status , ProblemType.INVALID_PARAMS , detail).build();
@@ -139,7 +140,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<?> handleBusinessException(
+    public ResponseEntity<@NonNull Object> handleBusinessException(
             BusinessException ex , WebRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST ;
 
@@ -150,7 +151,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex , apiError , new HttpHeaders(), status , request );
     }
     @ExceptionHandler(EntityInUseException.class)
-    public ResponseEntity<?> handleEntityEmUso(
+    public ResponseEntity<@NonNull Object> handleEntityEmUso(
             EntityInUseException ex , WebRequest request) {
         HttpStatus status = HttpStatus.CONFLICT ;
         String detail = ex.getMessage() ;
@@ -184,22 +185,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     //    Nós sobrescrevemos essa exception para não lançar nenhum json de volta ao consumidor, fazemos isso por que se o corpo da menssagem não for aceito (se a Media Type for diferente da passada) ele não deve receber nada no body de qualquer forma, e é um erro se nós passarmos algo no body, por isso tratamos para passar só os status
     @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(@NonNull HttpMediaTypeNotAcceptableException ex, @NonNull HttpHeaders headers, @NonNull HttpStatusCode status,@NonNull WebRequest request) {
+    protected ResponseEntity<@NonNull Object> handleHttpMediaTypeNotAcceptable(@NonNull HttpMediaTypeNotAcceptableException ex, @NonNull HttpHeaders headers, @NonNull HttpStatusCode status,@NonNull WebRequest request) {
         return ResponseEntity.status(status).headers(headers).build();
     }
 
     //    Verificando se o consumidor digitou o parâmetro da URL corretamente
     @Override
-    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, @NonNull  HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
+    protected ResponseEntity<@NonNull Object> handleTypeMismatch(TypeMismatchException ex, @NonNull  HttpHeaders headers, @NonNull HttpStatusCode status, @NonNull WebRequest request) {
 
-        String detail = String.format("O parâmetro da URL '%s' recebeu o valor de '%s', que é um tipo inválido. Corrija e informe um valor compatível ao tipo '%s'." , ex.getPropertyName() , ex.getValue() , ex.getRequiredType().getSimpleName());
+        Class<?> requiredTypeClass = ex.getRequiredType();
+        String requiredType = requiredTypeClass != null ? requiredTypeClass.getSimpleName() : "desconhecido";
+        String detail = String.format("O parâmetro da URL '%s' recebeu o valor de '%s', que é um tipo inválido. Corrija e informe um valor compatível ao tipo '%s'." , ex.getPropertyName() , ex.getValue() , requiredType);
 
         ApiError apiError = createAPIErrorBuilder(status, ProblemType.INVALID_PARAMS , detail).build();
         return handleExceptionInternal(ex,apiError , headers, status, request);
     }
 
     @Override
-    protected ResponseEntity<Object> handleNoResourceFoundException(NoResourceFoundException ex, @NonNull HttpHeaders headers,@NonNull HttpStatusCode status,@NonNull WebRequest request) {
+    protected ResponseEntity<@NonNull Object> handleNoResourceFoundException(NoResourceFoundException ex, @NonNull HttpHeaders headers,@NonNull HttpStatusCode status,@NonNull WebRequest request) {
         String detail = String.format("O recurso '%s' que você tentou acessar, é inexistente." , ex.getResourcePath());
 
         ApiError apiError = createAPIErrorBuilder(status, ProblemType.RESOURCE_NOT_FOUND , detail).build();
@@ -207,15 +210,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+    protected ResponseEntity<@NonNull Object> handleHttpMessageNotReadable(
             HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Throwable rootCause = ExceptionUtils.getRootCause(ex);
 //        Verificando se o tipo da exceção é InvalidFormatException que é um tipo pai do HttpMessageNotReadable e nós temos que tratar de um jeito diferente,
-        if (rootCause instanceof InvalidFormatException) {
-            return handleInvalidFormatException((InvalidFormatException) rootCause , headers, status , request);
+        if (rootCause instanceof InvalidFormatException invalidFormatException) {
+            return handleInvalidFormatException(invalidFormatException , headers, status , request);
         }
-        else if (rootCause instanceof PropertyBindingException) {
-            return handlePropertyBindingExceptions((PropertyBindingException) rootCause , headers , status , request) ;
+        else if (rootCause instanceof PropertyBindingException propertyBindingException) {
+            return handlePropertyBindingExceptions(propertyBindingException , headers , status , request) ;
         }
 
         String detail = "O corpo da requisição é inválido. Tente verificar a sintaxe do texto digitado.";
@@ -282,62 +285,62 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     // -------------------------------------------
 
     @ExceptionHandler(CityNotFoundException.class)
-    public ResponseEntity<?> handleCityNotFound(CityNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleCityNotFound(CityNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(StateNotFoundException.class)
-    public ResponseEntity<?> handleStateNotFound(StateNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleStateNotFound(StateNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(GroupNotFoundException.class)
-    public ResponseEntity<?> handleGroupNotFound(GroupNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleGroupNotFound(GroupNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(PermissionNotFoundException.class)
-    public ResponseEntity<?> handlePermissionNotFound(PermissionNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handlePermissionNotFound(PermissionNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(OrderItemNotFoundException.class)
-    public ResponseEntity<?> handleOrderItemNotFound(OrderItemNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleOrderItemNotFound(OrderItemNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<?> handleOrderNotFound(OrderNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleOrderNotFound(OrderNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
         }
 
     @ExceptionHandler(PaymentMethodNotFoundException.class)
-    public ResponseEntity<?> handlePaymentMethodNotFound(PaymentMethodNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handlePaymentMethodNotFound(PaymentMethodNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<?> handleProductNotFound(ProductNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleProductNotFound(ProductNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(ProductPhotoNotFoundException.class)
-    public ResponseEntity<?> handleProductPhotoNotFound(ProductPhotoNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleProductPhotoNotFound(ProductPhotoNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(RestaurantNotFoundException.class)
-    public ResponseEntity<?> handleRestaurantNotFound(RestaurantNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleRestaurantNotFound(RestaurantNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleEntityNotFound(EntityNotFoundException ex, WebRequest request) {
         return buildResponse(ex, request);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleDefaultException(
+    public ResponseEntity<@NonNull Object> handleDefaultException(
             Exception ex , WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR ;
 
@@ -350,7 +353,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<?> handleAuthorizationDeniedException (AuthorizationDeniedException ex , WebRequest request) {
+    public ResponseEntity<@NonNull Object> handleAuthorizationDeniedException (AuthorizationDeniedException ex , WebRequest request) {
         String detail = ex.getMessage();
         HttpStatus status = HttpStatus.FORBIDDEN;
         ApiError apiError = createAPIErrorBuilder(

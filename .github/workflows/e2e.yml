@@ -1,0 +1,100 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: tests/package-lock.json
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Criar .env.test
+        run: |
+          echo "TEST_DATABASE_PASSWORD=${{ secrets.TEST_DATABASE_PASSWORD }}" >> ../pendezzapizza-api/.env.test
+          echo "TEST_DATABASE_USERNAME=${{ secrets.TEST_DATABASE_USERNAME }}" >> ../pendezzapizza-api/.env.test
+          echo "TEST_DATABASE_NAME=${{ secrets.TEST_DATABASE_NAME }}"         >> ../pendezzapizza-api/.env.test
+          echo "TEST_DATABASE_PORT=${{ secrets.TEST_DATABASE_PORT }}"         >> ../pendezzapizza-api/.env.test
+          echo "API_PORT=${{ secrets.API_PORT }}"                             >> ../pendezzapizza-api/.env.test
+          echo "CONTAINER_VOLUME=${{ secrets.CONTAINER_VOLUME }}"             >> ../pendezzapizza-api/.env.test
+
+      - name: Permissão no mvnw
+        run: chmod +x ../pendezzapizza-api/mvnw
+
+      - name: Build do projeto Maven
+        run: ../pendezzapizza-api/mvnw -f ../pendezzapizza-api/pom.xml package -DskipTests
+
+      - name: Build da imagem da API
+        run: docker build -t pendezzapizza-api -f ../pendezzapizza-api/Dockerfile.test ../pendezzapizza-api
+        
+      - name: Subir infraestrutura
+        run: npm run infra:up
+
+      - name: Aguardar API ficar healthy
+        run: npm run infra:wait
+
+      - name: 'Testes: Login'
+        run: npm run triggerAllTests-login
+
+      - name: 'Testes: Statistics'
+        run: npm run triggerAllTests-statistics
+
+      - name: 'Testes: Normal'
+        run: npm run triggerAllTests-normal
+
+      - name: 'Testes: Business Features'
+        run: npm run triggerAllTests-bussiness
+
+      - name: Gerar relatório unificado
+        if: always()
+        run: npm run report:merge && npm run report:generate
+
+      - name: Upload — Relatório HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report
+          path: tests/cypress/reports/html
+
+      - name: Upload — Screenshots (somente em falha)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: tests/cypress/screenshots
+
+      - name: Upload — Vídeos (somente em falha)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: tests/cypress/videos
+
+      - name: Teardown da infraestrutura
+        if: always()
+        run: npm run infra:down
