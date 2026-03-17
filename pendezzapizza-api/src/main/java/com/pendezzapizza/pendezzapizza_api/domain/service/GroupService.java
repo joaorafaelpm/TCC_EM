@@ -30,7 +30,6 @@ public class GroupService {
     private final PermissionService permissionService;
     private final UserService userService;
 
-    private CacheInvalidatorUtil cacheInvalidatorUtil;
 
     @Cacheable("groups")
     public Page<Group> findAll (Pageable pageable) {
@@ -68,7 +67,7 @@ public class GroupService {
     @Transactional
     public void deleteById (UUID groupId) {
         try {
-            groupRepository.delete(findById(groupId));
+            groupRepository.delete(this.findById(groupId));
             groupRepository.flush();
         }catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(groupId);

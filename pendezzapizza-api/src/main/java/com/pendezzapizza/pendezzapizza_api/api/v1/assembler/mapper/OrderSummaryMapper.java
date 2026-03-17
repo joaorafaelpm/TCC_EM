@@ -9,8 +9,13 @@ import org.springframework.context.annotation.Bean;
 @Mapper(componentModel = "spring")
 public interface OrderSummaryMapper {
 
-    @Mapping(source = "orderStatus", target = "status")
     @Bean
+    @Mapping(source = "orderStatus", target = "status")
+    @Mapping(source = "cancellationDate", target = "canceledAt")
+    @Mapping(source = "confirmationDate", target = "confirmedAt")
+    @Mapping(source = "creationDate", target = "createdAt")
+    @Mapping(source = "deliveryDate", target = "deliveredAt")
+    @Mapping(source = "totalCost", target = "totalValue")
     OrderSummaryModel toModel(Order order);
 
 }

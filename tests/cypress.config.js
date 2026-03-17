@@ -72,10 +72,19 @@ module.exports = defineConfig({
   failOnStatusCode: false,
   video: true,
   baseUrl:"http://localhost:8080",
-  reporter: "cypress-multi-reporters",
+  reporter: 'cypress-multi-reporters',
   reporterOptions: {
-    configFile: "reporter-config.json",
-  },
+    reporterEnabled: 'mochawesome, mocha-junit-reporter',
+    mochawesomeReporterOptions: {
+      reportDir: 'cypress/reports/json',
+      overwrite: false,       // ← chave: não sobrescreve
+      html: false,            // ← gera só JSON aqui, o HTML vem do merge
+      json: true,
+    },
+    mochaJunitReporterReporterOptions: {
+      mochaFile: 'cypress/reports/junit/results-[hash].xml',
+    },
+},
   retries: {
     runMode: 0,
     openMode: 1,

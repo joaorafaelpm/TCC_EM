@@ -14,18 +14,18 @@ services:
       - ${TEST_DATABASE_PORT}
     networks:
       - pendezzapizza-test-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+    healthcheck:                          
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
 
   test-redis:
     image: redis:8.4.0-alpine
     networks:
       - pendezzapizza-test-network
     healthcheck:                          
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 10s
       retries: 10

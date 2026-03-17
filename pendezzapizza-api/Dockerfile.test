@@ -1,0 +1,10 @@
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+RUN mkdir -p catalogo   # ← só cria a pasta vazia, sem copiar nada
+
+EXPOSE ${API_PORT}
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

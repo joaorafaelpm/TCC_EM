@@ -23,7 +23,6 @@ import java.util.UUID;
 public class StateService {
 
     private final StateRepository stateRepository;
-    private CacheInvalidatorUtil cacheInvalidatorUtil;
 
     @Cacheable("states")
     public Page<State> findAll(Pageable pageable) {
