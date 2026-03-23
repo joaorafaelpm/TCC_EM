@@ -1,3 +1,5 @@
+name: pendezzaspizza
+
 networks:
   pendezzapizza-test-network:
     driver: bridge
