@@ -102,25 +102,6 @@ class BussinessApi {
     });
   }
 
-  static addOrSaveProducts(token, method, endpoint, restaurantId, productId) {
-    endpoint = endpoint.replace("restaurantId", restaurantId);
-    endpoint = endpoint.replace("productId", productId);
-    return cy.request({
-      method: method,
-      url: `${endpoint}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: {
-        name: "Pizza Margherita",
-        description: "Pizza clássica com molho de tomate e queijo",
-        price: 49.9,
-      },
-      failOnStatusCode: false,
-    });
-  }
-
   static addOrRemoveProductPhotos(
     token,
     method,
