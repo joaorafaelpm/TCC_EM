@@ -11,6 +11,9 @@ cypress/reports/
 # act secrets
 .secrets
 
+# act secrets
+.secrets
+
 # Pasta Personalizada
 **/catalogo/*
 
