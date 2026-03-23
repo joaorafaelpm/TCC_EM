@@ -32,8 +32,9 @@ services:
 
   test-api:
     image: pendezzapizza-api
+    restart: on-failure:5 
     environment:
-      SPRING_PROFILES_ACTIVE: test        
+      SPRING_PROFILES_ACTIVE: test
       SPRING_DATASOURCE_URL: jdbc:mysql://test-database/${TEST_DATABASE_NAME}?createDatabaseIfNotExists=true&serverTimezone=UTC
       SPRING_SESSION_STORE_TYPE: redis
       SPRING_DATA_REDIS_HOST: test-redis
@@ -43,11 +44,18 @@ services:
       - pendezzapizza-test-network
     depends_on:
       test-database:
-        condition: service_healthy        
+        condition: service_healthy
       test-redis:
         condition: service_healthy
     volumes:
-      - ${CONTAINER_VOLUME}
-    ports :
+      - /app/catalogo
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
       - ${API_PORT}
-
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/oauth2/jwks || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
