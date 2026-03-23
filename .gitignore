@@ -2,9 +2,11 @@
 cypress/screenshots/
 cypress/videos/
 cypress/results/
+cypress/reports/
 **/screenshots/
 **/videos/
 **/results/
+**/reports/ 
 
 # act secrets
 .secrets

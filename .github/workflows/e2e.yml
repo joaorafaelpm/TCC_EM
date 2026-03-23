@@ -68,13 +68,13 @@ jobs:
       - name: Aguardar API ficar healthy
         run: npm run infra:wait
 
-      # - name: Logs da API (diagnóstico)
-      #   if: failure()
-      #   run: |
-      #     echo "=== LOGS DA API ==="
-      #     docker logs pendezzaspizza-test-api-1 2>&1
-      #     echo "=== INSPECT DA API ==="
-      #     docker inspect pendezzaspizza-test-api-1 2>&1
+      - name: Logs da API (diagnóstico)
+        if: failure()
+        run: |
+          echo "=== LOGS DA API ==="
+          docker logs pendezzaspizza-test-api-1 2>&1
+          echo "=== INSPECT DA API ==="
+          docker inspect pendezzaspizza-test-api-1 2>&1
 
 
       # Faça isso 
