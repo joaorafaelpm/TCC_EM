@@ -1,0 +1,100 @@
+stages:
+  - build
+  - test
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+
+# Serviços (banco e redis) sobem junto com o job
+services:
+  - name: mysql:8.3.0
+    alias: test-database
+    variables:
+      MYSQL_ROOT_PASSWORD: $TEST_DATABASE_PASSWORD
+      MYSQL_USER: $TEST_DATABASE_USERNAME
+      MYSQL_PASSWORD: $TEST_DATABASE_PASSWORD
+      MYSQL_DATABASE: $TEST_DATABASE_NAME
+
+  - name: redis:8.4.0-alpine
+    alias: test-redis
+
+build-api:
+  stage: build
+  image: eclipse-temurin:21-jdk
+  script:
+    - chmod +x ./pendezzapizza-api/mvnw
+    - ./pendezzapizza-api/mvnw -f ./pendezzapizza-api/pom.xml package -DskipTests
+  artifacts:
+    paths:
+      - pendezzapizza-api/target/*.jar
+    expire_in: 1 hour
+
+e2e-tests:
+  stage: test
+  image: docker:latest
+  services:
+    - docker:dind
+  dependencies:
+    - build-api
+  before_script:
+    # Cria o .env.test
+    - |
+      cat > ./pendezzapizza-api/.env.test << EOF
+      API_HOST=$API_HOST
+      API_PORT=$API_PORT
+      TEST_DATABASE_USERNAME=$TEST_DATABASE_USERNAME
+      TEST_DATABASE_PASSWORD=$TEST_DATABASE_PASSWORD
+      TEST_DATABASE_NAME=$TEST_DATABASE_NAME
+      TEST_DATABASE_PORT=$TEST_DATABASE_PORT
+      JWT_KEYSTORE_LOCATION=$JWT_KEYSTORE_LOCATION
+      JWT_KEYSTORE_PASSWORD=$JWT_KEYSTORE_PASSWORD
+      JWT_KEYSTORE_KEYPAIR_ALIAS=$JWT_KEYSTORE_KEYPAIR_ALIAS
+      RECIPIENT_EMAIL=$RECIPIENT_EMAIL
+      SENDER_EMAIL=$SENDER_EMAIL
+      DOC_CLIENT_ID=$DOC_CLIENT_ID
+      DOC_CLIENT_SECRET=$DOC_CLIENT_SECRET
+      EOF
+    # Cria o .env do Cypress
+    - |
+      cat > ./tests/.env << EOF
+      ACCESS_TOKEN_URL=$ACCESS_TOKEN_URL
+      API_URL=$API_URL
+      REDIRECT_URL=$REDIRECT_URL
+      CODE_VERIFIER=$CODE_VERIFIER
+      CLIENT_ID=$CLIENT_ID
+      CLIENT_SECRET=$CLIENT_SECRET
+      CLIENT_USERNAME=$CLIENT_USERNAME
+      CLIENT_PASSWORD=$CLIENT_PASSWORD
+      RESTAURANT_OWNER_USERNAME=$RESTAURANT_OWNER_USERNAME
+      RESTAURANT_OWNER_PASSWORD=$RESTAURANT_OWNER_PASSWORD
+      SCOPES=$SCOPES
+      EOF
+    # Build da imagem da API
+    - docker build -t pendezzapizza-api -f ./pendezzapizza-api/Dockerfile.test ./pendezzapizza-api
+    # Sobe infraestrutura
+    - cd tests && npm ci
+    - npm run infra:up
+    - npm run infra:wait
+  script:
+    - npm run triggerAllTests-login
+    - npm run triggerAllTests-statistics
+    - npm run triggerAllTests-normal
+    - npm run triggerAllTests-bussiness
+  after_script:
+    - cd tests
+    - |
+      if ls cypress/reports/json/*.json 2>/dev/null; then
+        npm run report:merge && npm run report:generate
+      fi
+    - npm run infra:down
+  artifacts:
+    when: always
+    paths:
+      - tests/cypress/reports/html/
+      - tests/cypress/screenshots/
+      - tests/cypress/videos/
+    expire_in: 7 days
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "develop"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

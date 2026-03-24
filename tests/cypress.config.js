@@ -27,80 +27,80 @@ function getConfigurationByFile(file) {
 module.exports = defineConfig({
   e2e: {
     async setupNodeEvents(on, config) {
-    await addCucumberPreprocessorPlugin(on, config);
+      await addCucumberPreprocessorPlugin(on, config);
 
-    const bundler = createBundler({
-      plugins: [createEsbuildPlugin(config)],
-    });
+      const bundler = createBundler({
+        plugins: [createEsbuildPlugin(config)],
+      });
 
-    on("file:preprocessor", bundler);
+      on("file:preprocessor", bundler);
 
-    on("task", {
-      serializeData({ token, fileName }) {
-        serialize(token, fileName);
-        return null;
-      },
-      unSerializeData(fileName) {
-        try {
-          return unSerialize(fileName);
-        } catch (error) {
+      on("task", {
+        serializeData({ token, fileName }) {
+          serialize(token, fileName);
           return null;
-        }
+        },
+        unSerializeData(fileName) {
+          try {
+            return unSerialize(fileName);
+          } catch (error) {
+            return null;
+          }
+        },
+      });
+
+      const file = config.env.configFile || "";
+      const configJson = await getConfigurationByFile(file);
+
+      return {
+        ...config,
+        ...configJson,
+        env: {
+          ...config.env,
+          ...configJson.env,
+        },
+      };
+    },
+    testIsolation: false,
+    specPattern: "cypress/e2e/**/*.feature",
+    chromeWebSecurity: false,
+    projectId: "ikwo3k",
+    defaultCommandTimeout: 10000,
+    pageLoadTimeout: 120000,
+    screenshotOnRunFailure: true,
+    trashAssetsBeforeRuns: true,
+    failOnStatusCode: false,
+    video: true,
+    baseUrl: "http://localhost:8080",
+    reporter: "cypress-multi-reporters",
+    reporterOptions: {
+      reporterEnabled: "mochawesome, mocha-junit-reporter",
+      mochawesomeReporterOptions: {
+        reportDir: "cypress/reports/json",
+        overwrite: false, // ← chave: não sobrescreve
+        html: false, // ← gera só JSON aqui, o HTML vem do merge
+        json: true,
       },
-    });
-
-    const file = config.env.configFile || "";
-    const configJson = await getConfigurationByFile(file);
-
-    return { 
-      ...config, 
-      ...configJson,
-      env: {
-        ...config.env,
-        ...configJson.env
-      }
-    };
-  },
-  testIsolation: false,
-  specPattern: "cypress/e2e/**/*.feature",
-  chromeWebSecurity: false,
-  projectId: "1vvroh",
-  defaultCommandTimeout: 10000,
-  pageLoadTimeout: 120000,
-  screenshotOnRunFailure: true,
-  trashAssetsBeforeRuns: true,
-  failOnStatusCode: false,
-  video: true,
-  baseUrl:"http://localhost:8080",
-  reporter: 'cypress-multi-reporters',
-  reporterOptions: {
-    reporterEnabled: 'mochawesome, mocha-junit-reporter',
-    mochawesomeReporterOptions: {
-      reportDir: 'cypress/reports/json',
-      overwrite: false,       // ← chave: não sobrescreve
-      html: false,            // ← gera só JSON aqui, o HTML vem do merge
-      json: true,
+      mochaJunitReporterReporterOptions: {
+        mochaFile: "cypress/reports/junit/results-[hash].xml",
+      },
     },
-    mochaJunitReporterReporterOptions: {
-      mochaFile: 'cypress/reports/junit/results-[hash].xml',
+    retries: {
+      runMode: 0,
+      openMode: 1,
     },
-},
-  retries: {
-    runMode: 0,
-    openMode: 1,
+    env: {
+      CLIENT_ID: process.env.CLIENT_ID,
+      CLIENT_SECRET: process.env.CLIENT_SECRET,
+      SCOPES: process.env.SCOPES,
+      API_AUTH_URL: process.env.ACCESS_TOKEN_URL,
+      API_URL: process.env.API_URL,
+      REDIRECT_URL: process.env.REDIRECT_URL,
+      CODE_VERIFIER: process.env.CODE_VERIFIER,
+      CLIENT_USERNAME: process.env.CLIENT_USERNAME,
+      CLIENT_PASSWORD: process.env.CLIENT_PASSWORD,
+      RESTAURANT_OWNER_USERNAME: process.env.RESTAURANT_OWNER_USERNAME,
+      RESTAURANT_OWNER_PASSWORD: process.env.RESTAURANT_OWNER_PASSWORD,
+    },
   },
-  env: {
-    CLIENT_ID: process.env.CLIENT_ID,
-    CLIENT_SECRET: process.env.CLIENT_SECRET,
-    SCOPES: process.env.SCOPES,
-    API_AUTH_URL: process.env.ACCESS_TOKEN_URL,
-    API_URL: process.env.API_URL,
-    REDIRECT_URL: process.env.REDIRECT_URL,
-    CODE_VERIFIER: process.env.CODE_VERIFIER,
-    CLIENT_USERNAME: process.env.CLIENT_USERNAME,
-    CLIENT_PASSWORD: process.env.CLIENT_PASSWORD,
-    RESTAURANT_OWNER_USERNAME: process.env.RESTAURANT_OWNER_USERNAME,
-    RESTAURANT_OWNER_PASSWORD: process.env.RESTAURANT_OWNER_PASSWORD,
-  },
-},
 });
