@@ -97,6 +97,7 @@ jobs:
           echo "RESTAURANT_OWNER_USERNAME=${{ secrets.RESTAURANT_OWNER_USERNAME }}" >> .env
           echo "RESTAURANT_OWNER_PASSWORD=${{ secrets.RESTAURANT_OWNER_PASSWORD }}" >> .env
           echo "SCOPES=${{ secrets.SCOPES }}"                    >> .env
+          echo "CYPRESS_RECORD_KEY=${{ secrets.CYPRESS_RECORD_KEY }}"                    >> .env
 
     # É necessário ajustar a url por que dentro do contexto da CI do github ele obviamente não sabe ler o meu localhost
     # Logo eu preciso alterar o valor de localhost para o que geralmente é o ip padrão do Docker, e isso somente se eu estiver usando a CI do github
