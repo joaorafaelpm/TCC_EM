@@ -13,7 +13,6 @@ Feature: StatisticsTest
     Then I should receive a response body with totalBilled "61.5"
     Then I should receive a response body with totalSales "1"
 
-  
   Scenario: Error 406
     Given I make a GET request to endpoint statistics with accept header "application/ogg"
     Then I should receive a response with status code "406"
