@@ -6,7 +6,6 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
 
-# Serviços (banco e redis) sobem junto com o job
 services:
   - name: mysql:8.3.0
     alias: test-database
@@ -37,8 +36,11 @@ e2e-tests:
     - docker:dind
   dependencies:
     - build-api
+  variables:
+    # Variáveis equivalentes do GitLab para os scripts
+    BUILD_NUMBER: $CI_PIPELINE_IID
+    BRANCH_NAME: $CI_COMMIT_REF_NAME
   before_script:
-    # Cria o .env.test
     - |
       cat > ./pendezzapizza-api/.env.test << EOF
       API_HOST=$API_HOST
@@ -55,7 +57,6 @@ e2e-tests:
       DOC_CLIENT_ID=$DOC_CLIENT_ID
       DOC_CLIENT_SECRET=$DOC_CLIENT_SECRET
       EOF
-    # Cria o .env do Cypress
     - |
       cat > ./tests/.env << EOF
       ACCESS_TOKEN_URL=$ACCESS_TOKEN_URL
@@ -70,24 +71,69 @@ e2e-tests:
       RESTAURANT_OWNER_PASSWORD=$RESTAURANT_OWNER_PASSWORD
       SCOPES=$SCOPES
       EOF
-    # Build da imagem da API
     - docker build -t pendezzapizza-api -f ./pendezzapizza-api/Dockerfile.test ./pendezzapizza-api
-    # Sobe infraestrutura
     - cd tests && npm ci
     - npm run infra:up
     - npm run infra:wait
   script:
-    - npm run triggerAllTests-login
-    - npm run triggerAllTests-statistics
-    - npm run triggerAllTests-normal
-    - npm run triggerAllTests-bussiness
+    - cd tests && npm run triggerAllTests
   after_script:
     - cd tests
     - |
       if ls cypress/reports/json/*.json 2>/dev/null; then
         npm run report:merge && npm run report:generate
+      else
+        echo "Nenhum relatório encontrado, pulando merge."
       fi
     - npm run infra:down
+    # Notificação Slack
+    - |
+      if [ "$CI_JOB_STATUS" = "success" ]; then
+        STATUS_EMOJI="✅"
+        STATUS_TEXT="Passou"
+        STATUS_COLOR="#36a64f"
+      else
+        STATUS_EMOJI="❌"
+        STATUS_TEXT="Falhou"
+        STATUS_COLOR="#e01e5a"
+      fi
+      curl -X POST "$SLACK_WEBHOOK_URL" \
+        -H 'Content-type: application/json' \
+        --data "{
+          \"attachments\": [{
+            \"color\": \"$STATUS_COLOR\",
+            \"blocks\": [
+              {
+                \"type\": \"header\",
+                \"text\": {\"type\": \"plain_text\", \"text\": \"$STATUS_EMOJI E2E Tests — Pendezza Pizza\"}
+              },
+              {
+                \"type\": \"section\",
+                \"fields\": [
+                  {\"type\": \"mrkdwn\", \"text\": \"*Status:*\n$STATUS_TEXT\"},
+                  {\"type\": \"mrkdwn\", \"text\": \"*Branch:*\n\`$CI_COMMIT_REF_NAME\`\"},
+                  {\"type\": \"mrkdwn\", \"text\": \"*Run:*\n#$CI_PIPELINE_IID\"},
+                  {\"type\": \"mrkdwn\", \"text\": \"*Commit:*\n$CI_COMMIT_MESSAGE\"}
+                ]
+              },
+              {
+                \"type\": \"actions\",
+                \"elements\": [
+                  {
+                    \"type\": \"button\",
+                    \"text\": {\"type\": \"plain_text\", \"text\": \"🔍 Ver no Cypress Cloud\"},
+                    \"url\": \"https://cloud.cypress.io/projects/$CYPRESS_PROJECT_ID/runs\"
+                  },
+                  {
+                    \"type\": \"button\",
+                    \"text\": {\"type\": \"plain_text\", \"text\": \"📋 Ver no GitLab Pipeline\"},
+                    \"url\": \"$CI_PIPELINE_URL\"
+                  }
+                ]
+              }
+            ]
+          }]
+        }"
   artifacts:
     when: always
     paths:
