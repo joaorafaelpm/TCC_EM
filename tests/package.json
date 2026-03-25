@@ -11,14 +11,14 @@
     "infra:up": "docker compose -f ../docker-compose.test.yml --env-file ../pendezzapizza-api/.env.test --profile test up -d",
     "infra:wait": "bash -c 'echo Waiting for API...; for i in $(seq 1 36); do status=$(docker inspect --format=\"{{.State.Health.Status}}\" pendezzaspizza-test-api-1 2>/dev/null); echo Attempt $i: $status; if [ \"$status\" = \"healthy\" ]; then echo API ready; exit 0; fi; sleep 5; done; echo Timed out waiting for API; exit 1'",
     "infra:down": "docker compose -f ../docker-compose.test.yml --env-file ../pendezzapizza-api/.env.test down -v",
-    "triggerAllTests-login": "npx cypress run --record --key $CYPRESS_RECORD_KEY --spec cypress/e2e --headless --env tags=\"@login\"",
-    "triggerAllTests-statistics": "npx cypress run --record --key $CYPRESS_RECORD_KEY --spec cypress/e2e --headless --env tags=\"@statistics\"",
-    "triggerAllTests-bussiness": "npx cypress run --record --key $CYPRESS_RECORD_KEY --spec cypress/e2e --headless --env tags=\"@bussinessFeatures\"",
-    "triggerAllTests-normal": "npx cypress run --record --key $CYPRESS_RECORD_KEY --spec cypress/e2e --headless --env tags=\"not @login and not @statistics and not @bussinessFeatures\"",
-    "triggerAllTests": "npm run triggerAllTests-login && npm run triggerAllTests-statistics && npm run triggerAllTests-normal && npm run triggerAllTests-bussiness",
     "report:merge": "npx mochawesome-merge cypress/reports/json/*.json -o cypress/reports/merged.json",
     "report:generate": "npx marge cypress/reports/merged.json -o cypress/reports/html --reportFilename index",
-    "test:e2e": "npm run infra:up && npm run infra:wait && npm run triggerAllTests; npm run report:merge && npm run report:generate; npm run infra:down"
+    "test:e2e": "npm run infra:up && npm run infra:wait && npm run triggerAllTests; npm run report:merge && npm run report:generate; npm run infra:down",
+    "triggerAllTests-login": "npx cypress run --record --key ${CYPRESS_RECORD_KEY} --tag \"🔐 Login,Run #${BUILD_NUMBER},${BRANCH_NAME}\" --spec cypress/e2e --headless --env tags=\"@login\"",
+    "triggerAllTests-statistics": "npx cypress run --record --key ${CYPRESS_RECORD_KEY} --tag \"📊 Statistics,Run #${BUILD_NUMBER},${BRANCH_NAME}\" --spec cypress/e2e --headless --env tags=\"@statistics\"",
+    "triggerAllTests-bussiness": "npx cypress run --record --key ${CYPRESS_RECORD_KEY} --tag \"💼 Business Features,Run #${BUILD_NUMBER},${BRANCH_NAME}\" --spec cypress/e2e --headless --env tags=\"@bussinessFeatures\"",
+    "triggerAllTests-normal": "npx cypress run --record --key ${CYPRESS_RECORD_KEY} --tag \"🔌 API Tests,Run #${BUILD_NUMBER},${BRANCH_NAME}\" --spec cypress/e2e --headless --env tags=\"not @login and not @statistics and not @bussinessFeatures\"",
+    "triggerAllTests": "npm run triggerAllTests-login && npm run triggerAllTests-statistics && npm run triggerAllTests-normal && npm run triggerAllTests-bussiness"
   },
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^24.0.0",

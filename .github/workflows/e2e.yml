@@ -12,6 +12,8 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    env:
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}  # ← adicione aqui
     defaults:
       run:
         working-directory: ./tests
@@ -97,7 +99,6 @@ jobs:
           echo "RESTAURANT_OWNER_USERNAME=${{ secrets.RESTAURANT_OWNER_USERNAME }}" >> .env
           echo "RESTAURANT_OWNER_PASSWORD=${{ secrets.RESTAURANT_OWNER_PASSWORD }}" >> .env
           echo "SCOPES=${{ secrets.SCOPES }}"                    >> .env
-          echo "CYPRESS_RECORD_KEY=${{ secrets.CYPRESS_RECORD_KEY }}"                    >> .env
 
     # É necessário ajustar a url por que dentro do contexto da CI do github ele obviamente não sabe ler o meu localhost
     # Logo eu preciso alterar o valor de localhost para o que geralmente é o ip padrão do Docker, e isso somente se eu estiver usando a CI do github
@@ -125,17 +126,60 @@ jobs:
             libasound2t64 \
             libgtk-3-0t64
             
-      - name: 'Testes: Login'
-        run: npm run triggerAllTests-login
+      - name: 'Testes: E2E'
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: npm run triggerAllTests
 
-      - name: 'Testes: Statistics'
-        run: npm run triggerAllTests-statistics
-
-      - name: 'Testes: Normal'
-        run: npm run triggerAllTests-normal
-
-      - name: 'Testes: Business Features'
-        run: npm run triggerAllTests-bussiness
+      - name: Notificar Slack
+        if: always()
+        env:
+          STATUS_EMOJI: ${{ job.status == 'success' && '✅' || '❌' }}
+          STATUS_TEXT: ${{ job.status == 'success' && 'Passou' || 'Falhou' }}
+          STATUS_COLOR: ${{ job.status == 'success' && '#36a64f' || '#e01e5a' }}
+        run: |
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+          -H 'Content-type: application/json' \
+          --data '{
+            "attachments": [{
+              "color": "'"$STATUS_COLOR"'",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "'"$STATUS_EMOJI"' E2E Tests — Pendezza Pizza"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Status:*\n'"$STATUS_TEXT"'"},
+                    {"type": "mrkdwn", "text": "*Branch:*\n`${{ github.ref_name }}`"},
+                    {"type": "mrkdwn", "text": "*Run:*\n#${{ github.run_number }}"},
+                    {"type": "mrkdwn", "text": "*Commit:*\n${{ github.event.head_commit.message }}"}
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {"type": "plain_text", "text": "🔍 Ver no Cypress Cloud"},
+                      "url": "https://cloud.cypress.io/projects/${{ secrets.CYPRESS_PROJECT_ID }}/runs"
+                    },
+                    {
+                      "type": "button",
+                      "text": {"type": "plain_text", "text": "📋 Ver no GitHub Actions"},
+                      "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }]
+          }'
 
       - name: Gerar relatório unificado
         if: always()
