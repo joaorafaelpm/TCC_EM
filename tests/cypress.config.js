@@ -101,6 +101,7 @@ module.exports = defineConfig({
       CLIENT_PASSWORD: process.env.CLIENT_PASSWORD,
       RESTAURANT_OWNER_USERNAME: process.env.RESTAURANT_OWNER_USERNAME,
       RESTAURANT_OWNER_PASSWORD: process.env.RESTAURANT_OWNER_PASSWORD,
+      CYPRESS_RECORD_KEY: process.env.CYPRESS_RECORD_KEY,
     },
   },
 });
