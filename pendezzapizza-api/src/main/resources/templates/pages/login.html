@@ -1,116 +1,319 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Pendezza Pizza</title>
+    <title>Acesso Restrito - Pendezza Pizza</title>
+    <link rel="icon" type="image/png" th:href="@{/favicon.png}">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: rgba(0,0,0,0.6);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* NOVA CLASSE PARA O LOGO */
+        .top-logo {
+            color: #000 ;
+            position: absolute;
+            background-color: none;
+            top: 20px; /* Distância do topo */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20; /* Fica acima de tudo */
+            max-width: 250px; /* Ajuste o tamanho conforme necessário */
+            height: auto;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Pizza centralizada */
+        .floating-pizza {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            height: 75vh;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .login-side {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 2rem;
+            z-index: 1;
         }
 
-        .login-popup-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
+        .login-container {
             width: 100%;
-            max-width: 360px;
+            max-width: 400px;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .login-header { margin-bottom: 2rem; }
+        .login-header h2 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .color-pendezza { color: #12472A; }
+        .color-pizza { color: #7b241c; }
+
+        .input-group {
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .login-popup-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .login-popup-title h2 {
-            font-size: 1.4rem;
-        }
-
-        .login-popup-inputs {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .login-popup-inputs input {
-            padding: 0.75rem;
+        .input-group input {
+            padding: 0.85rem 1rem;
             border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             outline: none;
+            transition: border-color 0.3s;
+            width: 100%;
         }
 
-        .login-popup-inputs input:focus {
-            border-color: #f0522b;
+        .input-group input:focus {
+            border-color: #12472A;
+            box-shadow: 0 0 0 3px rgba(18, 71, 42, 0.1);
         }
 
-        button[type=submit] {
-            background: #f0522b;
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .password-container input { padding-right: 2.8rem; }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s;
+            padding: 0;
+        }
+
+        .toggle-password:hover { color: #12472A; }
+        .toggle-password svg { width: 20px; height: 20px; }
+
+        .error-msg {
+            color: #d32f2f;
+            background-color: #fdeeea;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            display: none;
+            border-left: 4px solid #d32f2f;
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            background: #12472A;
             color: white;
             border: none;
-            padding: 0.85rem;
+            padding: 1rem;
             border-radius: 8px;
             font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 1.5rem;
         }
 
-        button[type=submit]:hover {
-            background: #d4421e;
+       .register-link {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 1.2rem;
+            margin-top: -0.5rem; /* Aproxima um pouco do campo de senha */
+            display: block;
         }
 
-        .login-popup-condition {
+        .register-link a {
+            color: #12472A;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        button[type="submit"]:hover { background: #0d361f; }
+
+        .login-condition {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #555;
         }
 
-        .error-msg {
-            color: red;
-            font-size: 0.85rem;
-            display: none;
+        .login-condition input[type="checkbox"] { accent-color: #12472A; }
+        .login-condition a {
+            color: #12472A;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .login-condition a:hover { text-decoration: underline; }
+
+        .image-side {
+            flex: 1;
+            background-color: rgba(123, 36, 28, 0.92);
+            color: #f6efe8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .image-side-content {
+            max-width: 80%;
+            z-index: 10;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .image-side h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            font-weight: 800;
+        }
+
+        .image-side p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .italy-tagline {
+            margin-top: 2.5rem;
+            font-size: 1.2rem;
+            font-style: italic;
+            font-weight: 300;
+            display: block;
+            border-top: 1px solid rgba(246, 239, 232, 0.3);
+            padding-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .image-side, .floating-pizza, .top-logo { display: none; }
+            body { background-image: none; }
         }
     </style>
 </head>
-<body>
-<form class="login-popup-container" action="/login" method="POST">
-    <div class="login-popup-title">
-        <h2>Login</h2>
+<body th:style="'background-image: url(\'' + @{/images/background.png} + '\'); background-repeat: no-repeat; background-position: center; background-size: cover; background-color: #f6efe8;'">
+
+<img th:src="@{/images/logo.svg}" alt="Logo Pendezza Pizza" class="top-logo">
+
+<div class="container">
+    <div class="login-side">
+        <form class="login-container" action="/login" method="POST">
+            <div class="login-header">
+                <h2>
+                    <span class="color-pendezza">Pendezza</span>
+                    <span class="color-pizza">Pizza</span>
+                </h2>
+            </div>
+
+            <div class="error-msg" id="erroMsg">
+                Credenciais inválidas. Verifique seu e-mail e senha.
+            </div>
+
+            <div class="input-group">
+                <input type="email" name="username" placeholder="E-mail de acesso" required autocomplete="email" />
+
+                <div class="password-container">
+                    <input type="password" name="password" id="passwordField" placeholder="Sua senha" required autocomplete="current-password" />
+                    <button type="button" id="togglePassword" class="toggle-password" aria-label="Mostrar senha">
+                        <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        <svg id="eyeClosed" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="register-link">
+                Ainda não tem conta? <a href="http://localhost:5173/cadastro">Cadastre-se Aqui!</a>
+            </div>
+
+            <button type="submit" id="LoginButton">Entrar no Sistema</button>
+
+            <div class="login-condition">
+                <input type="checkbox" required id="termos" />
+                <label for="termos">Concordo com os <a href="http://localhost:5173/terms_of_user" target="_blank" rel="noopener noreferrer">Termos de Serviço</a></label>
+            </div>
+        </form>
     </div>
 
-    <div class="login-popup-inputs">
-        <!-- Spring Security exige exatamente name="username" e name="password" -->
-        <input type="email" name="username" placeholder="Seu Email" required />
-        <input type="password" name="password" placeholder="Senha" required />
+    <div class="image-side">
+        <div class="image-side-content">
+            <h1>Obras primas em forma de pizza.</h1>
+            <p>Gerencie pedidos, atualize o cardápio e acompanhe o fluxo do restaurante em tempo real. Faça login para acessar as ferramentas administrativas do sistema.</p>
+            <span class="italy-tagline">Aproveite sua viagem à moda italiana! 🇮🇹</span>
+        </div>
     </div>
-
-    <!-- Mostra erro se o Spring redirecionar com ?error -->
-    <p class="error-msg" id="erroMsg">Email ou senha inválidos.</p>
-
-    <button type="submit" id = "LoginButton">Entrar</button>
-
-    <div class="login-popup-condition">
-        <input type="checkbox" required />
-        <span>Concordo com os <strong>Termos de Serviço</strong></span>
-    </div>
-</form>
+</div>
 
 <script>
-    // Mostra mensagem de erro se o Spring redirecionou com ?error
-    if (window.location.search.includes("error")) {
-        document.getElementById("erroMsg").style.display = "block";
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+        if (window.location.search.includes("error")) {
+            document.getElementById("erroMsg").style.display = "block";
+        }
+
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordField = document.getElementById("passwordField");
+        const eyeOpen = document.getElementById("eyeOpen");
+        const eyeClosed = document.getElementById("eyeClosed");
+
+        togglePassword.addEventListener("click", () => {
+            const isPassword = passwordField.getAttribute("type") === "password";
+            passwordField.setAttribute("type", isPassword ? "text" : "password");
+
+            if (isPassword) {
+                eyeOpen.style.display = "none";
+                eyeClosed.style.display = "block";
+            } else {
+                eyeOpen.style.display = "block";
+                eyeClosed.style.display = "none";
+            }
+        });
+    });
 </script>
 </body>
 </html>

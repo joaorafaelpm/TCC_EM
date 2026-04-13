@@ -364,14 +364,3 @@ public class OrderController {
 
 }
 ```
-
-## Próximos Passos
-
-Algumas tarefas importantes para evoluir o projeto:
-
-- Adicionar autenticação com Oauth2 + JWT usando o Spring Security e Spring Authentication Server
-- Migrar o código existente para a estrutura dividida em micro serviços
-- Adicionar testes integrados e end to end para validação de merge no versionamento do código
-- Documentar as APIs REST usando Swagger ou OpenAPI
-
-

@@ -1,59 +1,54 @@
-import React from 'react'
-import Navbar from './components/Navbar/Navbar'
-import { Route, Routes } from 'react-router-dom'
-import Home from './pages/Home/Home'
-import Cart from './pages/Cart/Cart'
-import PlaceOrder from './pages/PlaceOrder/PlaceOrder'
-import Footer from './components/Footer/Footer'
-import './App.css'
 
-import { useEffect } from 'react'
-import { useState } from 'react'
-import LoginPopup from './components/LoginPopup/LoginPopup'
-import Callback from './pages/Callback/Callback'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import Navbar from "./components/Navbar/Navbar.jsx"
+import Footer from "./components/Footer/Footer.jsx"
+import Home from "./pages/Home/Home.jsx"
+import PlaceOrder from "./pages/PlaceOrder/PlaceOrder.jsx"
+import Cart from "./pages/Cart/Cart.jsx"
+import TermsOfUser from "./pages/TermsOfUser/TermsOfUser.jsx"
+import { Route, Routes, useLocation } from 'react-router-dom'
+import Cadastro from './pages/Cadastro/Cadastro.jsx'
 
+function AppContent() {
+  const { user, isLoading } = useAuth()
+  const location = useLocation()
 
+  const noCadastro = location.pathname.includes('/cadastro')
 
-function App() {
+  // Sempre renderiza o cadastro, independente do estado de auth
+  if (noCadastro) {
+    return (
+      <Routes>
+        <Route path='/cadastro' element={<Cadastro />} />
+      </Routes>
+    )
+  }
 
-  const[showLogin, setShowLogin] = useState(false);
-
-
-  useEffect(() => {
-    document.body.style.overflow = showLogin ? "hidden" : "auto";
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [showLogin]);
-
-
+  if (isLoading) return <div>Carregando...</div>
+  if (!user) return null
 
   return (
-    <>
-
-    {showLogin? <LoginPopup setShowLogin={setShowLogin} /> : <></>}
-      <div className="app">
-        <Navbar setShowLogin={setShowLogin} />
-
-        <div className="page-content">
-          <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='/cart' element={<Cart />} />
-            <Route path='/order' element={<PlaceOrder />} />
-            <Route path="/redirect" element={<Callback />} />
-            <Route path="/login" element={<LoginPopup setShowLogin={setShowLogin}/>} />
-            
-          </Routes>
-          
-        </div>
+    <div className="app">
+      <Navbar />
+      <div className="page-content">
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/cart' element={<Cart />} />
+          <Route path='/order' element={<PlaceOrder />} />
+          <Route path="/terms_of_user" element={<TermsOfUser />} />
+        </Routes>
       </div>
-      
-       <Footer />
-    </>
+      <Footer />
+    </div>
   )
 }
 
-export default App
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  )
+}
 
-
+export default App;
