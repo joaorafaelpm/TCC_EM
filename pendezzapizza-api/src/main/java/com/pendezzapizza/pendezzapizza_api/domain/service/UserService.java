@@ -66,6 +66,11 @@ public class UserService  {
             ));
         }
 
+        // Mais seguro — usa o próprio encoder para detectar
+        if (user.getPassword() != null && !isEncoded(user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
         return userRepository.save(user);
     }
 
@@ -90,5 +95,9 @@ public class UserService  {
             throw new BusinessException("Senhas não coincidem, por favor verifique de novo e tente novamente.");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
+    }
+    private boolean isEncoded(String password) {
+        // Cobre $2a$, $2b$, $2y$ e qualquer versão futura do bcrypt
+        return password.startsWith("$2");
     }
 }

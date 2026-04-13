@@ -34,9 +34,16 @@ public class ResourceServerConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // Adicione liberações públicas se necessário, ex: /public/**, /v3/api-docs
                         .requestMatchers(
+                                "/images/**",
+                                "/css/**",
+                                "/js/**",
+                                "/favicon.png",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/v1/users/register",
+                                "/oauth2/iniciar-login",
+                                "/redirect"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -10,6 +10,7 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.UserControl
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import com.pendezzapizza.pendezzapizza_api.domain.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
+import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -86,6 +88,14 @@ public class UserController implements UserControllerOpenApi {
         User user = userDisassembler.userWithPasswordDTOToUser(userWithPasswordDTO);
         userService.save(user);
         return userModelAssembler.toModel(user);
+    }
+
+    @PostMapping("/register")
+    public void register(@RequestBody @Valid UserWithPasswordDTO userWithPasswordDTO,
+                         HttpServletResponse response) throws IOException {
+        User user = userDisassembler.userWithPasswordDTOToUser(userWithPasswordDTO);
+        userService.save(user);
+        response.sendRedirect("/oauth2/iniciar-login");
     }
 
     @CheckSecurity.UsersGroupsPermissions.CanUpdateUser

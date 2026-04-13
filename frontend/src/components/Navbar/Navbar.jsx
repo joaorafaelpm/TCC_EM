@@ -5,7 +5,7 @@ import { assets } from '../../assets/assets'
 import { Link } from "react-router-dom"
 
 
-const Navbar = ({ setShowLogin }) => {
+const Navbar = () => {
     
   const [menu, setMenu] = useState("inicio")
   const [scrolled, setScrolled] = useState(false)
@@ -51,13 +51,6 @@ const Navbar = ({ setShowLogin }) => {
         <div className="navbar-search-icon">
           <Link to="/cart"><img src={assets.carrinho2} alt="" className='icon' /></Link>
           <div className="dot"></div>
-        </div>
-
-        <button onClick={() => setShowLogin(true)}>Login</button>
-
-        <div className="pedido-telefone-n">
-          <span>Ou peça agora em nosso telefone:</span>
-          <strong>(19) 99746-8594</strong>
         </div>
 
       </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./LoginPopup.css";
+import "./LoginPageHandler.css";
 
-const LoginPopup = ({ setShowLogin }) => {
+const LoginPageHandler = ({ setShowLogin }) => {
   const [currState, setCurrState] = useState("Login");
   const [nome, setNome] = useState("");
   const [erro, setErro] = useState("");
@@ -99,4 +99,4 @@ const LoginPopup = ({ setShowLogin }) => {
   );
 };
 
-export default LoginPopup;
+export default LoginPageHandler;
