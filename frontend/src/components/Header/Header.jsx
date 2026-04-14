@@ -12,7 +12,7 @@ const Header = () => {
           Peça e receba diretamente em casa!
         </p>
 
-        {/* HORÁRIO */}
+        {/* HORÁRIO
         <div className="info-row">
           <img src={assets.clock} alt="Horário" className="info-icon" />
           <div>
@@ -22,20 +22,20 @@ const Header = () => {
         </div>
 
         {/* ENDEREÇO */}
-        <div className="info-row">
+        {/* <div className="info-row">
           <img src={assets.location} alt="Endereço" className="info-icon" />
           <div>
             <p className='t'>Endereço:</p>
             <p className='p'>Rua das Flores, 123 - Centro</p>
           </div>
-        </div>
+        </div> */}
 
         <a href="#explore-menu" className="btn">Ver Cardápio</a>
 
-        <div className="pedido-telefone">
+        {/* <div className="pedido-telefone">
           <span>Ou peça agora em nosso telefone:</span>
           <strong>(19) 99746-8594</strong>
-        </div>
+        </div> */}
 
       </div>
     </div>

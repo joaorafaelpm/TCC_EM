@@ -4,59 +4,55 @@ import { assets } from '../../assets/assets'
 
 const Footer = () => {
   return (
-    <div className="footer" id ="footer">
-        <div className="footer-content">
-            <div className="footer-content-left">
-                <img src={assets.logo3} alt="" className='img-logo'/>
-                <p>Escolha e desfrute de verdadeiras obras primas, criadas com ingredientes frescos e selecionados. 
-          Peça e receba diretamente em casa!</p>
-                <div className="footer-social-icons">
-                    
-                    <img src={assets.facebook} alt="" />
-                    <img src={assets.x} alt="" />
-                    <img src={assets.instagram} alt="" />
-                </div>
+    <footer className="footer" id="footer">
+      <div className="footer-container">
+        {/* Lado Esquerdo: Branding e Social */}
+        <section className="footer-brand">
+          <img src={assets.logo3} alt="Pendezza Pizza Logo" className='footer-logo' />
+          <p>
+            Escolha e desfrute de verdadeiras obras-primas, criadas com ingredientes 
+            frescos e selecionados. Peça e receba diretamente em casa!
+          </p>
+          <div className="footer-social">
+            <a href="#" aria-label="Facebook"><img src={assets.facebook} alt="" /></a>
+            <a href="#" aria-label="Twitter/X"><img src={assets.x} alt="" /></a>
+            <a href="#" aria-label="Instagram"><img src={assets.instagram} alt="" /></a>
+          </div>
+        </section>
 
-            </div>
+        {/* Centro: Navegação */}
+        <nav className="footer-nav">
+          <h3>Menu</h3>
+          <ul>
+            <li><a href="/">Início</a></li>
+            <li><a href="#explore-menu">Cardápio</a></li>
+            <li><a href="#sobre">Sobre</a></li>
+            <li><a href="#depoimentos">Depoimentos</a></li>
+          </ul>
+        </nav>
 
-            <div className="footer-content-center">
-                <h2>Menu </h2>
-                <ul>
-                    <li><a href="/">Início</a></li>
-                    <li><a href="#explore-menu">cardápio</a></li>
-                    <li><a href="#sobre">Sobre</a></li>
-                    <li><a href="#depoimentos">Depoimentos</a></li>
-                </ul>
+        {/* Lado Direito: Contato */}
+        <section className="footer-contact">
+          <h3>Entre em Contato</h3>
+          <address>
+            <p>pendezza@gmail.com</p>
+            <p>(19) 99746-8594</p>
+          </address>
+        </section>
+      </div>
 
-            </div>
+      <hr className="footer-divider" />
 
-            <div className="footer-content-right">
-                <h2>Entre em Contato</h2>
-                <ul>
-                    <li>pendezza@gmail.com</li>
-                    <li>(19) 99746-8594</li>
-                </ul>
-
-            </div>
-
-        </div>
-        <hr/>
-       <div className="copyright">
-  <p>© 2026 Pendezza Pizza. Todos os direitos reservados.</p>
-
-  <div className="desenvolvido">
-    <span>Desenvolvido por </span>
-    <a
-      href="https://personal-website-chi-nine-74.vercel.app/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Pendezza Pizza
-    </a>
-  </div>
-</div>
-
-    </div>
+      <div className="footer-bottom">
+        <p>© 2026 Pendezza Pizza. Todos os direitos reservados.</p>
+        <p className="developer-info">
+          Desenvolvido por 
+          <a href="https://personal-website-chi-nine-74.vercel.app/" target="_blank" rel="noopener noreferrer">
+             Pendezza Pizza
+          </a>
+        </p>
+      </div>
+    </footer>
   )
 }
 

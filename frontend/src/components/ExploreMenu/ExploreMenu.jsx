@@ -1,8 +1,16 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './ExploreMenu.css'
-import { category_list } from '../../assets/assets'
 
-const ExploreMenu = ({ category, setCategory }) => {
+const ExploreMenu = () => {
+  const [exploreMenuItems, setExploreMenuItems] = useState([])
+  useEffect(() => {
+    (async () => {
+      const response = await fetch("http://localhost/v1/restaurants", { credentials: 'include' });
+      const data = await response.json();
+      setExploreMenuItems(data.content);
+    })();
+  }, [])
+
   return (
     
     <div className='explore-menu' id='explore-menu'>
@@ -13,19 +21,15 @@ const ExploreMenu = ({ category, setCategory }) => {
       </div>
 
       <div className='explore-menu-p'>
-        <p className='explore-menu-text'>Nosso Cardápio</p>
+        <p className='explore-menu-text'>Nossos Restaurantes</p>
       </div>
  
       <div className='explore-menu-items'>
-        {category_list.map((item, index) => (
-          <div
-            key={index}
-            className={`explore-menu-item-list ${category === item.category ? 'active' : ''}`}
-            onClick={() => setCategory(item.category)}
-            
-          >
-            <img src={item.image} alt={item.name} />
-            <p>{item.name}</p>
+        {exploreMenuItems.map((item, index) => (
+          <div key={index} className={`explore-menu-item`}>
+            <a href={`http://localhost:5173/restaurant/${item.id}`} target="_blank" rel="noopener noreferrer">
+              <p>{item.name}</p>
+            </a>
           </div>
         ))}
       </div>

@@ -1,6 +1,8 @@
 package com.pendezzapizza.pendezzapizza_api.api;
 
-import com.pendezzapizza.pendezzapizza_api.core.pcke.PkceService;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
+import com.pendezzapizza.pendezzapizza_api.core.pkce.PkceService;
 import com.pendezzapizza.pendezzapizza_api.core.security.session.TokenSessionService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Map;
 
 @RestController
@@ -45,7 +48,7 @@ public class FrontEndHandlerController {
     public void captureCode(@RequestParam(required = false) String code,
                             @RequestParam(required = false) String state,
                             @RequestParam(required = false) String error,
-                            HttpServletResponse response) throws IOException {
+                            HttpServletResponse response) throws IOException, ParseException {
 
         if (error != null) {
             // Redireciona pro frontend com o erro para exibir uma mensagem
@@ -53,23 +56,22 @@ public class FrontEndHandlerController {
             return;
         }
 
-        // 1. Recupera e deleta o code_verifier do Redis
         String codeVerifier = pkceService.consumeVerifier(state);
 
-        // 2. Troca o code pelo token, agora com o code_verifier
         Map<String, String> tokens = exchangeCodeForTokens(code, codeVerifier);
+        String accessToken = tokens.get("access_token");
+        JWT jwt = JWTParser.parse(accessToken);
+        String userId = jwt.getJWTClaimsSet().getStringClaim("user_id");
 
-        // 3. Salva tokens na sessão (como antes)
         String sessionId = tokenSessionService.createSession(
-                tokens.get("access_token"),
-                tokens.get("refresh_token")
+                accessToken,
+                tokens.get("refresh_token"),
+                userId
         );
 
-        // 4. Seta cookie e redireciona
         ResponseCookie cookie = ResponseCookie.from("SESSION_ID", sessionId)
                 .httpOnly(true)
                 .secure(false)
-//                .sameSite("Strict")
                 .sameSite("Lax")
                 .path("/")
                 .maxAge(3600)
@@ -81,7 +83,6 @@ public class FrontEndHandlerController {
     private Map<String, String> exchangeCodeForTokens(String code, String codeVerifier) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        // Basic Auth com clientId:clientSecret
         headers.setBasicAuth(clientId, clientSecret);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();

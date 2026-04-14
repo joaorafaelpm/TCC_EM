@@ -45,6 +45,11 @@ public class ResourceServerConfig {
                                 "/oauth2/iniciar-login",
                                 "/redirect"
                         ).permitAll()
+                        .requestMatchers(
+                                "/HNAP1/**",
+                                "/cgi/**",
+                                "/loginMsg.js"
+                        ).denyAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

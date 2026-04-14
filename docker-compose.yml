@@ -23,6 +23,7 @@ services:
     image: redis:8.4.0-alpine
     networks:
       - pendezzapizza-network
+    command: redis-server --appendonly yes
 
   pendezzapizza-api:
     # image: jrfifipi/pendezzapizza:v1

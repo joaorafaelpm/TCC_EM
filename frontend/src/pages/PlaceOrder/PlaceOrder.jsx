@@ -48,12 +48,10 @@ const PlaceOrder = () => {
     <div className="place-order-right"> 
           <div className="cart-bottom-order">
                 <div className='cart-total'>
-                    <h2>Total do Carrinho </h2>
+                  <h2>Total do Carrinho </h2>
                 <div className="cart-bottom-total">
-                    <h3>R$ {food_list.reduce((total, item) => total + item.price * (cartItems[item._id] || 0), 0).toFixed(2)}</h3>
-                </div>
-
-                
+                  <h3>R$ {food_list.reduce((total, item) => total + item.price * (cartItems[item._id] || 0), 0).toFixed(2)}</h3>
+                </div>               
 
               </div>
               

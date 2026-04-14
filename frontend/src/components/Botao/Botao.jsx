@@ -4,7 +4,7 @@ import './Botao.css'
 const Botao = () => {
   return (
     <div className='botao-container'>
-      <a href="#explore-menu" className="botao">Ver Cardápio</a>
+      <a href="#inicio" className="botao">Voltar</a>
     </div>
   )
 }

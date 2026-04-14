@@ -1,223 +1,125 @@
 :root {
-  
   --primary-color: #742b2b;
-  --secondary-color:rgb(16, 69, 30);
   --tertiary-color: #ffdddd;
-  --banner-color:rgb(16, 69, 30);
-  --bg-color: #fff6e2;
+  --white: #ffffff;
+  --transition: all 0.3s ease;
 }
 
+.banner {
+  width: 90%;
+  max-width: 1400px;
+  margin: 40px auto;
+  background: var(--primary-color);
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: fadeIn 0.8s ease-out;
+}
 
-
-.banner{
-    height: 28vh;
-    width: 80%;
-    background: var(--primary-color);
-    margin: 55px auto;
-    border-radius: 25px;      
-    overflow: hidden;   
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.093);     
-    animation: fadeIn 0.9s ease-in-out; 
-    color: color-mix(in srgb, var(--tertiary-color) 35%, rgb(255, 255, 255));
-    padding: 30px 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
+.banner-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(20px, 4vw, 40px) clamp(20px, 5vw, 60px);
+  gap: 30px;
 }
 
 /* LOGO */
 .banner-logo img {
-  width: 170px;
+  width: clamp(100px, 12vw, 160px);
   height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
-/* TEXTO */
-.banner-text {
-  flex: 1;
- 
+/* CONTEÚDO CENTRAL */
+.banner-content {
+  flex: 2;
 }
 
-.banner-text .stars {
-  font-size: 14px;
-  letter-spacing: 1px;
-  opacity: 0.9;
-}
-
-.banner-text h2 {
-  margin-top: 10px;
-  font-size: 36px;
-  line-height: 1.1;
+.banner-title {
+  color: var(--white);
+  /* Fonte fluida: min 20px, ideal 3vw, max 40px */
+  font-size: clamp(20px, 2.5vw, 38px);
+  line-height: 1.2;
   font-weight: 800;
+  margin: 0;
 }
 
-/* TELEFONE */
-.banner-phone {
-  font-size: 40px;
-  font-weight: bold;
+.banner-title span {
+  display: block;
+  font-size: 0.7em;
+  opacity: 0.9;
+  font-weight: 400;
+  margin-top: 5px;
+  color: var(--tertiary-color);
+}
+
+/* INFO / CONTATO */
+.banner-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  flex: 1;
+}
+
+.support-label {
+  font-size: clamp(12px, 1vw, 16px);
+  color: var(--tertiary-color);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.phone-number {
+  font-size: clamp(18px, 2.2vw, 34px);
+  font-weight: 900;
+  color: var(--white);
+  text-decoration: none;
   white-space: nowrap;
+  transition: var(--transition);
 }
 
-
-/* =====================================
-   RESPONSIVIDADE AVANÇADA — BANNER
-===================================== */
-
-/* 🔹 telas grandes */
-@media (min-width: 1600px) {
-  .banner {
-    max-width: 1400px;
-  }
-
-  .banner-text h2 {
-    font-size: 44px;
-  }
-
-  .banner-phone {
-    font-size: 46px;
-  }
+.phone-number:hover {
+  transform: scale(1.05);
+  color: var(--tertiary-color);
 }
 
-/* 🔹 até 1300px */
-@media (max-width: 1300px) {
-  .banner {
-    width: 88%;
-    padding: 30px 45px;
+/* ANIMAÇÃO */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
 
-  .banner-logo img {
-    width: 150px;
-  }
-
-  .banner-text h2 {
-    font-size: 34px;
-  }
-
-  .banner-phone {
-    font-size: 38px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* 🔹 até 1100px */
-@media (max-width: 1100px) {
-  .banner {
-    width: 92%;
-    height: auto;
-    padding: 35px 40px;
-  }
-
-  .banner-logo img {
-    width: 140px;
-  }
-
-  .banner-text h2 {
-    font-size: 32px;
-  }
-
-  .banner-phone {
-    font-size: 34px;
-  }
-}
-
-/* 🔹 até 900px */
-@media (max-width: 900px) {
-  .banner {
+/* RESPONSIVIDADE (Apenas o necessário) */
+@media (max-width: 850px) {
+  .banner-container {
     flex-direction: column;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .banner-info {
     align-items: center;
-    gap: 20px;
-    padding: 10px 35px;
+    text-align: center;
+  }
+
+  .banner-title br {
     display: none;
-  }
-
-  .banner-logo img {
-    width: 130px;
-  }
-
-  .banner-text {
-    width: 100%;
-    text-align: flex-start;
-  }
-
-  .banner-text h2 {
-    font-size: 30px;
-  }
-
-  .banner-phone {
-    font-size: 32px;
+    /* Melhora o fluxo de texto no mobile */
   }
 }
 
-/* 🔹 até 750px */
-@media (max-width: 750px) {
-  .banner {
-    margin: 70px auto;
-    padding: 45px 30px;
-    border-radius: 22px;
-  }
-
-  .banner-text h2 {
-    font-size: 28px;
-  }
-
-  .banner-phone {
-    font-size: 30px;
-  }
-}
-
-/* 🔹 até 550px */
-@media (max-width: 550px) {
-  .banner {
-    padding: 45px 25px;
-    gap: 22px;
-  }
-
-  .banner-logo img {
-    width: 115px;
-  }
-
-  .banner-text h2 {
-    font-size: 26px;
-  }
-
-  .banner-phone {
-    font-size: 27px;
-  }
-}
-
-/* 🔹 até 450px */
-@media (max-width: 450px) {
+@media (max-width: 480px) {
   .banner {
     width: 95%;
-    padding: 50px 22px;
-    border-radius: 20px;
-  }
-
-  .banner-text h2 {
-    font-size: 24px;
-    line-height: 1.2;
-  }
-
-  .banner-phone {
-    font-size: 25px;
-  }
-}
-
-/* 🔹 até 360px */
-@media (max-width: 360px) {
-  .banner {
-    padding: 55px 18px;
-    gap: 18px;
-  }
-
-  .banner-logo img {
-    width: 100px;
-  }
-
-  .banner-text h2 {
-    font-size: 22px;
-  }
-
-  .banner-phone {
-    font-size: 23px;
+    border-radius: 15px;
   }
 }

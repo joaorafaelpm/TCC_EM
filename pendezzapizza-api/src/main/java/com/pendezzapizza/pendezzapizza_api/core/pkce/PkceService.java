@@ -1,4 +1,4 @@
-package com.pendezzapizza.pendezzapizza_api.core.pcke;
+package com.pendezzapizza.pendezzapizza_api.core.pkce;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

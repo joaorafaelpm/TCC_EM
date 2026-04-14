@@ -8,6 +8,7 @@ import Cart from "./pages/Cart/Cart.jsx"
 import TermsOfUser from "./pages/TermsOfUser/TermsOfUser.jsx"
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Cadastro from './pages/Cadastro/Cadastro.jsx'
+import Restaurant from './pages/Restaurant/Restaurant.jsx'
 
 function AppContent() {
   const { user, isLoading } = useAuth()
@@ -15,7 +16,6 @@ function AppContent() {
 
   const noCadastro = location.pathname.includes('/cadastro')
 
-  // Sempre renderiza o cadastro, independente do estado de auth
   if (noCadastro) {
     return (
       <Routes>
@@ -36,6 +36,7 @@ function AppContent() {
           <Route path='/cart' element={<Cart />} />
           <Route path='/order' element={<PlaceOrder />} />
           <Route path="/terms_of_user" element={<TermsOfUser />} />
+          <Route path='/restaurant/:id' element={<Restaurant />} />
         </Routes>
       </div>
       <Footer />

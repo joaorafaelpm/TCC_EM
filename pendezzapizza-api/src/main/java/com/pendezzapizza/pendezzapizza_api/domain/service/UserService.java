@@ -66,7 +66,6 @@ public class UserService  {
             ));
         }
 
-        // Mais seguro — usa o próprio encoder para detectar
         if (user.getPassword() != null && !isEncoded(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }

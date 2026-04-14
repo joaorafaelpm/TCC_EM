@@ -29,7 +29,7 @@ const Navbar = () => {
 
       <ul className="navbar-menu">
         <li className={menu === "inicio" ? "active" : ""} onClick={() => setMenu('inicio')}>
-          <a href="/">Início</a>
+          <a href="#inicio">Início</a>
         </li>
 
         <li className={menu === "cardapio" ? "active" : ""} onClick={() => setMenu('cardapio')}>

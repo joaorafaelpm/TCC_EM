@@ -7,17 +7,14 @@ const FoodDisplay = ({ category }) => {
   const { food_list } = useContext(StoreContext)
   const [showAll, setShowAll] = useState(false)
 
-  // 🔹 Reseta ao trocar categoria
   useEffect(() => {
     setShowAll(false)
   }, [category])
 
-  // 🔹 Filtra
   const filteredList = food_list.filter(item =>
     category === 'all' || item.category === category
   )
 
-  // 🔹 Quantidade visível
   const visibleItems = showAll
     ? filteredList
     : filteredList.slice(0, 5)
@@ -25,7 +22,6 @@ const FoodDisplay = ({ category }) => {
   return (
     <div className="food-display" id="food-display">
 
-      {/* 🔹 TÍTULO VINDO DA CATEGORY LIST */}
       {category !== 'all' && (
         <h2 className="food-display-title">
           {category}
@@ -45,7 +41,6 @@ const FoodDisplay = ({ category }) => {
         ))}
       </div>
 
-      {/* 🔹 BOTÃO */}
       {filteredList.length > 5 && (
         <div className="show-more-container">
           <button

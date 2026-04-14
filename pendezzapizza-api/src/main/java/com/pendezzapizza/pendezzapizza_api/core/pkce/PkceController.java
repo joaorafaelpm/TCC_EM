@@ -1,4 +1,4 @@
-package com.pendezzapizza.pendezzapizza_api.core.pcke;
+package com.pendezzapizza.pendezzapizza_api.core.pkce;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

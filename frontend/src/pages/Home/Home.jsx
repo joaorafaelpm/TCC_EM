@@ -12,19 +12,15 @@ import Botao from '../../components/Botao/Botao'
 
 
 const Home = () => {
-  const [category, setCategory] = React.useState('all')
-
   return (
     <div>
       <Header />
-      <ExploreMenu category={category} setCategory={setCategory} />
-      <FoodDisplay category={category} />
+      <ExploreMenu/>
+      <FoodDisplay/>
       <Sobre />
       <Banner />
       <Testimonials/>
       <Botao/>
-      
-      
     </div>
   )
 }

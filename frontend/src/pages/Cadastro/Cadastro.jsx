@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import './Cadastro.css'; // Importando o CSS que criamos acima
+import './Cadastro.css';
 
-// ATENÇÃO: Importe as imagens aqui. 
-// O caminho exato depende de onde a sua pasta de assets está localizada no projeto React.
 import backgroundImg from '../../assets/background.png';
 import logoImg from '../../assets/logo.svg';
 
@@ -18,28 +16,25 @@ export default function Cadastro() {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
-        setErro('As senhas não conferem');
-        return;
+      setErro('As senhas não conferem');
+      return;
     }
 
     const res = await fetch('http://localhost/v1/users/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        redirect: 'manual', // <-- não segue o redirect automaticamente
-        body: JSON.stringify({ name: form.name, email: form.email, password: form.password })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      redirect: 'manual', // <-- não segue o redirect automaticamente
+      body: JSON.stringify({ name: form.name, email: form.email, password: form.password })
     });
 
-    // status 0 = redirect manual interceptado (opaqueredirect)
     if (res.ok || res.status === 0 || res.type === 'opaqueredirect') {
-        // Aí sim navega como browser de verdade
-        window.location.href = '/oauth2/iniciar-login';
+      window.location.href = '/oauth2/iniciar-login';
     } else {
-        setErro('Erro ao cadastrar. Tente novamente.');
+      setErro('Erro ao cadastrar. Tente novamente.');
     }
 };
 
-  // Função auxiliar para renderizar o ícone de olho
   const renderEyeIcon = (isOpen) => {
     if (isOpen) {
       return (

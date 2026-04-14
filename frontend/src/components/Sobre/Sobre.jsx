@@ -14,18 +14,18 @@ const Sobre = () => {
 
             <h3>Sobre nós</h3>
 
-            <h1>Bem-vindo à melhor pizzaria da cidade!</h1>
+            <h1>Bem-vindo ao melhor marketplace de pizzarias do mundo!</h1>
 
             <p>
               A Pendezza Pizza nasceu com o propósito de levar até você
               uma experiência única em sabor e qualidade.
-              Trabalhamos com ingredientes selecionados, massa artesanal
+              Trabalhamos com as maiores marcas que abrengem desde o seu bairro até as mais conhecidas no ramo das pizzarias, massa artesanal
               e receitas que unem tradição e inovação para tornar
               cada pedido inesquecível.
             </p>
 
             <a href="#explore-menu" className="btn-s">
-              Ver Cardápio
+              Ver Cardápio Geral
             </a>
 
           </div>
