@@ -12,3 +12,9 @@ Feature: Login
     Given I'm on the login page
     When I type a registered email and password
     Then I have a successful login and see my access_token
+
+
+    Scenario: I type my name and password on the login page and earn access to the system
+    Given I'm on the login page
+    When I type a registered email and password
+    Then I have access to the system

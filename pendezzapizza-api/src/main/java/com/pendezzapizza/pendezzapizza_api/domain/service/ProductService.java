@@ -28,6 +28,15 @@ public class ProductService {
     public Page<Product> findByRestaurant(Restaurant restaurant, Pageable pageable) {
         return productRepository.findByRestaurant(restaurant, pageable);
     }
+    @Cacheable(value = "productsActive", key = "{#pageable.pageNumber, #pageable.pageSize}")
+    public Page<Product> findAllActive(Pageable pageable) {
+        return productRepository.findAllActives(pageable);
+    }
+    //    Adicionar aos caches
+    @Cacheable(value = "allProducts", key = "{#pageable.pageNumber, #pageable.pageSize}")
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAllActives(pageable);
+    }
 
     @Cacheable(value = "productsActivesByRestaurant", key = "{#restaurant.id, #pageable.pageNumber, #pageable.pageSize}")
     public Page<Product> findActiveByRestaurant(Restaurant restaurant, Pageable pageable) {
@@ -70,6 +79,11 @@ public class ProductService {
         if (product.canDeactivate()) product.deactivate();
     }
 
+    //    Adicionar aos caches
+    @Cacheable(value = "productsAllLastUpdateDateActives")
+    public OffsetDateTime getAllLastUpdateDate () {
+        return productRepository.getAllLastUpdateDate();
+    }
     @Cacheable(value = "productsLastUpdateDateActivesByRestaurantId" , key = "#restaurantId")
     public OffsetDateTime findLastUpdateDateAndActivesByRestaurantId (UUID restaurantId) {
         return productRepository.getLastUpdateDateById(restaurantId);

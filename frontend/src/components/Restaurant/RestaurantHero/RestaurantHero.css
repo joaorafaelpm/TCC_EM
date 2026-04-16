@@ -1,0 +1,54 @@
+.restaurant-hero {
+    background: linear-gradient(135deg, #e63946 0%, #a8222e 100%);
+    color: white;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-content {
+    max-width: 1000px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.title-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge.open {
+    background-color: #4caf50;
+}
+
+.status-badge.closed {
+    background-color: #757575;
+}
+
+.delivery-info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px 25px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+    .hero-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+}

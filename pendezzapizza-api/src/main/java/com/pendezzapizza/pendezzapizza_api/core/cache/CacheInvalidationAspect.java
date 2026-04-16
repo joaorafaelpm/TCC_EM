@@ -44,7 +44,7 @@ public class CacheInvalidationAspect {
     }
     @AfterReturning("@annotation(com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.ProductCacheEvict)")
     public void afterProductUpdate() {
-        cacheInvalidatorUtil.publishCacheInvalidation("product", "productsByRestaurant" , "productsActivesByRestaurant" , "productsLastUpdateDateActivesByRestaurantId" , "productsLastUpdateDateByRestaurantId");
+        cacheInvalidatorUtil.publishCacheInvalidation("product","allProducts","productsActive", "productsByRestaurant" , "productsActivesByRestaurant" ,"productsAllLastUpdateDateActives", "productsLastUpdateDateActivesByRestaurantId" , "productsLastUpdateDateByRestaurantId");
     }
     @AfterReturning("@annotation(com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.RestaurantsCacheEvict)")
     public void afterRestaurantUpdate() {

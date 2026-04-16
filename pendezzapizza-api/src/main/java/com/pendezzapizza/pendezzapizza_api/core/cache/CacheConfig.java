@@ -54,6 +54,7 @@ public class CacheConfig {
 
 //        Products
         manager.registerCustomCache("product", buildCache(200, 30));
+        manager.registerCustomCache("productsActive", buildCache(200, 30));
         manager.registerCustomCache("productsByRestaurant", buildCache(200, 30));
         manager.registerCustomCache("productsActivesByRestaurant", buildCache(200, 30));
         manager.registerCustomCache("productsLastUpdateDateActivesByRestaurantId", buildCache(1, 30));

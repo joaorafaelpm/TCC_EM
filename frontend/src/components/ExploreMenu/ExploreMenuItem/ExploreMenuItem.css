@@ -1,0 +1,43 @@
+.explore-menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.explore-menu-link {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.img-wrapper img {
+    width: clamp(80px, 10vw, 120px);
+    height: clamp(80px, 10vw, 120px);
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.explore-menu-item:hover .img-wrapper img {
+    transform: scale(1.08);
+    border-color: #742b2b;
+    /* Cor da pizzaria */
+}
+
+.explore-menu-item p {
+    margin-top: 12px;
+    color: #822828;
+    font-weight: 600;
+    font-size: clamp(0.9rem, 1.2vw, 1.2rem);
+    text-align: center;
+}
+
+/* Estado Ativo (se você quiser destacar a categoria selecionada) */
+.explore-menu-item.active img {
+    border-color: #ff6a6a;
+    padding: 3px;
+}

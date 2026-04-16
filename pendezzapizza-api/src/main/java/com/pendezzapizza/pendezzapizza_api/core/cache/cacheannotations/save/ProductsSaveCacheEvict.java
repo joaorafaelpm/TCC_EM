@@ -15,7 +15,10 @@ import java.lang.annotation.Target;
         @CacheEvict(value = "product", key = "#result.id"),
         // Limpa TODAS as páginas de produtos daquele restaurante
         @CacheEvict(value = "productsByRestaurant", allEntries = true),
+        @CacheEvict(value = "allProducts", allEntries = true),
+        @CacheEvict(value = "productsActive", allEntries = true),
         @CacheEvict(value = "productsActivesByRestaurant", allEntries = true),
+        @CacheEvict(value = "productsAllLastUpdateDateActives", allEntries = true),
         @CacheEvict(value = "productsLastUpdateDateActivesByRestaurantId", key = "#restaurantId"),
         @CacheEvict(value = "productsLastUpdateDateByRestaurantId", key = "#restaurantId")
 })

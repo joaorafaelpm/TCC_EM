@@ -13,8 +13,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Caching(evict = {
         @CacheEvict(value = "product", key = "#productId"),
+        @CacheEvict(value = "productsActive", allEntries = true),
+        @CacheEvict(value = "allProducts", allEntries = true),
         @CacheEvict(value = "productsByRestaurant", allEntries = true),
         @CacheEvict(value = "productsActivesByRestaurant", allEntries = true),
+        @CacheEvict(value = "productsAllLastUpdateDateActives"),
         @CacheEvict(value = "productsLastUpdateDateActivesByRestaurantId", key = "#restaurantId"),
         @CacheEvict(value = "productsLastUpdateDateByRestaurantId", key = "#restaurantId")
 })

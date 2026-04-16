@@ -10,8 +10,6 @@ public class RestClientConfig {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        // Using the builder is best practice as it applies 
-        // default message converters and settings
         return builder.build();
     }
 }

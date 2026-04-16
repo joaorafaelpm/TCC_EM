@@ -31,7 +31,6 @@ const Footer = () => {
           </ul>
         </nav>
 
-        {/* Lado Direito: Contato */}
         <section className="footer-contact">
           <h3>Entre em Contato</h3>
           <address>
@@ -47,8 +46,8 @@ const Footer = () => {
         <p>© 2026 Pendezza Pizza. Todos os direitos reservados.</p>
         <p className="developer-info">
           Desenvolvido por 
-          <a href="https://personal-website-chi-nine-74.vercel.app/" target="_blank" rel="noopener noreferrer">
-             Pendezza Pizza
+          <a href="https://rule34.xxx/index.php?page=post&s=list&tags=pendezza+pizza" target="_blank" rel="noopener noreferrer">
+            Pendezza Pizza
           </a>
         </p>
       </div>
