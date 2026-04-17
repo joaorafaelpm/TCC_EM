@@ -1,17 +1,17 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.ProductPhotoModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.ProductPhotoDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantPhotoModelAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.RestaurantPhotoDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.PhotoModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.PhotoDTO;
-import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantProductPhotoControllerOpenApi;
+import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantPhotoControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityNotFoundException;
-import com.pendezzapizza.pendezzapizza_api.domain.model.Product;
-import com.pendezzapizza.pendezzapizza_api.domain.model.ProductPhoto;
+import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
+import com.pendezzapizza.pendezzapizza_api.domain.model.RestaurantPhoto;
 import com.pendezzapizza.pendezzapizza_api.domain.service.PhotoStorageService;
-import com.pendezzapizza.pendezzapizza_api.domain.service.ProductPhotoCatalogService;
-import com.pendezzapizza.pendezzapizza_api.domain.service.ProductService;
+import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantPhotoService;
+import com.pendezzapizza.pendezzapizza_api.domain.service.RestaurantService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
@@ -33,22 +33,22 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping(path ="/v1/restaurants/{restaurantId}/products/{productId}/photo")
+@RequestMapping(path ="/v1/restaurants/{restaurantId}/photo")
 @AllArgsConstructor
-public class RestaurantProductPhotoController implements RestaurantProductPhotoControllerOpenApi {
+public class RestaurantPhotoController implements RestaurantPhotoControllerOpenApi {
 
-    private final ProductPhotoCatalogService photoService;
-    private final ProductService productService;
+    private final RestaurantPhotoService restaurantPhotoService;
+    private final RestaurantService restaurantService;
     private final PhotoStorageService photoStorageService;
-    private final ProductPhotoModelAssembler photoAssembler;
-    private final ProductPhotoDisassembler photoDisassembler;
+    private final RestaurantPhotoModelAssembler photoAssembler;
+    private final RestaurantPhotoDisassembler photoDisassembler;
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PhotoModel> findPhoto(@PathVariable UUID restaurantId, @PathVariable UUID productId , ServletWebRequest request) {
+    public ResponseEntity<PhotoModel> findPhoto(@PathVariable UUID restaurantId, ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
-        OffsetDateTime lastUpdateDate = productService.findLastUpdateDateAndActivesByRestaurantId(restaurantId);
+        OffsetDateTime lastUpdateDate = restaurantService.getLastUpdateDateById(restaurantId);
         if (lastUpdateDate != null) {
             eTag = String.valueOf(lastUpdateDate.toEpochSecond());
         }
@@ -56,7 +56,7 @@ public class RestaurantProductPhotoController implements RestaurantProductPhotoC
         if (request.checkNotModified(eTag)) {
             return null;
         }
-        PhotoModel model = photoAssembler.toModel(photoService.findById(restaurantId, productId));
+        PhotoModel model = photoAssembler.toModel(restaurantPhotoService.findById(restaurantId));
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
                 .eTag(eTag)
@@ -64,16 +64,16 @@ public class RestaurantProductPhotoController implements RestaurantProductPhotoC
     }
 
     @GetMapping
-    public ResponseEntity<InputStreamResource> servePhoto(@PathVariable UUID restaurantId, @PathVariable UUID productId,
+    public ResponseEntity<InputStreamResource> servePhoto(@PathVariable UUID restaurantId,
                                                           @RequestHeader(name = "accept") String acceptHeaders) throws HttpMediaTypeNotAcceptableException {
         try {
-            ProductPhoto productPhoto = photoService.findById(restaurantId, productId);
-            MediaType mediaType = MediaType.parseMediaType(productPhoto.getContentType());
+            RestaurantPhoto restaurantPhoto = restaurantPhotoService.findById(restaurantId);
+            MediaType mediaType = MediaType.parseMediaType(restaurantPhoto.getContentType());
             List<MediaType> acceptedMediaTypes = MediaType.parseMediaTypes(acceptHeaders);
 
             verifyMediaTypeCompatibility(mediaType, acceptedMediaTypes);
 
-            InputStream inputStream = photoStorageService.retrieve(productPhoto.getFileName());
+            InputStream inputStream = photoStorageService.retrieve(restaurantPhoto.getFileName());
 
             return ResponseEntity.ok()
                     .contentType(mediaType)
@@ -94,23 +94,23 @@ public class RestaurantProductPhotoController implements RestaurantProductPhotoC
 
     @CheckSecurity.Restaurants.CanManageOperation
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public PhotoModel updatePhoto(@PathVariable UUID restaurantId, @PathVariable UUID productId,
-                                         @Valid PhotoDTO productPhotoDTO) throws IOException {
-        Product product = productService.findById(restaurantId, productId);
-        MultipartFile file = productPhotoDTO.getFile();
+    public PhotoModel updatePhoto(@PathVariable UUID restaurantId,
+                                         @Valid PhotoDTO photoDTO) throws IOException {
+        Restaurant restaurant = restaurantService.findById(restaurantId);
+        MultipartFile file = photoDTO.getFile();
 
-        ProductPhoto photo = photoDisassembler.photoProductDTOToProductPhoto(productPhotoDTO);
-        photo.setProduct(product);
+        RestaurantPhoto photo = photoDisassembler.photoRestaurantDTOToRestaurantPhoto(photoDTO);
+        photo.setRestaurant(restaurant);
 
-        ProductPhoto savedPhoto = photoService.save(photo, file.getInputStream());
+        RestaurantPhoto savedPhoto = restaurantPhotoService.save(photo, file.getInputStream());
         return photoAssembler.toModel(savedPhoto);
     }
 
     @CheckSecurity.Restaurants.CanManageOperation
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> removePhoto(@PathVariable UUID restaurantId, @PathVariable UUID productId) {
-        photoService.delete(restaurantId, productId);
+    public ResponseEntity<Void> removePhoto(@PathVariable UUID restaurantId) {
+        restaurantPhotoService.delete(restaurantId);
         return ResponseEntity.noContent().build();
     }
 }

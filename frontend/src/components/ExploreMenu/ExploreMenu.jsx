@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './ExploreMenu.css';
 import ExploreMenuItem from './ExploreMenuItem/ExploreMenuItem.jsx';
 
-const ExploreMenu = ({ category, setCategory }) => {
+const ExploreMenu = () => {
   const [restaurants, setRestaurants] = useState([]);
 
   useEffect(() => {
@@ -34,8 +34,6 @@ const ExploreMenu = ({ category, setCategory }) => {
             key={item.id}
             id={item.id}
             name={item.name}
-            category={item.category} // Se tiver categoria no futuro
-            activeCategory={category}
           />
         ))}
       </div>

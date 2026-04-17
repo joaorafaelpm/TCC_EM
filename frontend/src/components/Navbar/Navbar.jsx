@@ -28,20 +28,20 @@ const Navbar = () => {
       <Link to="/"><img src={assets.logo2} alt="" className="logo"/></Link> 
 
       <ul className="navbar-menu">
-        <li className={menu === "inicio" ? "active" : ""} onClick={() => setMenu('inicio')}>
-          <a href="#inicio">Início</a>
+        <li>
+          <a href="/#inicio" className={menu === "inicio" ? "active" : ""} onClick={() => setMenu('inicio')}>Início</a>
         </li>
 
-        <li className={menu === "cardapio" ? "active" : ""} onClick={() => setMenu('cardapio')}>
-          <a href="#explore-menu">Cardápio</a>
+        <li>
+          <a href="/#explore-menu" className={menu === "cardapio" ? "active" : ""} onClick={() => setMenu('cardapio')}>Cardápio</a>
         </li>
 
-        <li className={menu === "sobre" ? "active" : ""} onClick={() => setMenu('sobre')}>
-          <a href="#sobre">Sobre</a>
+        <li>
+          <a href="/#sobre" className={menu === "sobre" ? "active" : ""} onClick={() => setMenu('sobre')}>Sobre</a>
         </li>
 
-        <li className={menu === "depoimentos" ? "active" : ""} onClick={() => setMenu('depoimentos')}>
-          <a href="#depoimentos">Depoimentos</a>
+        <li>
+          <a href="/#depoimentos" className={menu === "depoimentos" ? "active" : ""} onClick={() => setMenu('depoimentos')}>Depoimentos</a>
         </li>
       </ul>
 

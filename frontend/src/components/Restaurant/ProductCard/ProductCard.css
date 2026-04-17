@@ -1,60 +1,58 @@
 .product-card {
   background: white;
   border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   border: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   height: 100%;
+  padding: 0 !important;
+  overflow: hidden;
 }
 
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-}
-
-.product-image-container {
-  width: 100%;
-  height: 200px;
-  /* Mantém todas as imagens com a mesma altura */
-  background-color: #f9f9f9;
-}
-
+/* AQUI É ONDE VOCÊ CONTROLA O TAMANHO DA FOTO */
 .product-image {
   width: 100%;
-  height: 100%;
+  height: 280px;
   object-fit: cover;
-  /* Evita que a imagem fique esticada/achatada */
+  display: block;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .product-info {
   padding: 20px;
+  /* O respiro do texto */
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  /* Faz a área de info crescer para preencher o card */
+}
+
+.product-info {
+  padding: 20px;
+  /* O padding agora fica só aqui dentro, protegendo o texto */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .product-info h3 {
-  margin: 0 0 10px 0;
-  color: #742b2b;
-  /* Cor primária da Pendezza Pizza */
-  font-size: 1.2rem;
+  margin: 0 0 8px 0;
+  color: #a8222e;
+  font-size: 1.1rem;
 }
 
 .product-info .description {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #666;
   line-height: 1.4;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   flex-grow: 1;
-  /* Empurra o preço sempre para o final do card */
+  /* Empurra o preço para o final do card */
 }
 
 .product-info .price {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #333;
 }

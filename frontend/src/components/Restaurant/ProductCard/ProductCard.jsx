@@ -2,9 +2,9 @@ import React from 'react';
 import semImagemPng from '../../../assets/sem-foto.png';
 import './ProductCard.css';
 
-const ProductCard = ({ product, restaurantId }) => {
+const ProductCard = ({ product}) => {
   // A URL agora utiliza o ID do restaurante e do produto conforme sua API
-  const imageUrl = `http://localhost/v1/restaurants/${restaurantId}/products/${product.id}/photo`;
+  const imageUrl = `http://localhost/v1/restaurants/${product.restaurantId}/products/${product.id}/photo`;
 
   return (
     <div className="product-card">

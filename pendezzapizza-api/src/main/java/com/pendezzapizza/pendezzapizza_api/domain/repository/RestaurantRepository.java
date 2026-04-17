@@ -1,8 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.repository;
 
-import com.pendezzapizza.pendezzapizza_api.domain.model.PaymentMethod;
-import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
-import com.pendezzapizza.pendezzapizza_api.domain.model.User;
+import com.pendezzapizza.pendezzapizza_api.domain.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -24,6 +22,9 @@ public interface RestaurantRepository
 
     @EntityGraph(attributePaths = "paymentMethods")
     Page<Restaurant> findAll (Pageable pageable);
+
+    @Query("from RestaurantPhoto rp join rp.restaurant r where r.id = :restaurantId")
+    Optional<RestaurantPhoto> findRestaurantPhotoById (UUID restaurantId) ;
 
     @Query("""
     SELECT r FROM Restaurant r

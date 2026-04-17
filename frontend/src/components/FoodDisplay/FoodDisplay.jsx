@@ -44,7 +44,7 @@ const FoodDisplay = ({ category }) => {
   // Controla a paginação no front-end (exibe 5 ou todos)
   const visibleItems = showAll ? filteredList : filteredList.slice(0, 5);
 
-  return (
+   return (
     <div className="food-display" id="food-display">
       
       {category !== 'all' && (

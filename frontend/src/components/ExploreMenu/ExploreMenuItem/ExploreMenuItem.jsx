@@ -2,9 +2,9 @@ import React from 'react';
 import './ExploreMenuItem.css';
 import semImagemPng from '../../../assets/sem-foto.png';
 
-const ExploreMenuItem = ({ id, name, category, activeCategory }) => {
+const ExploreMenuItem = ({ id, name}) => {
   return (
-    <div className={`explore-menu-item ${activeCategory === category ? "active" : ""}`}>
+    <div className={`explore-menu-item`}>
       <a href={`/restaurant/${id}`} className="explore-menu-link">
         <div className="img-wrapper">
            {/* Assumindo que a foto do restaurante segue o padrão de id */}

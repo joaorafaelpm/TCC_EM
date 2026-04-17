@@ -16,6 +16,9 @@ public class ProductModel {
     @Schema(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48")
     private UUID id;
 
+    @Schema(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48")
+    private UUID restaurantId ;
+
     @Schema(example = "Fettuccine Alfredo")
     private String name;
 
@@ -27,4 +30,7 @@ public class ProductModel {
 
     @Schema(example = "true")
     private Boolean active;
+
+
+
 }

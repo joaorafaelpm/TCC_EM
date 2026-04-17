@@ -1,24 +1,5 @@
-.food-list-h2{
-    color:rgb(16, 69, 30);
-    font-size: 1.6vw;
-    font-weight: 430;
-    letter-spacing: -1px;
-    margin-bottom: 0.8vw;
- 
-}
-.food-display-title{
-    font-size: 2rem;
-    font-weight: 725;
-    letter-spacing: -1px;
-    color: rgb(16, 69, 30);
-    margin: 0px 0 40px 5px;
-    display: flex;
-    justify-content: center;
-}
-
-.food-display{
-    
-    margin: 15px 125px auto 125px;
+.food-display {
+  margin: 15px 125px auto 125px;
 }
 
 .food-display-list {
@@ -26,7 +7,6 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 25px;
 }
-
 
 .show-more-container {
   display: flex;

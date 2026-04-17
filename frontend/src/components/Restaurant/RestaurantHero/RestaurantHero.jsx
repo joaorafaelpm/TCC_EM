@@ -1,5 +1,6 @@
 import React from 'react';
 import './RestaurantHero.css';
+import semImagemPng from '../../../assets/sem-foto.png';
 
 const RestaurantHero = ({ restaurant }) => {
   const { name, open, address, shippingFee } = restaurant;
@@ -11,6 +12,18 @@ const RestaurantHero = ({ restaurant }) => {
   return (
     <section className="restaurant-hero">
       <div className="hero-content">
+        <div className="img-wrapper">
+          <img 
+            src={`http://localhost/v1/restaurants/${restaurant.id}/photo`} 
+            alt={name} 
+            onError={(e) => {
+              e.target.onerror = null; 
+              e.target.src = semImagemPng;
+            }}
+            className={`status-image-restaurant ${open ? 'open' : 'closed'}`}
+          />
+        </div>
+        
         <div className="info-main">
           <div className="title-group">
             <h1>{name}</h1>
@@ -28,8 +41,8 @@ const RestaurantHero = ({ restaurant }) => {
 
         <div className="delivery-info">
           <div className="info-item">
-            <span className="label">Frete</span>
-            <span className="value">{formattedShipping}</span>
+            <span className="label">Frete: </span>
+            <span className="value"><strong>{formattedShipping}</strong></span>
           </div>
         </div>
       </div>

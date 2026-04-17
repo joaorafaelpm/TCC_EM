@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductPhotoDTO {
+public class PhotoDTO {
 
     @Schema(description = "Arquivo da foto do produto (máximo 500KB, apenas JPG e PNG)")
     @NotNull

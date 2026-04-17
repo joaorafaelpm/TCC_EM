@@ -7,7 +7,7 @@ const ProductCardDisplay = ({ product }) => {
     <div className="product-card">
       <div className="product-image-container">
         <img 
-          src={`http://localhost/v1/products/${product.id}/photo`} 
+          src={`http://localhost/v1/restaurants/${product.restaurantId}/products/${product.id}/photo`} 
           alt={`Foto de ${product.name}`}
           className="product-image"
           loading="lazy"

@@ -42,10 +42,11 @@ public class RestaurantService {
     public Page<PaymentMethod> findPaymentMethodsByRestaurantId(UUID restaurantId , Pageable pageable) {
         return restaurantRepository.findPaymentMethodsByRestaurantId(restaurantId , pageable);
     }
-
     @Cacheable(value = "restaurant" , key = "#restaurantId")
     public Restaurant findById (UUID restaurantId ) {
-        return restaurantRepository.findByIdOrThrowException(restaurantId);
+//        return restaurantRepository.findByIdOrThrowException(restaurantId);
+        return restaurantRepository.findByIdMapperResolved(restaurantId).orElseThrow(() ->
+                new RestaurantNotFoundException(restaurantId));
     }
     public Restaurant findByIdWithAllDependencies (UUID restaurantId ) {
         return restaurantRepository.findByIdMapperResolved(restaurantId).orElseThrow(() ->

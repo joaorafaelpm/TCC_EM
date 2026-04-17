@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductPhotoModel {
+public class PhotoModel {
 
     @Schema(example = "b8bbd21a-4dd3-4954-835c-3493af2ba6a0_arquivo1.jpeg")
     private String fileName;
