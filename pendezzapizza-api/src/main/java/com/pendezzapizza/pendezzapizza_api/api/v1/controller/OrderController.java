@@ -5,6 +5,7 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.OrderSummaryModelAss
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.OrderDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderSummaryModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.OrderBatchDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.OrderDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.OrderControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.data.PageWrapper;
@@ -14,6 +15,8 @@ import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.filter.OrderFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
+import com.pendezzapizza.pendezzapizza_api.domain.model.OrderBatchModel;
+import com.pendezzapizza.pendezzapizza_api.domain.service.OrderBatchIssuanceService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.OrderIssuanceService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.OrderService;
 import com.pendezzapizza.pendezzapizza_api.infrastructure.repository.spec.OrderSpecs;
@@ -44,6 +47,7 @@ public class OrderController implements OrderControllerOpenApi {
     private final OrderModelAssembler orderModelAssembler;
     private final OrderSummaryModelAssembler orderSummaryModelAssembler;
     private final OrderDisassembler orderDisassembler;
+    private final OrderBatchIssuanceService orderBatchIssuanceService;
 
     @CheckSecurity.Orders.CanList
     @GetMapping
@@ -97,6 +101,13 @@ public class OrderController implements OrderControllerOpenApi {
         } catch (EntityNotFoundException e) {
             throw new BusinessException(e.getMessage(), e);
         }
+    }
+
+    @CheckSecurity.Orders.CanCreate
+    @PostMapping("/batch")
+    @ResponseStatus(HttpStatus.MULTI_STATUS) // 207 — alguns podem ter falhado
+    public OrderBatchModel saveBatch(@RequestBody @Valid OrderBatchDTO batchDTO) {
+        return orderBatchIssuanceService.issueBatch(batchDTO.orders());
     }
 
 //    Nós usamos essa tradução para indicar o nome referente à ordenação da requisição, se eu quiser limitar por nome do restaurante eu preciso colocar restaurantName , restaurant.name

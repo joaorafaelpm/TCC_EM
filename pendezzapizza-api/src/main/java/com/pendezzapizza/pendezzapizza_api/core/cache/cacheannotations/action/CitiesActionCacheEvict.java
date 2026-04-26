@@ -17,7 +17,9 @@ import java.lang.annotation.Target;
 
         // Pega o ID diretamente do parâmetro do método (ex: UUID cityId)
         @CacheEvict(value = "city", key = "#cityId"),
-        @CacheEvict(value = "citiesLastUpdateById", key = "#cityId")
+        @CacheEvict(value = "cityAndStateName", key = "{#cityName, #stateName}"),
+        @CacheEvict(value = "citiesLastUpdateById", key = "#cityId"),
+        @CacheEvict(value = "citiesLastUpdateByName", key = "#cityName")
 })
 public @interface CitiesActionCacheEvict {
 }

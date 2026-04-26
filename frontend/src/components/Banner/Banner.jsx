@@ -1,6 +1,7 @@
 import React from 'react'
 import './Banner.css'
 import { assets } from '../../assets/assets'
+import { Link } from 'react-router-dom';
 
 const Banner = () => {
   return (
@@ -19,7 +20,7 @@ const Banner = () => {
 
         <div className="banner-info">
           <p className="support-label">Contate o suporte</p>
-          <a href="tel:19997468594" className="phone-number">(19) 99746-8594</a>
+          <Link to="tel:19997468594" className="phone-number">(19) 99746-8594</Link>
         </div>
       </div>
     </section>

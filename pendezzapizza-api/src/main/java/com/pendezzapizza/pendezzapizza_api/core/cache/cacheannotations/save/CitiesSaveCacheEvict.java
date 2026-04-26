@@ -17,7 +17,10 @@ import java.lang.annotation.Target;
 
         // Pega o ID do objeto City retornado pelo método save()
         @CacheEvict(value = "city", key = "#result.id"),
-        @CacheEvict(value = "citiesLastUpdateById", key = "#result.id")
+        @CacheEvict(value = "cityAndStateName", key = "{#cityName, #stateName}"),
+        @CacheEvict(value = "citiesLastUpdateById", key = "#result.id"),
+        @CacheEvict(value = "citiesLastUpdateByName", key = "#result.name"),
+
 })
 public @interface CitiesSaveCacheEvict {
 }

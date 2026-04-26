@@ -12,6 +12,9 @@ public class CityNotFoundException extends EntityNotFoundException {
     public CityNotFoundException(String message) {
         super(message);
     }
+    public CityNotFoundException(String cityName , String stateName) {
+        super(String.format("Cidade com nome '%s' não encontrada dentro do estado '%s'!" , cityName , stateName));
+    }
     public CityNotFoundException(UUID id) {
         super(String.format("Cidade com id '%s' não encontrada!" , id));
     }

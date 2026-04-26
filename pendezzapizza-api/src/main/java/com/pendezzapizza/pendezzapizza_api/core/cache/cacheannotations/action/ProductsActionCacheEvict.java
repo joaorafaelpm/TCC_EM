@@ -14,10 +14,12 @@ import java.lang.annotation.Target;
 @Caching(evict = {
         @CacheEvict(value = "product", key = "#productId"),
         @CacheEvict(value = "productsActive", allEntries = true),
+        @CacheEvict(value = "productId", key = "#productId"),
         @CacheEvict(value = "allProducts", allEntries = true),
         @CacheEvict(value = "productsByRestaurant", allEntries = true),
         @CacheEvict(value = "productsActivesByRestaurant", allEntries = true),
         @CacheEvict(value = "productsAllLastUpdateDateActives"),
+        @CacheEvict(value = "productsLastUpdateDateById", key = "#productId"),
         @CacheEvict(value = "productsLastUpdateDateActivesByRestaurantId", key = "#restaurantId"),
         @CacheEvict(value = "productsLastUpdateDateByRestaurantId", key = "#restaurantId")
 })

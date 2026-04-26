@@ -5,6 +5,7 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.ProductPhoto;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,10 @@ public interface ProductRepository extends CustomJPARepository<Product, UUID> , 
 
     @Query("from Product where restaurant.id = :restaurantId and id = :productId")
     Optional<Product> findById (@Param("restaurantId") UUID restaurantId , @Param("productId") UUID productId);
+
+    @EntityGraph(attributePaths = {"restaurant"})
+    @Query("SELECT p FROM Product p WHERE p.id = :productId")
+    Optional<Product> findByProductIdLazySolver(@Param("productId") UUID productId);
 
     @Query("from Product p where p.active=true")
     Page<Product>findAllActives(Pageable pageable) ;
@@ -36,6 +41,9 @@ public interface ProductRepository extends CustomJPARepository<Product, UUID> , 
 
     @Query("select max(p.updateDate) from Product p where p.active=true and p.restaurant.id = :restaurantId")
     OffsetDateTime getLastUpdateDateById(@Param("restaurantId") UUID restaurantId);
+
+    @Query("select updateDate from Product where id=:productId")
+    OffsetDateTime getLastUpdateDateByProductId(@Param("productId") UUID productId);
 
     @Query("select max(p.updateDate) from Product p where p.restaurant.id = :restaurantId")
     OffsetDateTime getLastUpdateDateByIdGetAll(@Param("restaurantId") UUID restaurantId);

@@ -12,7 +12,11 @@ public class ProductNotFoundException extends EntityNotFoundException {
         super(message);
     }
     public ProductNotFoundException(UUID restauranteId, UUID produtoId) {
-        this(String.format("Não existe um cadastro de produto com código '%s' para o restaurante de código '%s'",
+        this(String.format("Não existe um cadastro de produto com id '%s' para o restaurante de id '%s'",
                 produtoId, restauranteId));
+    }
+    public ProductNotFoundException(UUID produtoId) {
+        this(String.format("Não existe um cadastro de produto com id '%s'",
+                produtoId));
     }
 }

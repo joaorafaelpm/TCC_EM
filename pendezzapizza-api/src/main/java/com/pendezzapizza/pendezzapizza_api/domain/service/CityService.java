@@ -2,6 +2,7 @@ package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.CitiesActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.CitiesSaveCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.domain.exception.CityNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.City;
 import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
@@ -30,6 +31,12 @@ public class CityService {
     @Cacheable(value = "city", key = "#cityId")
     public City findById(UUID cityId) {
         return cityRepository.findByIdOrThrowException(cityId);
+
+    }@Cacheable(value = "cityAndStateName", key = "{#cityName, #stateName}")
+    public City findCityByNameAndStateName(String cityName , String stateName) {
+        return cityRepository.findCityByNameAndStateName(cityName, stateName).orElseThrow(() ->
+                new CityNotFoundException(cityName , stateName)
+        );
     }
 
     @Cacheable("citiesLastUpdate")
@@ -40,6 +47,10 @@ public class CityService {
     @Cacheable(value = "citiesLastUpdateById", key = "#cityId")
     public OffsetDateTime getLastUpdateDateById(UUID cityId) {
         return cityRepository.getLastUpdateDateById(cityId);
+    }
+    @Cacheable(value = "citiesLastUpdateByName", key = "#cityName")
+    public OffsetDateTime getLastUpdateDateByName(String cityName) {
+        return cityRepository.getLastUpdateDateByName(cityName);
     }
 
     @CitiesSaveCacheEvict

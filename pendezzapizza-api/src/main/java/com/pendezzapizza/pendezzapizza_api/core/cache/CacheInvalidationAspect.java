@@ -32,7 +32,7 @@ public class CacheInvalidationAspect {
     }
     @AfterReturning("@annotation(com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.CitiesCacheEvict)")
     public void afterCitiesUpdate() {
-        cacheInvalidatorUtil.publishCacheInvalidation("cities", "city" , "citiesLastUpdate" , "citiesLastUpdateById");
+        cacheInvalidatorUtil.publishCacheInvalidation("cities", "city" , "citiesLastUpdate" , "citiesLastUpdateById" , "cityAndStateName");
     }
     @AfterReturning("@annotation(com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.PaymentMethodsCacheEvict)")
     public void afterPaymentMethodsUpdate() {
@@ -44,7 +44,7 @@ public class CacheInvalidationAspect {
     }
     @AfterReturning("@annotation(com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.ProductCacheEvict)")
     public void afterProductUpdate() {
-        cacheInvalidatorUtil.publishCacheInvalidation("product","allProducts","productsActive", "productsByRestaurant" , "productsActivesByRestaurant" ,"productsAllLastUpdateDateActives", "productsLastUpdateDateActivesByRestaurantId" , "productsLastUpdateDateByRestaurantId");
+        cacheInvalidatorUtil.publishCacheInvalidation("product","allProducts","productId","productsActive", "productsByRestaurant","productsLastUpdateDateById" , "productsActivesByRestaurant" ,"productsAllLastUpdateDateActives", "productsLastUpdateDateActivesByRestaurantId" , "productsLastUpdateDateByRestaurantId");
     }
     @AfterReturning("@annotation(com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.RestaurantsCacheEvict)")
     public void afterRestaurantUpdate() {

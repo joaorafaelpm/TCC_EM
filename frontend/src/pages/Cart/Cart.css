@@ -1,12 +1,15 @@
+/* Cart.css */
+
 :root {
-  --button-color: #b43e3e;
-  --bg-color: #fff6e2;
+    --button-color: #b43e3e;
+    --bg-color: #fff6e2;
 }
 
 .cart {
-     margin: 70px 160px;
+    margin: 70px 160px;
 }
 
+/* Essa classe fica aqui porque ela dita o formato de "tabela" de todo o carrinho */
 .cart-itens-title {
     display: grid;
     grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 0.5fr;
@@ -14,57 +17,27 @@
     gap: 10px;
     font-size: max(1.05vw, 12px);
     color: color-mix(in srgb, var(--bg-color) 45%, black);
-
 }
 
-.cart hr{
+.cart hr {
     background-color: color-mix(in srgb, var(--bg-color) 80%, black);
-    margin: 8px 0px ;
+    margin: 8px 0px;
     height: 1px;
     border: none;
     width: 100%;
-    
-
 }
 
-
-.cart-itens-item{
-   margin: 15px 0px;
-   color: color-mix(in srgb, var(--bg-color) 10%, black);
-}
-
-.cart-itens-item img{
-    width: 75px;
-    height: 70px;
-    border-radius: 5px;
-    
-}
-
-.close-icon-cart {
-  width: 22px;
-  height: 22px;
-  color: color-mix(in srgb, var(--bg-color) 10%, black);
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.close-icon-cart:hover {
-  filter: brightness(1.1);
-  transform:  scale(1.1);
-}
-
-
-.cart-bottom{
+.cart-bottom {
     display: flex;
     justify-content: space-between;
     margin-top: 50px;
-    gap:max(10vw, 16px);
+    gap: max(10vw, 16px);
 }
 
-.cart-bottom h2{
+.cart-bottom h2 {
     color: color-mix(in srgb, var(--bg-color) 30%, black);
     font-size: max(1.5vw, 15px);
-    margin-bottom:  -5px;
+    margin-bottom: -5px;
 }
 
 .btn-cart-checkout {
@@ -78,23 +51,21 @@
     transition: 0.4s;
     border: none;
     margin-top: 12px;
-    
 }
 
 .btn-cart-checkout:hover {
-   filter: brightness(1.3);
-   transition: 0.4s;
+    filter: brightness(1.3);
+    transition: 0.4s;
 }
 
-.cart-total{
+.cart-total {
     display: flex;
     flex-direction: column;
     gap: 20px;
     flex: 1;
 }
 
-
-.cart-bottom-total{
+.cart-bottom-total {
     display: flex;
     justify-content: space-between;
     font-size: max(1.1vw, 8px);
@@ -102,14 +73,14 @@
     color: color-mix(in srgb, var(--bg-color) 45%, black);
 }
 
-
-@media (max-width:1200px) {
+/* Responsividade estrutural do Carrinho */
+@media (max-width: 1200px) {
     .cart {
         margin: 70px 80px;
     }
 }
 
-@media (max-width:768px) {
+@media (max-width: 768px) {
     .cart {
         margin: 70px 20px;
     }
@@ -119,87 +90,63 @@
         grid-template-columns: 1fr 2fr 1fr 1fr 1fr 0.5fr;
     }
 
-    .cart-itens-item img{
-        width: 60px;
-        height: 55px;
-    }
-
-    .cart-bottom{
+    .cart-bottom {
         flex-direction: column;
         align-items: center;
         gap: max(5vw, 16px);
     }
 
-    .cart-bottom h2{
+    .cart-bottom h2 {
         font-size: max(3vw, 15px);
     }
 
     .btn-cart-checkout {
         font-size: max(3vw, 7px);
-        
     }
 
-    .cart-bottom-total{
+    .cart-bottom-total {
         font-size: max(2.5vw, 8px);
     }
 }
 
-
-@media  (max-width:450px) {
+@media (max-width: 450px) {
     .cart-itens-title {
         font-size: max(4vw, 12px);
         grid-template-columns: 1fr 2.5fr 1fr 1fr 1fr 0.5fr;
     }
 
-    .cart-itens-item img{
-        width: 50px;
-        height: 45px;
-    }
-    
-    .cart-bottom h2{
+    .cart-bottom h2 {
         font-size: max(4vw, 20px);
     }
 
     .btn-cart-checkout {
         font-size: max(4vw, 12px);
-        
     }
 
-    .cart-bottom-total{
+    .cart-bottom-total {
         font-size: max(3.5vw, 15px);
     }
-
 }
 
-@media  (max-width:350px) {
-
-    .cart{
+@media (max-width: 350px) {
+    .cart {
         margin: 10px 10px;
     }
-    
+
     .cart-itens-title {
         font-size: max(3.8vw, 10px);
         grid-template-columns: 1fr 3fr 1fr 1fr 1fr 0.5fr;
     }
 
-   .cart-itens-item img{
-        width: 45px;
-        height: 40px;
-    }
-    
-    .cart-bottom h2{
+    .cart-bottom h2 {
         font-size: max(4vw, 20px);
     }
 
     .btn-cart-checkout {
         font-size: max(4vw, 12px);
-        
     }
 
-    .cart-bottom-total{
+    .cart-bottom-total {
         font-size: max(3.5vw, 15px);
     }
-
-
-
 }

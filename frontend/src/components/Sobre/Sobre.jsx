@@ -1,5 +1,6 @@
 import React from 'react'
 import './Sobre.css'
+import { Link } from 'react-router-dom';
 
 const Sobre = () => {
   return (
@@ -24,9 +25,9 @@ const Sobre = () => {
               cada pedido inesquecível.
             </p>
 
-            <a href="#explore-menu" className="btn-s">
+            <Link to="#explore-menu" className="btn-s">
               Ver Cardápio Geral
-            </a>
+            </Link>
 
           </div>
 

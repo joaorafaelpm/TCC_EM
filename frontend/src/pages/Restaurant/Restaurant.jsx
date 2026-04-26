@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import RestaurantHero from '../../components/Restaurant/RestaurantHero/RestaurantHero.jsx';
 import ProductCard from '../../components/Restaurant/ProductCard/ProductCard.jsx';
 import './Restaurant.css';
+import { StoreContext } from '../../components/context/StoreContext.jsx'; 
 
 const Restaurant = () => {
   const { id } = useParams();
   const [restaurant, setRestaurant] = useState(null);
-  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const { food_list, setFoodList } = useContext(StoreContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +25,7 @@ const Restaurant = () => {
         const productsData = await productsRes.json();
 
         setRestaurant(restaurantData);
-        setProducts(productsData.content || []);
+        setFoodList(productsData.content || []);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       } finally {
@@ -32,7 +34,7 @@ const Restaurant = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [id, setFoodList]);
 
   if (loading) return <div className="loading">Carregando detalhes...</div>;
   if (!restaurant) return <div className="error">Restaurante não encontrado.</div>;
@@ -44,8 +46,8 @@ const Restaurant = () => {
       <main className="products-container">
         <h2>Cardápio</h2>
         <div className="products-grid">
-          {products.length > 0 ? (
-            products
+          {food_list && food_list.length > 0 ? (
+            food_list
               .filter(p => p.active)
               .map(product => (
                 <ProductCard 

@@ -3,6 +3,7 @@ package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.ProductsActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.ProductsSaveCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.domain.exception.ProductNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Product;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.ProductRepository;
@@ -49,6 +50,13 @@ public class ProductService {
         return productRepository.findByIdOrThrowException(restaurant, restaurantId, productId);
     }
 
+    @Cacheable(value = "productId", key = "#productId")
+    public Product findByProductId(UUID productId) {
+        return productRepository.findByProductIdLazySolver(productId).orElseThrow( () ->
+                new ProductNotFoundException(productId)
+        );
+    }
+
     @ProductsSaveCacheEvict // Resolve o ID nulo via #result.id
     @Transactional
     public Product save(UUID restaurantId, Product product) {
@@ -91,6 +99,10 @@ public class ProductService {
     @Cacheable(value = "productsLastUpdateDateByRestaurantId" , key = "#restaurantId")
     public OffsetDateTime findLastUpdateDateByRestaurantId (UUID restaurantId) {
         return productRepository.getLastUpdateDateByIdGetAll(restaurantId);
+    }
+    @Cacheable(value = "productsLastUpdateDateById" , key = "#productId")
+    public OffsetDateTime findLastUpdateDateById (UUID productId) {
+        return productRepository.getLastUpdateDateByProductId(productId);
     }
 
 }

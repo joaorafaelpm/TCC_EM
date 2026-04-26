@@ -48,15 +48,20 @@ public class CacheConfig {
 
 //        Algumas configurações de cache mais personalizadas:
 
+//        Cities
+        manager.registerCustomCache("cityAndStateName", buildCache(200, 30));
+
 //        Restaurants:
         manager.registerCustomCache("restaurantsResponsibleUsers", buildCache(200, 30));
         manager.registerCustomCache("restaurantsPaymentMethods", buildCache(200, 30));
 
 //        Products
         manager.registerCustomCache("product", buildCache(200, 30));
+        manager.registerCustomCache("productId", buildCache(200, 30));
         manager.registerCustomCache("productsActive", buildCache(200, 30));
         manager.registerCustomCache("productsByRestaurant", buildCache(200, 30));
         manager.registerCustomCache("productsActivesByRestaurant", buildCache(200, 30));
+        manager.registerCustomCache("productsLastUpdateDateById", buildCache(200, 30));
         manager.registerCustomCache("productsLastUpdateDateActivesByRestaurantId", buildCache(1, 30));
         manager.registerCustomCache("productsLastUpdateDateByRestaurantId", buildCache(1, 30));
 

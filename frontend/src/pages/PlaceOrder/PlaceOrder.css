@@ -1,44 +1,41 @@
-.place-order{
+.place-order {
     display: flex;
     align-items: start;
     justify-content: space-between;
     margin-top: 60px;
     gap: 50px;
-    margin-left:  160px;
-    margin-bottom:  100px;
-    
-
+    margin-left: 160px;
+    margin-bottom: 100px;
 }
 
-
-.cart-bottom-order{
+.cart-bottom-order {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
-    gap:max(10vw, 16px);
+    gap: max(10vw, 16px);
 }
 
-.cart-bottom-order h2{
+.cart-bottom-order h2 {
     color: color-mix(in srgb, var(--bg-color) 30%, black);
     font-size: max(1.5vw, 15px);
-    margin-bottom:  -5px;
+    margin-bottom: -5px;
 }
 
-.place-order-left{
+.place-order-left {
     width: 40%;
-    max-width: max (50%, 500px);
-
+    max-width: max(50%, 500px);
 }
 
-.place-order-left .title{
+.place-order-left .title {
     font-size: max(2vw, 20px);
     color: color-mix(in srgb, var(--bg-color) 30%, black);
     margin-bottom: 35px;
     font-weight: 600;
-
 }
 
-.place-order-left input{
+/* Adicionado o "select" aqui para aplicar o mesmo estilo do input */
+.place-order-left input,
+.place-order-left select {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
@@ -47,52 +44,51 @@
     margin-bottom: 15px;
     outline-color: var(--button-color);
     font-family: 'Poppins', sans-serif;
-
+    background-color: white;
+    /* Garante fundo branco para o select */
 }
 
-.place-order-left .multi-fields{
+/* Evita que a seta nativa do dropdown fique estranha em alguns browsers */
+.place-order-left select {
+    cursor: pointer;
+    appearance: auto;
+}
+
+.place-order-left .multi-fields {
     display: flex;
     gap: 15px;
-
 }
 
-.place-order-right{
+.place-order-right {
     width: 40%;
-    max-width: max (40%, 400px);
-
+    max-width: max(40%, 400px);
 }
 
-.place-order-right .title{
+.place-order-right .title {
     font-size: max(2vw, 20px);
     color: color-mix(in srgb, var(--bg-color) 30%, black);
     margin-bottom: 35px;
     font-weight: 600;
-
 }
 
 @media (max-width:1200px) {
-    .place-order{
+    .place-order {
         flex-direction: column;
-        margin-left:  40px;
-        margin-right:  40px;
+        margin-left: 40px;
+        margin-right: 40px;
         gap: 30px;
     }
 
-    .place-order-left, .place-order-right{
+    .place-order-left,
+    .place-order-right {
         width: 100%;
-        margin-right:  40px;
+        margin-right: 40px;
         max-width: none;
     }
 }
 
-
-
 @media (max-width:768px) {
-    .place-order{
+    .place-order {
         margin: 40px 20px 80px 20px;
     }
-
-
-
-
 }

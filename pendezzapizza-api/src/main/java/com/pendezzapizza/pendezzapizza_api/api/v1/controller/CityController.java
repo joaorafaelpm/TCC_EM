@@ -81,6 +81,29 @@ public class CityController implements CityControllerOpenApi {
                 .eTag(eTag)
                 .body(cityModel);
     }
+    @CheckSecurity.Cities.CanConsult
+    @GetMapping(value = "/{cityName}/state/{stateName}")
+    public ResponseEntity<CityModel> findByCityAndStateName(@PathVariable String cityName ,@PathVariable String stateName , ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = cityService.getLastUpdateDateByName(cityName);
+
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
+        CityModel cityModel = cityAssembler
+                .toModel(cityService.findCityByNameAndStateName(cityName, stateName));
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(cityModel);
+    }
 
     @CheckSecurity.Cities.CanEdit
     @ResponseStatus(HttpStatus.CREATED)

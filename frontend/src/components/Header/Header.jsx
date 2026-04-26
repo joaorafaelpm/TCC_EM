@@ -1,5 +1,6 @@
 import './Header.css'
 import { assets } from '../../assets/assets'
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -12,7 +13,7 @@ const Header = () => {
           Peça e receba diretamente em casa!
         </p>
 
-        <a href="#explore-menu" className="btn">Ver Opções</a>
+        <Link to="#explore-menu" className="btn">Ver Opções</Link>
 
       </div>
     </div>

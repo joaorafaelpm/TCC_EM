@@ -1,5 +1,5 @@
 
-import { AuthProvider, useAuth } from './context/AuthContext'
+import { AuthProvider, useAuth } from './components/context/AuthContext.jsx'
 import Navbar from "./components/Navbar/Navbar.jsx"
 import Footer from "./components/Footer/Footer.jsx"
 import Home from "./pages/Home/Home.jsx"
@@ -9,6 +9,7 @@ import TermsOfUser from "./pages/TermsOfUser/TermsOfUser.jsx"
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Cadastro from './pages/Cadastro/Cadastro.jsx'
 import Restaurant from './pages/Restaurant/Restaurant.jsx'
+import StoreContextProvider from './components/context/StoreContext.jsx';
 
 function AppContent() {
   const { user, isLoading } = useAuth()
@@ -47,7 +48,9 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <StoreContextProvider>
+        <AppContent />
+      </StoreContextProvider>
     </AuthProvider>
   )
 }

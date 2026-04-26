@@ -1,6 +1,7 @@
 import React from 'react'
 import './Footer.css'
 import { assets } from '../../assets/assets'
+import { Link } from 'react-router-dom'
 
 const Footer = () => {
   return (
@@ -14,9 +15,9 @@ const Footer = () => {
             frescos e selecionados. Peça e receba diretamente em casa!
           </p>
           <div className="footer-social">
-            <a href="#" aria-label="Facebook"><img src={assets.facebook} alt="" /></a>
-            <a href="#" aria-label="Twitter/X"><img src={assets.x} alt="" /></a>
-            <a href="#" aria-label="Instagram"><img src={assets.instagram} alt="" /></a>
+            <Link to="#" aria-label="Facebook"><img src={assets.facebook} alt="" /></Link>
+            <Link to="#" aria-label="Twitter/X"><img src={assets.x} alt="" /></Link>
+            <Link to="#" aria-label="Instagram"><img src={assets.instagram} alt="" /></Link>
           </div>
         </section>
 
@@ -24,10 +25,10 @@ const Footer = () => {
         <nav className="footer-nav">
           <h3>Menu</h3>
           <ul>
-            <li><a href="/">Início</a></li>
-            <li><a href="#explore-menu">Cardápio</a></li>
-            <li><a href="#sobre">Sobre</a></li>
-            <li><a href="#depoimentos">Depoimentos</a></li>
+            <li><Link to="/">Início</Link></li>
+            <li><Link to="#explore-menu">Cardápio</Link></li>
+            <li><Link to="#sobre">Sobre</Link></li>
+            <li><Link to="#depoimentos">Depoimentos</Link></li>
           </ul>
         </nav>
 
@@ -46,9 +47,9 @@ const Footer = () => {
         <p>© 2026 Pendezza Pizza. Todos os direitos reservados.</p>
         <p className="developer-info">
           Desenvolvido por 
-          <a href="https://rule34.xxx/index.php?page=post&s=list&tags=pendezza+pizza" target="_blank" rel="noopener noreferrer">
+          <Link to="https://rule34.xxx/index.php?page=post&s=list&tags=pendezza+pizza" target="_blank" rel="noopener noreferrer">
             Pendezza Pizza
-          </a>
+          </Link>
         </p>
       </div>
     </footer>

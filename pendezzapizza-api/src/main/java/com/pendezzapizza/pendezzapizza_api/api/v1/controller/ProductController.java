@@ -12,14 +12,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -53,6 +51,27 @@ public class ProductController implements ProductControllerOpenApi {
         }
 
         Page<ProductModel> productsModel = products.map(productAssembler::toModel);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
+                .eTag(eTag)
+                .body(productsModel);
+    }
+    @CheckSecurity.Restaurants.CanConsult
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductModel> findById(@PathVariable UUID productId ,
+                                                          ServletWebRequest request) {
+        ProductModel productsModel = productAssembler.toModel(productService.findByProductId(productId));
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = productService.findLastUpdateDateById(productId);
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
                 .eTag(eTag)

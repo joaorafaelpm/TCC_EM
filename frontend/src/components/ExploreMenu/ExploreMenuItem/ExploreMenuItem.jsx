@@ -1,11 +1,12 @@
 import React from 'react';
 import './ExploreMenuItem.css';
 import semImagemPng from '../../../assets/sem-foto.png';
+import { Link } from 'react-router-dom';
 
 const ExploreMenuItem = ({ id, name}) => {
   return (
     <div className={`explore-menu-item`}>
-      <a href={`/restaurant/${id}`} className="explore-menu-link">
+      <Link to={`/restaurant/${id}`} className="explore-menu-link">
         <div className="img-wrapper">
            {/* Assumindo que a foto do restaurante segue o padrão de id */}
           <img 
@@ -18,7 +19,7 @@ const ExploreMenuItem = ({ id, name}) => {
             }}/>
         </div>
         <p>{name}</p>
-      </a>
+      </Link>
     </div>
   );
 };

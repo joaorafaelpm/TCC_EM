@@ -1,5 +1,6 @@
 {
     "java.configuration.updateBuildConfiguration": "interactive" ,
     "background.enabled": true,
-    "claudeCodeChat.permissions.yoloMode": false
+    "claudeCodeChat.permissions.yoloMode": false,
+    "java.compile.nullAnalysis.mode": "disabled"
 }

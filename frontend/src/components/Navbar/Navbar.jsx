@@ -29,19 +29,19 @@ const Navbar = () => {
 
       <ul className="navbar-menu">
         <li>
-          <a href="/#inicio" className={menu === "inicio" ? "active" : ""} onClick={() => setMenu('inicio')}>Início</a>
+          <Link to="/#inicio" className={menu === "inicio" ? "active" : ""} onClick={() => setMenu('inicio')}>Início</Link>
         </li>
 
         <li>
-          <a href="/#explore-menu" className={menu === "cardapio" ? "active" : ""} onClick={() => setMenu('cardapio')}>Cardápio</a>
+          <Link to="/#explore-menu" className={menu === "cardapio" ? "active" : ""} onClick={() => setMenu('cardapio')}>Cardápio</Link>
         </li>
 
         <li>
-          <a href="/#sobre" className={menu === "sobre" ? "active" : ""} onClick={() => setMenu('sobre')}>Sobre</a>
+          <Link to="/#sobre" className={menu === "sobre" ? "active" : ""} onClick={() => setMenu('sobre')}>Sobre</Link>
         </li>
 
         <li>
-          <a href="/#depoimentos" className={menu === "depoimentos" ? "active" : ""} onClick={() => setMenu('depoimentos')}>Depoimentos</a>
+          <Link to="/#depoimentos" className={menu === "depoimentos" ? "active" : ""} onClick={() => setMenu('depoimentos')}>Depoimentos</Link>
         </li>
       </ul>
 
