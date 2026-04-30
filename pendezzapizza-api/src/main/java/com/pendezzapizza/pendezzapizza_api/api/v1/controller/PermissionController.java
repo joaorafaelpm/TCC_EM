@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
@@ -31,7 +32,8 @@ public class PermissionController implements PermissionControllerOpenApi {
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public ResponseEntity<Page<PermissionModel>> findAll(Pageable pageable , ServletWebRequest request) {
+    public ResponseEntity<Page<PermissionModel>> findAll(@RequestParam(required = false) String permissionName, Pageable pageable , ServletWebRequest request) {
+        Page<Permission> permissions;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = permissionService.getLastUpdateDate();
@@ -43,7 +45,13 @@ public class PermissionController implements PermissionControllerOpenApi {
             return null;
         }
 
-        Page<Permission> permissions = permissionService.findAll(pageable);
+        if (permissionName == null) {
+            permissions = permissionService.findAll(pageable);
+        }
+        else {
+            permissions = permissionService.findAllByName(permissionName , pageable);
+        }
+
         Page<PermissionModel> permissionsModel = permissions.map(permissionAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())

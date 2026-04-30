@@ -35,7 +35,8 @@ public class PaymentMethodController implements PaymentMethodControllerOpenApi {
 
     @CheckSecurity.PaymentMethods.CanConsult
     @GetMapping
-    public ResponseEntity<Page<PaymentMethodModel>> all(Pageable pageable, ServletWebRequest request) {
+    public ResponseEntity<Page<PaymentMethodModel>> all(@RequestParam(required = false) String paymentMethodName , Pageable pageable, ServletWebRequest request) {
+        Page<PaymentMethod> paymentMethods;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = paymentMethodService.getLastUpdateDate();
@@ -47,7 +48,13 @@ public class PaymentMethodController implements PaymentMethodControllerOpenApi {
             return null;
         }
 
-        Page<PaymentMethod> paymentMethods = paymentMethodService.findAll(pageable);
+        if (paymentMethodName == null) {
+            paymentMethods = paymentMethodService.findAll(pageable);
+        }
+        else {
+            paymentMethods = paymentMethodService.findAllByName(paymentMethodName , pageable);
+        }
+
         Page<PaymentMethodModel> paymentMethodModels = paymentMethods.map(paymentMethodAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())

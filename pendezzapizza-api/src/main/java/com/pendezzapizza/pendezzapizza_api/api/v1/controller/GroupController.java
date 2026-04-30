@@ -36,7 +36,8 @@ public class GroupController implements GroupControllerOpenApi {
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public ResponseEntity<Page<GroupModel>> all(Pageable pageable, ServletWebRequest request) {
+    public ResponseEntity<Page<GroupModel>> all(@RequestParam(required = false) String groupName ,Pageable pageable, ServletWebRequest request) {
+        Page<Group> groups;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = groupService.getLastUpdateDate();
@@ -48,12 +49,18 @@ public class GroupController implements GroupControllerOpenApi {
             return null;
         }
 
-        Page<Group> groups = groupService.findAll(pageable);
-        Page<GroupModel> cityModels = groups.map(groupAssembler::toModel);
+        if (groupName != null) {
+            groups = groupService.findAllByName(groupName , pageable);
+        }
+        else {
+            groups = groupService.findAll(pageable);
+        }
+
+        Page<GroupModel> groupModels = groups.map(groupAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
                 .eTag(eTag)
-                .body(cityModels);
+                .body(groupModels);
 
     }
 

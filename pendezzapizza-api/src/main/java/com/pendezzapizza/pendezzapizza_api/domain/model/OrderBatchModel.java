@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Modelo de OrderBatch, aqui dentro a gente recebe uma lista dos pedidos criados e posteriormente os erros de cada um
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

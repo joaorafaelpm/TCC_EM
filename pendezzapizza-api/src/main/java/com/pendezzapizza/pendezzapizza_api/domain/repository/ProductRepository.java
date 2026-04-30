@@ -27,6 +27,9 @@ public interface ProductRepository extends CustomJPARepository<Product, UUID> , 
     @Query("from Product p where p.active=true")
     Page<Product>findAllActives(Pageable pageable) ;
 
+    @Query("SELECT p FROM Product p WHERE p.active = true AND p.name LIKE %:productName%")
+    Page<Product> findAllActivesByName(String productName, Pageable pageable);
+
     Page<Product> findByRestaurant (Restaurant restaurant , Pageable pageable);
 
     @Query("from Product p where p.active=true and p.restaurant = :restaurant")

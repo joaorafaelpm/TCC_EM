@@ -37,7 +37,8 @@ public class CityController implements CityControllerOpenApi {
 
     @CheckSecurity.PaymentMethods.CanConsult
     @GetMapping
-    public ResponseEntity<Page<CityModel>> all(Pageable pageable, ServletWebRequest request) {
+    public ResponseEntity<Page<CityModel>> all(@RequestParam(required = false) String cityName , Pageable pageable, ServletWebRequest request) {
+        Page<City> cities;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = cityService.getLastUpdateDate();
@@ -49,7 +50,12 @@ public class CityController implements CityControllerOpenApi {
             return null;
         }
 
-        Page<City> cities = cityService.findAll(pageable);
+        if (cityName == null) {
+            cities = cityService.findAll(pageable);
+        }
+        else {
+            cities = cityService.findAllByName(cityName , pageable);
+        }
         Page<CityModel> cityModels = cities.map(cityAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
@@ -57,6 +63,7 @@ public class CityController implements CityControllerOpenApi {
                 .body(cityModels);
 
     }
+
 
     @CheckSecurity.Cities.CanConsult
     @GetMapping(value = "/{cityId}")

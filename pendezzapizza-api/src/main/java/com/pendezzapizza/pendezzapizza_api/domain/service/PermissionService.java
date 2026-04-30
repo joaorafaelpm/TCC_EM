@@ -2,12 +2,12 @@ package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.domain.model.Permission;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.PermissionRepository;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -26,6 +26,11 @@ public class PermissionService {
 
     public Permission findById (UUID permissionId) {
         return permissionRepository.findByIdOrThrowException(permissionId);
+    }
+
+    @Cacheable(value = "permissionsName", key = "{#pageable.pageNumber, #pageable.pageSize, #permissionName}")
+    public Page<Permission> findAllByName(String permissionName, Pageable pageable) {
+        return permissionRepository.findByName(permissionName, pageable);
     }
 
     @Cacheable("permissionsLastUpdateDate")

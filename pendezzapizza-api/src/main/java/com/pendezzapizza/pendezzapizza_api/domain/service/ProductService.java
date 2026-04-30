@@ -39,6 +39,11 @@ public class ProductService {
         return productRepository.findAllActives(pageable);
     }
 
+    @Cacheable(value = "productsName", key = "{#pageable.pageNumber, #pageable.pageSize, #productName}")
+    public Page<Product> findAllByName(String productName, Pageable pageable) {
+        return productRepository.findByName(productName, pageable);
+    }
+
     @Cacheable(value = "productsActivesByRestaurant", key = "{#restaurant.id, #pageable.pageNumber, #pageable.pageSize}")
     public Page<Product> findActiveByRestaurant(Restaurant restaurant, Pageable pageable) {
         return productRepository.findActivesByRestaurant(restaurant, pageable);

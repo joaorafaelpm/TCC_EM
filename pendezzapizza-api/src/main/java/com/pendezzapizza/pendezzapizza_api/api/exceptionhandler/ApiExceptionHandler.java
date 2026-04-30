@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
  * O objeto de erro segue a especificação RFC 7807.
  */
 @ControllerAdvice
+// Nós importamos essa biblioteca para ajudar no debug do código
 @Slf4j
 @AllArgsConstructor
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -281,7 +282,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // -------------------------------------------
-    // Handlers Gerados
+    // Handlers Genericos para todas as classes
     // -------------------------------------------
 
     @ExceptionHandler(CityNotFoundException.class)

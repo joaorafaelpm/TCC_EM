@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 public interface GroupRepository extends CustomJPARepository<Group ,  UUID> {
 
-    @EntityGraph(attributePaths = {"permissions"})
+    @EntityGraph(attributePaths = {"permission"})
     Page<Group> findAll(Pageable pageable);
 
     @Query("select max(g.updateDate) from Group g")

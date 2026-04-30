@@ -32,6 +32,11 @@ public class PaymentMethodService {
         return paymentMethodRepository.findByIdOrThrowException(paymentMethodId);
     }
 
+    @Cacheable(value = "paymentMethodsName", key = "{#pageable.pageNumber, #pageable.pageSize, #paymentMethodName}")
+    public Page<PaymentMethod> findAllByName(String paymentMethodName, Pageable pageable) {
+        return paymentMethodRepository.findByName(paymentMethodName, pageable);
+    }
+
     @Cacheable("paymentMethodsLastUpdate")
     public OffsetDateTime getLastUpdateDate () {
         return paymentMethodRepository.getLastUpdateDate();

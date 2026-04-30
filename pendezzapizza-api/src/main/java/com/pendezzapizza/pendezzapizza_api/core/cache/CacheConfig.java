@@ -36,6 +36,10 @@ public class CacheConfig {
             // Cache Individual (ex: "user")
             manager.registerCustomCache(entity, buildCache(200, 30));
 
+            // Cache Individual com nome (ex: "userName")
+            entity = entity + "Name";
+            manager.registerCustomCache(entity, buildCache(200, 30));
+
             // Cache de Coleção (ex: "users")
             manager.registerCustomCache(plural, buildCache(100, 60));
 
@@ -57,6 +61,7 @@ public class CacheConfig {
 
 //        Products
         manager.registerCustomCache("product", buildCache(200, 30));
+        manager.registerCustomCache("productName", buildCache(200, 30));
         manager.registerCustomCache("productId", buildCache(200, 30));
         manager.registerCustomCache("productsActive", buildCache(200, 30));
         manager.registerCustomCache("productsByRestaurant", buildCache(200, 30));
@@ -67,15 +72,6 @@ public class CacheConfig {
 
         //        Users
         manager.registerCustomCache("userGroup", buildCache(1, 30));
-//        manager.registerCustomCache("users", buildCache(200, 30));
-//        manager.registerCustomCache("user", buildCache(200, 30));
-//        manager.registerCustomCache("usersLastUpdate", buildCache(1, 30));
-//        manager.registerCustomCache("usersLastUpdateById", buildCache(1, 30));
-////        Groups
-//        manager.registerCustomCache("groups", buildCache(200, 30));
-//        manager.registerCustomCache("group", buildCache(200, 30));
-//        manager.registerCustomCache("groupsLastUpdate", buildCache(1, 30));
-//        manager.registerCustomCache("groupsLastUpdateById", buildCache(1, 30));
 
         return manager;
     }

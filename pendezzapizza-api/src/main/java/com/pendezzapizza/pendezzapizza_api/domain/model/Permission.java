@@ -1,3 +1,9 @@
+/**
+ * @summary     Representa uma permissão de acesso que pode ser atribuída a grupos de usuários,
+ *              controlando quais funcionalidades cada grupo pode acessar na aplicação.
+ * @difficulty  Low
+ * @depends-on  None
+ */
 package com.pendezzapizza.pendezzapizza_api.domain.model;
 
 import jakarta.persistence.*;
@@ -9,16 +15,31 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+/**
+ * Entidade JPA que representa uma permissão do sistema.
+ * Implementa {@code Serializable} para permitir que objetos desta classe
+ * sejam convertidos em bytes — necessário para cache e transferência entre sistemas.
+ */
 @Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Permission {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) // Garante que apenas o campo "id" seja usado nas comparações de igualdade entre objetos Permission
+public class Permission implements Serializable {
 
+    /**
+     * Identificador único da permissão.
+     *
+     * {@code @Id} — marca este campo como chave primária da tabela.
+     * {@code @GeneratedValue} — o valor é gerado automaticamente pelo banco/Hibernate, sem precisar setar manualmente.
+     * {@code @EqualsAndHashCode.Include} — inclui apenas este campo ao comparar dois objetos Permission, evitando comparações incorretas baseadas em outros atributos mutáveis.
+     * {@code @JdbcTypeCode(SqlTypes.BINARY)} — instrui o Hibernate a tratar o UUID como bytes binários no JDBC, compatível com a definição BINARY(16) no banco.
+     * {@code @Column(columnDefinition = "BINARY(16)")} — armazena o UUID como 16 bytes no banco em vez de uma string de 36 caracteres, economizando espaço e melhorando performance em índices.
+     */
     @Id
     @GeneratedValue
     @EqualsAndHashCode.Include
@@ -26,10 +47,13 @@ public class Permission {
     @Column(columnDefinition = "BINARY(16)")
     private UUID id;
 
-    private String name ;
+    /** Identificador textual da permissão usado internamente pelo sistema (ex: "MANAGE_ORDERS", "VIEW_REPORTS"). */
+    private String name;
 
-    private String description ;
+    /** Texto legível explicando o propósito da permissão, exibido para administradores na interface. */
+    private String description;
 
+    /** Preenchida automaticamente pelo Hibernate sempre que o registro for atualizado no banco. */
     @UpdateTimestamp
-    private OffsetDateTime updateDate ;
+    private OffsetDateTime updateDate;
 }

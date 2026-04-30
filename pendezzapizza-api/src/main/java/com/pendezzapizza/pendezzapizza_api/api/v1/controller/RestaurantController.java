@@ -1,8 +1,10 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantModelAssembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantSummaryModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.RestaurantDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
@@ -32,11 +34,12 @@ public class RestaurantController implements RestaurantControllerOpenApi {
 
     private final RestaurantService restaurantService;
     private final RestaurantModelAssembler restaurantAssembler;
+    private final RestaurantSummaryModelAssembler restaurantSummaryModelAssembler;
     private final RestaurantDisassembler restaurantDisassembler;
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
-    public ResponseEntity<Page<RestaurantModel>> list(Pageable pageable , ServletWebRequest request) {
+    public ResponseEntity<Page<RestaurantSummaryModel>> list(Pageable pageable , ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = restaurantService.getLastUpdateDate();
@@ -49,7 +52,7 @@ public class RestaurantController implements RestaurantControllerOpenApi {
         }
 
         Page<Restaurant> restaurants = restaurantService.findAll(pageable);
-        Page<RestaurantModel> restaurantsModel = restaurants.map(restaurantAssembler::toModel);
+        Page<RestaurantSummaryModel> restaurantsModel = restaurants.map(restaurantSummaryModelAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
                 .eTag(eTag)

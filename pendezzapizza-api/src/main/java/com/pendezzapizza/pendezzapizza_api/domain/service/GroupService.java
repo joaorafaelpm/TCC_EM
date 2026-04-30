@@ -1,6 +1,5 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.GroupsActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.PermissionsActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.UsersActionCacheEvict;
@@ -36,6 +35,11 @@ public class GroupService {
         return groupRepository.findAll(pageable);
     }
 
+    @Cacheable(value = "groupsName", key = "{#pageable.pageNumber, #pageable.pageSize, #groupName}")
+    public Page<Group> findAllByName(String groupName, Pageable pageable) {
+        return groupRepository.findByName(groupName, pageable);
+    }
+
     @Cacheable(value = "group", key = "#groupId")
     public Group findById (UUID groupId ) {
         return groupRepository.findByIdOrThrowException(groupId);
@@ -44,7 +48,6 @@ public class GroupService {
     @Cacheable(value = "userGroup", key = "#userId")
     public Set<Group> findGroupsByUserId (UUID userId) {
         return userService.findById(userId).getGroups();
-
     }
 
     @Cacheable("groupsLastUpdate")

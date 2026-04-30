@@ -18,4 +18,6 @@ public class UserModel {
     private String name;
     @Schema(example = "roberto@gmail.com")
     private String email;
+//    @Schema(example = "(19) 11111-1111")
+//    private String phone ;
 }

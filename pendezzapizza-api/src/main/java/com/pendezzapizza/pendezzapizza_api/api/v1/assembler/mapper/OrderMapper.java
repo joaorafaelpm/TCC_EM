@@ -15,6 +15,7 @@ import java.util.List;
 public interface OrderMapper {
 
     @Bean
+//    Esse mapping literalmente mapeia de um objeto (source = de onde vem) para o objeto final (target = para onde vai). Isso vale para TODOS os mappings do Mapper
     @Mapping(source = "orderStatus", target = "status")
     @Mapping(source = "deliveryAddress.city.state.name" , target = "deliveryAddress.city.state")
     @Mapping(source = "items" , target = "items" , qualifiedByName = "mapItems")

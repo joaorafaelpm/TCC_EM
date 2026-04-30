@@ -15,8 +15,8 @@ public class UserWithPasswordDTO extends UserDTO {
     @NotBlank
     private String password;
 
-    public UserWithPasswordDTO(String name, String email, String password) {
-        super(name, email);
+    public UserWithPasswordDTO(String name, String email, String phone, String password ) {
+        super(name, email , phone);
         this.password = password;
     }
 }

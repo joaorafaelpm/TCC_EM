@@ -1,6 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public interface RestaurantControllerOpenApi {
 
     @Operation(summary = "Lista de restaurantes")
-    ResponseEntity<Page<RestaurantModel>> list(
+    ResponseEntity<Page<RestaurantSummaryModel>> list(
             @Parameter(hidden = true) Pageable pageable ,
             @Parameter(hidden = true) ServletWebRequest request
             );

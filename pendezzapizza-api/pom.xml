@@ -40,6 +40,7 @@
 		<spring-security.version>6.5.0</spring-security.version>
 		<jib-maven-plugin.version>3.5.1</jib-maven-plugin.version>
 		<spring-doc.version>2.8.15</spring-doc.version>
+		<dotenv.version>3.0.0</dotenv.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -117,7 +118,7 @@
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
-			<version>3.0.0</version>
+			<version>${dotenv.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
