@@ -64,6 +64,19 @@ Cypress.Commands.add("getLoginTestEnv", () => {
   });
 });
 
+// Restaurant Owner Informations
+// ============================================================
+Cypress.Commands.add("getRestaurantOwnerInfo", () => {
+  return cy
+    .env(["RESTAURANT_OWNER_USERNAME", "RESTAURANT_OWNER_PASSWORD"])
+    .then((env) => {
+      return {
+        restaurantUsername: env.RESTAURANT_OWNER_USERNAME,
+        restaurantPassword: env.RESTAURANT_OWNER_PASSWORD,
+      };
+    });
+});
+
 
 
 // Access token

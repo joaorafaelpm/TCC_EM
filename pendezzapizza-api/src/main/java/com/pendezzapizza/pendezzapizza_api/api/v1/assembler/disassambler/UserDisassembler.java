@@ -11,15 +11,27 @@ import org.springframework.context.annotation.Bean;
 public interface UserDisassembler {
 
     @Bean
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updateDate", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "groups", ignore = true)
     User userDTOToUser (UserDTO userDTO) ;
 
     @Bean
     @Mapping(target = "password" , source = "password")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updateDate", ignore = true)
+    @Mapping(target = "groups", ignore = true)
     User userWithPasswordDTOToUser (UserWithPasswordDTO userWithPasswordDTO);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "updateDate", ignore = true)
+    @Mapping(target = "groups", ignore = true)
     void updateUserFromDto(UserDTO dto, @MappingTarget User entity);
 
 

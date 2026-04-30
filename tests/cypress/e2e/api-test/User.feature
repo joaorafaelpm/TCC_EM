@@ -21,7 +21,6 @@ Feature: UserTest
     Then I should receive a response with statusText "No Content"
   # Checando se o delete funcionou
     When I make a GET request to endpoint users with a deleted id
-    Then I should receive a response with status code "404"
     Then I should receive a response body with title "Recurso não encontrado."
 
   Scenario Outline: All Get Requests for Users

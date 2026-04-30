@@ -2,13 +2,17 @@
 cypress/screenshots/
 cypress/videos/
 cypress/results/
+cypress/reports/
 **/screenshots/
 **/videos/
 **/results/
+**/reports/ 
+
+# act secrets
+.secrets
 
 # Pasta Personalizada
-catalogo/
-**/catalogo/
+**/catalogo/*
 
 # Node.js
 node_modules/

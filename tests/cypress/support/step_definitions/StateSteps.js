@@ -8,12 +8,6 @@ import StateApi from "../pageObjects/StateApi";
 
 const stateId = "ac3bb31f-4c4f-44ff-88e8-92646ba56240";
 
-Before(() => {
-  cy.task("unSerializeData", "admin_access_token").then((token) => {
-    cy.wrap(token).as("token");
-  });
-});
-
 // ================= POST =================
 Given("I make a POST request to endpoint states with a valid body", () => {
   cy.get("@token").then((token) => {

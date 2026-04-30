@@ -9,12 +9,6 @@ import UserApi from "../pageObjects/UserApi";
 const userId = "a6162eb1-df44-471b-aef3-9feee0d9d267";
 const groupId = "4a3fdd17-542f-4f6c-b450-871ff0f21092";
 
-Before(() => {
-  cy.task("unSerializeData", "admin_access_token").then((token) => {
-    cy.wrap(token).as("token");
-  });
-});
-
 // ================= POST =================
 Given("I make a POST request to endpoint users with a valid body", () => {
   cy.get("@token").then((token) => {

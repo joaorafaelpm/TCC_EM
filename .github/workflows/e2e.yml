@@ -1,0 +1,216 @@
+# Rodar tudo
+# .\act.exe --secret-file .secrets 
+
+name: E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}  # ← adicione aqui
+    defaults:
+      run:
+        working-directory: ./tests
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: tests/package-lock.json
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Criar .env.test
+        run: |
+          echo "API_HOST=${{ secrets.API_HOST }}" > ../pendezzapizza-api/.env.test
+          echo "API_PORT=${{ secrets.API_PORT }}" >> ../pendezzapizza-api/.env.test
+          echo "TEST_DATABASE_PASSWORD=${{ secrets.TEST_DATABASE_PASSWORD }}" >> ../pendezzapizza-api/.env.test
+          echo "TEST_DATABASE_USERNAME=${{ secrets.TEST_DATABASE_USERNAME }}" >> ../pendezzapizza-api/.env.test
+          echo "TEST_DATABASE_NAME=${{ secrets.TEST_DATABASE_NAME }}"         >> ../pendezzapizza-api/.env.test
+          echo "TEST_DATABASE_PORT=${{ secrets.TEST_DATABASE_PORT }}"         >> ../pendezzapizza-api/.env.test
+          echo "JWT_KEYSTORE_LOCATION=${{ secrets.JWT_KEYSTORE_LOCATION }}"   >> ../pendezzapizza-api/.env.test
+          echo "JWT_KEYSTORE_PASSWORD=${{ secrets.JWT_KEYSTORE_PASSWORD }}"   >> ../pendezzapizza-api/.env.test
+          echo "JWT_KEYSTORE_KEYPAIR_ALIAS=${{ secrets.JWT_KEYSTORE_KEYPAIR_ALIAS }}" >> ../pendezzapizza-api/.env.test
+          echo "RECIPIENT_EMAIL=${{ secrets.RECIPIENT_EMAIL }}"               >> ../pendezzapizza-api/.env.test
+          echo "SENDER_EMAIL=${{ secrets.SENDER_EMAIL }}"                     >> ../pendezzapizza-api/.env.test
+          echo "DOC_CLIENT_SECRET=${{ secrets.DOC_CLIENT_SECRET }}"           >> ../pendezzapizza-api/.env.test
+          echo "DOC_CLIENT_ID=${{ secrets.DOC_CLIENT_ID }}"                   >> ../pendezzapizza-api/.env.test
+
+      - name: Permissão no mvnw
+        run: chmod +x ../pendezzapizza-api/mvnw
+
+      - name: Build do projeto Maven
+        run: ../pendezzapizza-api/mvnw -f ../pendezzapizza-api/pom.xml package -DskipTests
+
+      - name: Build da imagem da API
+        run: docker build -t pendezzapizza-api -f ../pendezzapizza-api/Dockerfile.test ../pendezzapizza-api
+        
+      - name: Subir infraestrutura
+        run: npm run infra:up
+
+      - name: Aguardar API ficar healthy
+        run: npm run infra:wait
+
+      - name: Logs da API (diagnóstico)
+        if: failure()
+        run: |
+          echo "=== LOGS DA API ==="
+          docker logs pendezzaspizza-test-api-1 2>&1
+          echo "=== INSPECT DA API ==="
+          docker inspect pendezzaspizza-test-api-1 2>&1
+
+
+      # Faça isso 
+      # - name: Instalar dependências do Cypress
+        # run: sudo apt-get install -y xvfb libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2t64 libxtst6 xauth
+      # Porém é necessário você criar um arquivo com o nome ".actrc" na raíz do projeto, com o texto:
+        # -P ubuntu-latest=catthehacker/ubuntu:full-latest
+      # Isso baixa uma imagem do ubuntu inteira, o  por que eu não estou optando por esse método, como o projeto inteiro eu estou visando o projeto mais leve possível não faz sentido baixar isso
+      # Então como alternativa eu baixo todas as dependências diretamente
+      - name: Criar .env do Cypress
+        run: |
+          echo "ACCESS_TOKEN_URL=${{ secrets.ACCESS_TOKEN_URL }}" > .env
+          echo "API_URL=${{ secrets.API_URL }}"                  >> .env
+          echo "REDIRECT_URL=${{ secrets.REDIRECT_URL }}"        >> .env
+          echo "CODE_VERIFIER=${{ secrets.CODE_VERIFIER }}"      >> .env
+          echo "CLIENT_ID=${{ secrets.CLIENT_ID }}"              >> .env
+          echo "CLIENT_SECRET=${{ secrets.CLIENT_SECRET }}"      >> .env
+          echo "CLIENT_USERNAME=${{ secrets.CLIENT_USERNAME }}"  >> .env
+          echo "CLIENT_PASSWORD=${{ secrets.CLIENT_PASSWORD }}"  >> .env
+          echo "RESTAURANT_OWNER_USERNAME=${{ secrets.RESTAURANT_OWNER_USERNAME }}" >> .env
+          echo "RESTAURANT_OWNER_PASSWORD=${{ secrets.RESTAURANT_OWNER_PASSWORD }}" >> .env
+          echo "SCOPES=${{ secrets.SCOPES }}"                    >> .env
+
+    # É necessário ajustar a url por que dentro do contexto da CI do github ele obviamente não sabe ler o meu localhost
+    # Logo eu preciso alterar o valor de localhost para o que geralmente é o ip padrão do Docker, e isso somente se eu estiver usando a CI do github
+      - name: Ajustar API_URL para act
+        if: ${{ env.ACT }}
+        run: sed -i 's|API_URL=.*|API_URL=http://172.17.0.1:8080|' .env
+
+      - name: Instalar dependências do Cypress
+        if: ${{ env.ACT }}
+        run: |
+          apt-get update -y
+          apt-get install -y --fix-missing \
+            xvfb \
+            libnss3 \
+            libatk1.0-0 \
+            libatk-bridge2.0-0 \
+            libcups2 \
+            libdrm2 \
+            libxkbcommon0 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxfixes3 \
+            libxrandr2 \
+            libgbm1 \
+            libasound2t64 \
+            libgtk-3-0t64
+            
+      - name: 'Testes: E2E'
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: npm run triggerAllTests
+
+      - name: Notificar Slack
+        if: always()
+        env:
+          STATUS_EMOJI: ${{ job.status == 'success' && '✅' || '❌' }}
+          STATUS_TEXT: ${{ job.status == 'success' && 'Passou' || 'Falhou' }}
+          STATUS_COLOR: ${{ job.status == 'success' && '#36a64f' || '#e01e5a' }}
+        run: |
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+          -H 'Content-type: application/json' \
+          --data '{
+            "attachments": [{
+              "color": "'"$STATUS_COLOR"'",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "'"$STATUS_EMOJI"' E2E Tests — Pendezza Pizza"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Status:*\n'"$STATUS_TEXT"'"},
+                    {"type": "mrkdwn", "text": "*Branch:*\n`${{ github.ref_name }}`"},
+                    {"type": "mrkdwn", "text": "*Run:*\n#${{ github.run_number }}"},
+                    {"type": "mrkdwn", "text": "*Commit:*\n${{ github.event.head_commit.message }}"}
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {"type": "plain_text", "text": "🔍 Ver no Cypress Cloud"},
+                      "url": "https://cloud.cypress.io/projects/${{ secrets.CYPRESS_PROJECT_ID }}/runs"
+                    },
+                    {
+                      "type": "button",
+                      "text": {"type": "plain_text", "text": "📋 Ver no GitHub Actions"},
+                      "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
+            }]
+          }'
+
+      - name: Gerar relatório unificado
+        if: always()
+        run: |
+          if ls cypress/reports/json/*.json 2>/dev/null; then
+            npm run report:merge && npm run report:generate
+          else
+            echo "Nenhum relatório encontrado, pulando merge."
+          fi
+
+      - name: Upload — Relatório HTML
+        if: always() && !env.ACT
+        uses: actions/upload-artifact@v4
+        with:
+          name: mochawesome-report
+          path: tests/cypress/reports/html
+
+      - name: Upload — Screenshots (somente em falha)
+        if: failure() && !env.ACT
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: tests/cypress/screenshots
+
+      - name: Upload — Vídeos (somente em falha)
+        if: failure() && !env.ACT
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: tests/cypress/videos
+
+      - name: Teardown da infraestrutura
+        if: always()
+        run: npm run infra:down

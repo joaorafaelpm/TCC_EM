@@ -10,7 +10,6 @@ import org.mapstruct.Named;
 import org.springframework.context.annotation.Bean;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
@@ -19,6 +18,11 @@ public interface OrderMapper {
     @Mapping(source = "orderStatus", target = "status")
     @Mapping(source = "deliveryAddress.city.state.name" , target = "deliveryAddress.city.state")
     @Mapping(source = "items" , target = "items" , qualifiedByName = "mapItems")
+    @Mapping(source = "cancellationDate", target = "canceledAt")
+    @Mapping(source = "confirmationDate", target = "confirmedAt")
+    @Mapping(source = "creationDate", target = "createdAt")
+    @Mapping(source = "deliveryDate", target = "deliveredAt")
+    @Mapping(source = "totalCost", target = "totalValue")
     OrderModel toModel(Order order);
 
     @Bean
@@ -28,7 +32,7 @@ public interface OrderMapper {
 
     @Named("mapItems")
     default List<OrderItemModel> mapItems (List<OrderItem> items) {
-        return items.stream().map(this::orderItemToOrderItemModel).collect(Collectors.toList());
+        return items.stream().map(this::orderItemToOrderItemModel).toList();
     }
 
 }

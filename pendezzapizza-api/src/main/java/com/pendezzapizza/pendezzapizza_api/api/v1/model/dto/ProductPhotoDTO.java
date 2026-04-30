@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.model.dto;
 
+
 import com.pendezzapizza.pendezzapizza_api.core.validation.productphoto.FileSize;
 import com.pendezzapizza.pendezzapizza_api.core.validation.productphoto.FileType;
 import io.swagger.v3.oas.annotations.media.Schema;

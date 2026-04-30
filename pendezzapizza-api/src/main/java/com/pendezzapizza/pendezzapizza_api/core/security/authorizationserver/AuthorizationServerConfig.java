@@ -1,6 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.core.security.authorizationserver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -41,10 +42,14 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,13 +72,13 @@ public class AuthorizationServerConfig {
                 customizer -> customizer.consentPage("/oauth2/consent"));
         http
                 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
-                .with(authorizationServerConfigurer, (authorizationServer) ->
+                .with(authorizationServerConfigurer, authorizationServer ->
                         authorizationServer.oidc(Customizer.withDefaults())
                 )
                 .cors(Customizer.withDefaults())
                 .formLogin(loginFormConfigurer ->
                         loginFormConfigurer.loginPage("/login").permitAll())
-                .authorizeHttpRequests((authorize) ->
+                .authorizeHttpRequests(authorize ->
                         authorize
                        .anyRequest().authenticated()
                 );
@@ -85,9 +90,8 @@ public class AuthorizationServerConfig {
         return new JdbcRegisteredClientRepository(jdbcOperation);
     }
 
-//        Aqui a gente pega a nossa classe do par de chaves do servidor de autenticação e monta o nosso jwt com base nisso, a classe e sua respectiva configuração é feita a partir do application.properties, onde todo o arquivo da chave está na codificação em base64 então o arquivo é o mesmo toda vez que nós reiniciamos o servidor, para facilitar no desenvolvimento, vou alterar para gerar uma chave nova a cada vez que o servidor reiniciar, para assim não manter o login quando eu reiniciar a aplicação
     @Bean
-    public JWKSource<SecurityContext> jwkSource(JwtKeyStoreProperties properties) throws Exception {
+    public JWKSource<SecurityContext> jwkSource(JwtKeyStoreProperties properties) throws KeyStoreException, JOSEException, NoSuchAlgorithmException, CertificateException, IOException {
         char[] keyStorePass = properties.getPassword().toCharArray();
         String keypairAlias = properties.getKeypairAlias();
 
@@ -100,6 +104,7 @@ public class AuthorizationServerConfig {
 
         return new ImmutableJWKSet<>(new JWKSet(rsaKey));
     }
+
     private static KeyPair generateRsaKey() {
         KeyPair keyPair;
         try {

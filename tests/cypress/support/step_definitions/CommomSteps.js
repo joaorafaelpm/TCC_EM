@@ -5,13 +5,31 @@ import {
   Before,
 } from "@badeball/cypress-cucumber-preprocessor";
 import CommomApi from "../pageObjects/CommomApi";
+import LoginPage from "../pageObjects/LoginApi";
 
-// ------------------------ Access Token ------------------------
 
 Before(() => {
   cy.task("unSerializeData", "admin_access_token").then((token) => {
     cy.wrap(token).as("token");
   });
+})
+
+// ------------------------  Commom steps of login ------------------------
+
+Given("I'm on the login page", () => {
+  LoginPage.visitLoginPage();
+});
+
+When("I click submit button", () => {
+  LoginPage.submit();
+});
+
+Then("I should see a error page", () => {
+  LoginPage.getErrorMessage();
+});
+
+Then("I have a successful login and see my access_token", () => {
+  LoginPage.makeAccessTokenRequest();
 });
 
 // ------------------------  GET ------------------------

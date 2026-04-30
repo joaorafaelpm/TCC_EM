@@ -8,12 +8,6 @@ import {
 import PermissionApi from "../pageObjects/PermissionApi";
 
 
-Before(() => {
-  cy.task("unSerializeData", "admin_access_token").then((token) => {
-    cy.wrap(token).as("token");
-  });
-});
-
 // ================= GET =================
 When("I make a GET request to endpoint permissions", () => {
   cy.get("@token").then((token) => {

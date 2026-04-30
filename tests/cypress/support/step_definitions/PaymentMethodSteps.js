@@ -7,13 +7,6 @@ import {
 import PaymentMethodApi from "../pageObjects/PaymentMethodApi";
 
 const usingPaymentId = "3ee42ee7-3d35-4680-afe0-e01a24e649dc";
-
-Before(() => {
-  cy.task("unSerializeData", "admin_access_token").then((token) => {
-    cy.wrap(token).as("token");
-  });
-});
-
 // ================= POST =================
 Given(
   "I make a POST request to endpoint payment-methods with a valid body",

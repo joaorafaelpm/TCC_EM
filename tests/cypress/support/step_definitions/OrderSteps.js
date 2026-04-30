@@ -11,12 +11,6 @@ const PAYMENT_METHOD_ID = "3ee42ee7-3d35-4680-afe0-e01a24e649dc";
 const PRODUCT_ID = "72e58c00-e73f-41ee-bdd7-acf75341a7a7";
 const CITY_ID = "0e0362cc-db84-4484-9909-d6977b96b619";
 
-Before(() => {
-  cy.task("unSerializeData", "admin_access_token").then((token) => {
-    cy.wrap(token).as("token");
-  });
-});
-
 // ================= POST =================
 Given("I make a POST request to endpoint orders with a valid body", () => {
   cy.get("@token").then((token) => {

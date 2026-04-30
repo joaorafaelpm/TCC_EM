@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 @Mapper(componentModel = "spring")
 public interface RestaurantDisassembler {
 
-    @Bean
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Restaurant restaurantDTOToRestaurant (RestaurantDTO restaurantDTO) ;
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
