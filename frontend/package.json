@@ -13,16 +13,16 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.47.10",
     "@svgr/webpack": "^8.1.0",
-    "cookie": "^1.0.2",
+    "cookie": "^1.1.0",
     "iron-session": "^8.0.4",
-    "next": "^15.1.4",
+    "next": "^15.5.15",
     "next-cookies": "^2.0.3",
     "next-iron-session": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
-    "react-router-dom": "^7.1.1",
-    "supabase": "^2.2.1",
+    "react-router-dom": "^7.14.2",
+    "supabase": "^2.95.6",
     "uuid4": "^2.0.3"
   },
   "devDependencies": {
