@@ -11,9 +11,15 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Interface criada para fazer a ponte entre banco e entidade de <b>usuário</b>
+ *
+ * <p>Toda query sql a mais está implementada dentro da função com seu código sql explicado  </p>
+ */
 @Repository
 public interface UserRepository extends CustomJPARepository<User, UUID> {
 
+//    Resolvendo os parâmetros da entidade
     @Query("""
     select distinct u 
     from User u
@@ -23,15 +29,19 @@ public interface UserRepository extends CustomJPARepository<User, UUID> {
     """)
     Optional<User> findByEmail(String email);
 
+//    Resolvendo o LAZY e EAGER fetch de grupos
     @EntityGraph(attributePaths = {"groups"})
     Page<User> findAll (Pageable pageable);
 
+//    Pega a última data de atualização
     @Query("select max(u.updateDate) from User u")
     OffsetDateTime getLastUpdateDate();
 
+//    Pega a última data de atualização por id
     @Query("select max(u.updateDate) from User u where u.id = :userId")
     OffsetDateTime getLastUpdateDateById(UUID userId);
 
+//    Resolvendo todos os objetos de usuário para evitar nullPointerException
     @Query("SELECT u FROM User u left join fetch u.groups g WHERE u.id = :userId")
     Optional<User> findByIdGroupLazy (UUID userId) ;
 }

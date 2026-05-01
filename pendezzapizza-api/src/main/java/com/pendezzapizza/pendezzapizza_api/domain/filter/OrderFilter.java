@@ -6,6 +6,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.OffsetDateTime;
 
+/**
+ * Objeto de filtro de pedidos
+ *
+ * <p>Usado para servir de filtro para o controlador</p>
+ */
 @Getter
 @Setter
 public class OrderFilter {

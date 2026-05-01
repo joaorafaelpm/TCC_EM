@@ -31,11 +31,15 @@ public class ProductController implements ProductControllerOpenApi {
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
     public ResponseEntity<Page<ProductModel>> findAll(@RequestParam(required = false) Boolean includeInactives ,
+                                                      @RequestParam(required = false) String productName ,
                                                                   Pageable pageable , ServletWebRequest request) {
         Page<Product> products;
         if (includeInactives != null && includeInactives) {
             products = productService.findAll(pageable);
-        } else {
+        } else if (productName != null && includeInactives == null || Boolean.FALSE.equals(includeInactives)) {
+            products = productService.findAllActivesByName(productName,includeInactives, pageable);
+        }
+        else {
             products = productService.findAllActive(pageable);
         }
 

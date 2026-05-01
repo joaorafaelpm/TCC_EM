@@ -22,6 +22,7 @@ public interface RestaurantControllerOpenApi {
 
     @Operation(summary = "Lista de restaurantes")
     ResponseEntity<Page<RestaurantSummaryModel>> list(
+            @Parameter(required = false , description = "Filtra os restaurantes por nome") String restaurantName ,
             @Parameter(hidden = true) Pageable pageable ,
             @Parameter(hidden = true) ServletWebRequest request
             );

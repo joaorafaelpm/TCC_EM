@@ -39,7 +39,8 @@ public class RestaurantController implements RestaurantControllerOpenApi {
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
-    public ResponseEntity<Page<RestaurantSummaryModel>> list(Pageable pageable , ServletWebRequest request) {
+    public ResponseEntity<Page<RestaurantSummaryModel>> list(@RequestParam(required = false) String restaurantName , Pageable pageable , ServletWebRequest request) {
+        Page<Restaurant> restaurants;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = restaurantService.getLastUpdateDate();
@@ -51,7 +52,13 @@ public class RestaurantController implements RestaurantControllerOpenApi {
             return null;
         }
 
-        Page<Restaurant> restaurants = restaurantService.findAll(pageable);
+        if (restaurantName == null) {
+            restaurants = restaurantService.findAll(pageable);
+        }
+        else {
+            restaurants = restaurantService.findAllByName(restaurantName, pageable);
+        }
+
         Page<RestaurantSummaryModel> restaurantsModel = restaurants.map(restaurantSummaryModelAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())

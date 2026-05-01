@@ -36,8 +36,8 @@ public class StateController implements StateControllerOpenApi {
 
     @CheckSecurity.States.CanConsult
     @GetMapping
-    public ResponseEntity<Page<StateModel>> all(Pageable pageable , ServletWebRequest request) {
-
+    public ResponseEntity<Page<StateModel>> all(@RequestParam(required = false)String stateName,  Pageable pageable , ServletWebRequest request) {
+        Page<State> states;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = stateService.getLastUpdateDate();
@@ -49,7 +49,13 @@ public class StateController implements StateControllerOpenApi {
             return null;
         }
 
-        Page<State> states = stateService.findAll(pageable);
+        if (stateName == null) {
+            states = stateService.findAll(pageable);
+        }
+        else {
+            states = stateService.findByName(stateName,pageable);
+        }
+
         Page<StateModel> statesModel = states.map(stateModelAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())

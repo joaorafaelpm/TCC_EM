@@ -5,6 +5,11 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Enumeração criada para controlar o status do pedido
+ *
+ * <p>Recebe uma descrição e o status anterior para controle de fase</p>
+ */
 public enum OrderStatus {
 
     CREATED("Created"),

@@ -34,6 +34,11 @@ public class RestaurantService {
         return restaurantRepository.findAll(pageable);
     }
 
+    @Cacheable(value = "restaurantName")
+    public Page<Restaurant> findAllByName(String restaurantName , Pageable pageable) {
+        return restaurantRepository.findByName(restaurantName, pageable);
+    }
+
     @Cacheable(value = "restaurantsResponsibleUsers" , key = "#restaurantId")
     public Page<User> findResponsibleUsersByRestaurantId(UUID restaurantId , Pageable pageable) {
         return restaurantRepository.findResponsibleUsersByRestaurantId(restaurantId , pageable);

@@ -21,6 +21,7 @@ public interface StateControllerOpenApi {
 
     @Operation(summary = "Lista de estados")
     ResponseEntity<Page<StateModel>> all(
+            @Parameter(required = false , description = "Filtra os estados pelo nome") String stateName,
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) ServletWebRequest request
     );

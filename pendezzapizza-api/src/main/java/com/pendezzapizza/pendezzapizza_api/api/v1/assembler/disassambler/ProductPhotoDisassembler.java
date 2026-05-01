@@ -8,6 +8,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+/**
+ * Disassembler da entidade de foto de produto usando a biblioteca Mapstruct, que requer a anotação {@code Mapper} para funcionar corretamente
+ *
+ * <p>Faço o mapeamento partindo da minha entidade de DTO para a minha original</p>
+ * <p>Toda diferença entre o modelo e a entidade original é mapeada nos métodos da interface e para evitar warning é <b>necessário<b> mapear cada um dos parâmetros mesmo que seja o mesmo</p>
+ */
 @Mapper(componentModel = "spring")
 public interface ProductPhotoDisassembler {
 

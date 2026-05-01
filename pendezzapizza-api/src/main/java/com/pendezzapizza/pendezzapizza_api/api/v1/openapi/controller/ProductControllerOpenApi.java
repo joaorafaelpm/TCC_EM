@@ -14,6 +14,7 @@ public interface ProductControllerOpenApi {
     @Operation(summary = "Lista  de produtos")
     ResponseEntity<Page<ProductModel>> findAll(
             Boolean includeInactives,
+            @Parameter(required = false, description = "Filtra um pedido pelo nome.") String productName ,
             @Parameter(hidden = true) Pageable pageable ,
             @Parameter(hidden = true) ServletWebRequest request);
 }

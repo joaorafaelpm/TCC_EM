@@ -13,7 +13,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 public interface PermissionControllerOpenApi {
     @Operation(summary = "Lista  de permissões")
     ResponseEntity<Page<PermissionModel>> findAll(
-            @Parameter(hidden = true) String permissionName,
+            @Parameter(hidden = true, description = "Filtra uma permissão pelo nome.") String permissionName,
             @Parameter(hidden = true) Pageable pageable ,
             @Parameter(hidden = true) ServletWebRequest request);
 }
