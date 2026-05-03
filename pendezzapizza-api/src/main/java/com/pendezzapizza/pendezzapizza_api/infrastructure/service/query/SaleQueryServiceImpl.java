@@ -14,8 +14,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Implementação das querys de serviço
+ *
+ * <p>Todas as funções relacionadas a projeção de um meio para visualisar as vendas</p>
+ */
 @Repository
 public class SaleQueryServiceImpl implements SaleQueryService {
+
+//    ==============================================
+//  TODO : A ideia é eventualmente adicionar ainda mais informação aqui dentro, como os ids dos pedidos, o nome deles, os clientes que mais pedem, se possível as datas sazonais (mais no inverno e etc)
+//  Se for viavel, conversar com o front para deixar isso tudo opcional com o front end - adicionar vários ckeckboxes em que eu posso selecionar o que vai aparecer no pdf para mim
+//    ==============================================
 
     @PersistenceContext
     private EntityManager manager;

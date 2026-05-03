@@ -3,6 +3,7 @@ package com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantUpdateDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -46,7 +47,7 @@ public interface RestaurantControllerOpenApi {
             @ApiResponse(responseCode = "400", description = "Erro no id do restaurante", content = @Content(schema = @Schema(ref = "ApiError")))
     })
     RestaurantModel save(@Parameter(description = "Id de um restaurante", example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", required = true) UUID restaurantId,
-                         @RequestBody(description = "Representação de um restaurante com dados atualizados", required = true) RestaurantDTO restaurantDTO);
+                         @RequestBody(description = "Representação de um restaurante com dados atualizados", required = true) RestaurantUpdateDTO restaurantDTO);
 
     @Operation(summary = "Ativa um restaurante por id", responses = {
             @ApiResponse(responseCode = "204", description = "Restaurante ativado"),

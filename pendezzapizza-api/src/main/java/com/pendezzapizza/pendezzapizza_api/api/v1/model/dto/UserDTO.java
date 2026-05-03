@@ -9,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Classe de DTO para representação da entidade de <b>usuário</b>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

@@ -67,15 +67,15 @@ insert into `group` (id, name, update_date) values
 
 -- 6. USUÁRIOS (com senha BCRYPT)
 
-INSERT INTO `user` (id, name, email, password, update_date) VALUES
-(UUID_TO_BIN(UUID()), 'João da Silva', 'joao.ger@pendezzapizza.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Maria Joaquina', 'maria.vnd@pendezzapizza.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Roberto fazbear', 'guinas.sec@pendezzapizza.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'La ele da silva', 'alele.cad@pendezzapizza.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'José Souza', 'email.teste.pendezzapizza.tcc+hubert@gmail.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Sebastião Martins', 'email.teste.pendezzapizza.tcc+sebastiao@gmail.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Ronaldo Pinto', 'cocoxixicocopinto@gmail.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN("a6162eb1-df44-471b-aef3-9feee0d9d267"), 'João Mohammed Pendezza', 'joaomohammed@gmail.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP());
+INSERT INTO `user` (id, name, email, phone , password, update_date) VALUES
+(UUID_TO_BIN(UUID()), 'João da Silva', 'joao.ger@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Maria Joaquina', 'maria.vnd@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Roberto fazbear', 'guinas.sec@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'La ele da silva', 'alele.cad@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'José Souza', 'email.teste.pendezzapizza.tcc+hubert@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Sebastião Martins', 'email.teste.pendezzapizza.tcc+sebastiao@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Ronaldo Pinto', 'cocoxixicocopinto@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN("a6162eb1-df44-471b-aef3-9feee0d9d267"), 'João Mohammed Pendezza', 'joaomohammed@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP());
 
 -- 7. RELAÇÃO GRUPO_PERMISSAO
 

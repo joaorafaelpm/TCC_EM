@@ -2,10 +2,12 @@ package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.RestaurantsActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.RestaurantsSaveCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.RestaurantNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.PaymentMethod;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
+import com.pendezzapizza.pendezzapizza_api.domain.model.RestaurantOwnerProfile;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.RestaurantRepository;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +27,13 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class RestaurantService {
 
-    RestaurantRepository restaurantRepository;
-    CityService cityService ;
-    PaymentMethodService paymentMethodService ;
-    UserService userService ;
+    private final RestaurantRepository restaurantRepository;
+    private final RestaurantOwnerProfileService restaurantOwnerProfileService;
+    private final CityService cityService ;
+    private final PaymentMethodService paymentMethodService ;
+    private final UserService userService ;
+    private final PasswordEncoder encoder ;
+    private final PendezzaPizzaSecurity pendezzaPizzaSecurity ;
 
     @Cacheable(value = "restaurants")
     public Page<Restaurant> findAll(Pageable pageable) {
@@ -70,13 +76,31 @@ public class RestaurantService {
 
     @RestaurantsSaveCacheEvict
     @Transactional
-    public Restaurant save (Restaurant restaurant) {
+    public Restaurant save (Restaurant restaurant , String ownerCpf) {
+        UUID cityId = restaurant.getAddress().getCity().getId();
+        restaurant.getAddress().setCity(cityService.findById(cityId));
+        UUID userId = pendezzaPizzaSecurity.getUserId();
+
+        if (!restaurantRepository.existsById(userId)) {
+            User user = userService.findById(userId);
+            var profile = new RestaurantOwnerProfile();
+            profile.setUser(user);
+            profile.setCpf(ownerCpf);
+            restaurantOwnerProfileService.save(profile);
+        }
+
+        Restaurant savedRestaurant = restaurantRepository.saveAndFlush(restaurant);
+        return  findByIdWithAllDependencies(savedRestaurant.getId());
+
+    }
+    @RestaurantsSaveCacheEvict
+    @Transactional
+    public Restaurant update (Restaurant restaurant) {
         UUID cityId = restaurant.getAddress().getCity().getId();
         restaurant.getAddress().setCity(cityService.findById(cityId));
 
         Restaurant savedRestaurant = restaurantRepository.saveAndFlush(restaurant);
         return  findByIdWithAllDependencies(savedRestaurant.getId());
-
     }
 
     @RestaurantsActionCacheEvict

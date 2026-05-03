@@ -98,7 +98,7 @@ public class Restaurant implements Serializable {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 
-    // =========== Campos adicionais para exibição na interface do cliente ===========
+//  =========== Campos adicionais para exibição na interface do cliente ===========
     /** Texto de apresentação do restaurante exibido ao cliente na listagem e página de detalhes. */
     @Column(name = "description", length = 500)
     private String description;
@@ -110,7 +110,7 @@ public class Restaurant implements Serializable {
     /** Valor mínimo exigido para que um pedido seja aceito por este restaurante. */
     @Column(name = "minimum_order_value")
     private BigDecimal minimumOrderValue;
-//    =================================================================================
+//  =================================================================================
 
     /**
      * Formas de pagamento aceitas por este restaurante.

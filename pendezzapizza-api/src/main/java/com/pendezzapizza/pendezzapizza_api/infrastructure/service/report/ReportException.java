@@ -2,6 +2,9 @@ package com.pendezzapizza.pendezzapizza_api.infrastructure.service.report;
 
 import java.io.Serial;
 
+/**
+ * Excessão específica para erro na formação do PDF
+ */
 public class ReportException extends RuntimeException {
 
     @Serial

@@ -6,6 +6,7 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.Restaur
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantUpdateDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
@@ -18,6 +19,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
@@ -36,6 +38,8 @@ public class RestaurantController implements RestaurantControllerOpenApi {
     private final RestaurantModelAssembler restaurantAssembler;
     private final RestaurantSummaryModelAssembler restaurantSummaryModelAssembler;
     private final RestaurantDisassembler restaurantDisassembler;
+    private final PasswordEncoder encoder ;
+
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
@@ -90,15 +94,16 @@ public class RestaurantController implements RestaurantControllerOpenApi {
     @PostMapping
     public RestaurantModel add(@RequestBody @Valid RestaurantDTO restaurantDTO) {
         Restaurant restaurant = restaurantDisassembler.restaurantDTOToRestaurant(restaurantDTO);
-        return restaurantAssembler.toModel(restaurantService.save(restaurant));
+        String encode = encoder.encode(restaurantDTO.getOwnerCpf());
+        return restaurantAssembler.toModel(restaurantService.save(restaurant,encode));
     }
 
     @CheckSecurity.Restaurants.CanManageRegistration
     @PutMapping("/{restaurantId}")
-    public RestaurantModel save(@PathVariable UUID restaurantId, @RequestBody @Valid RestaurantDTO restaurantDTO) {
+    public RestaurantModel save(@PathVariable UUID restaurantId, @RequestBody @Valid RestaurantUpdateDTO restaurantDTO) {
         Restaurant existingRestaurant = restaurantService.findById(restaurantId);
         restaurantDisassembler.updateRestaurantFromDto(restaurantDTO, existingRestaurant);
-        return restaurantAssembler.toModel(restaurantService.save(existingRestaurant));
+        return restaurantAssembler.toModel(restaurantService.update(existingRestaurant));
     }
 
     @CheckSecurity.Restaurants.CanManageRegistration

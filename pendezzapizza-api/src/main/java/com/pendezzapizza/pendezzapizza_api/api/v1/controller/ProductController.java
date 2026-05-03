@@ -36,8 +36,6 @@ public class ProductController implements ProductControllerOpenApi {
         Page<Product> products;
         if (includeInactives != null && includeInactives) {
             products = productService.findAll(pageable);
-        } else if (productName != null && includeInactives == null || Boolean.FALSE.equals(includeInactives)) {
-            products = productService.findAllActivesByName(productName,includeInactives, pageable);
         }
         else {
             products = productService.findAllActive(pageable);

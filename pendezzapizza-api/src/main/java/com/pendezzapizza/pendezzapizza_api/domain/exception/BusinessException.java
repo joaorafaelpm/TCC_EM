@@ -2,6 +2,9 @@ package com.pendezzapizza.pendezzapizza_api.domain.exception;
 
 import java.io.Serial;
 
+/**
+ * Excessão específica para erro de negócio
+*/
 public class BusinessException extends RuntimeException {
 
     @Serial

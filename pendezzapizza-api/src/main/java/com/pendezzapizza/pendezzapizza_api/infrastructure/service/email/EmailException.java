@@ -2,6 +2,9 @@ package com.pendezzapizza.pendezzapizza_api.infrastructure.service.email;
 
 import java.io.Serial;
 
+/**
+ * Excessão específica para erro no envio de email
+ */
 public class EmailException extends RuntimeException {
 
   @Serial

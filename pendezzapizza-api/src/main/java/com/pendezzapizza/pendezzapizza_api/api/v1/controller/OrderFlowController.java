@@ -13,7 +13,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/v1/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
-
 @AllArgsConstructor
 public class OrderFlowController implements OrderFlowControllerOpenApi {
 

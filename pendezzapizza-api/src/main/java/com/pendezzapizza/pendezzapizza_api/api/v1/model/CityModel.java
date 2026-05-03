@@ -1,3 +1,9 @@
+/**
+ * @summary     Representa o modelo de resposta completo de uma cidade retornado pela API.
+ *              Utilizado como DTO de saída em recursos que expõem dados completos de cidade.
+ * @difficulty  Low
+ * @depends-on  None
+ */
 package com.pendezzapizza.pendezzapizza_api.api.v1.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CityModel{
+public class CityModel {
 
     @Schema(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48")
     private UUID id;
@@ -18,5 +24,7 @@ public class CityModel{
     @Schema(example = "Campinas")
     private String name;
 
+    // Estado embutido no modelo completo de cidade — diferente de CitySummaryModel,
+    // este DTO expõe o estado para contextos onde o dado completo é necessário
     private StateModel state;
 }

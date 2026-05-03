@@ -1,5 +1,5 @@
 ﻿CREATE TABLE restaurant_owner_profile (
-    id                  BINARY(16)   NOT NULL,
+    id                  BINARY(16)   DEFAULT (UUID_TO_BIN(UUID())),
     user_id             BINARY(16)   NOT NULL,
     cpf                 VARCHAR(255) NOT NULL,
     verified_at         DATETIME     NULL,

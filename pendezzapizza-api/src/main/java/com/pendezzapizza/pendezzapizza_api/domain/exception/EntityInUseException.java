@@ -4,6 +4,9 @@ package com.pendezzapizza.pendezzapizza_api.domain.exception;
 import java.io.Serial;
 import java.util.UUID;
 
+/**
+ * Excessão específica ao tentar deletar uma entidade que stá sendo usada por outra
+ */
 public class EntityInUseException extends BusinessException {
 
     @Serial

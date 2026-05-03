@@ -1,6 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.domain.repository;
 
-import com.pendezzapizza.pendezzapizza_api.domain.model.City;
+import com.pendezzapizza.pendezzapizza_api.domain.model.RestaurantOwnerProfile;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
@@ -11,6 +11,6 @@ import java.util.UUID;
  * <p>Toda query sql a mais está implementada dentro da função com seu código sql explicado  </p>
  */
 @Repository
-public interface RestaurantOwnerProfileRepository extends CustomJPARepository<City, UUID> {
+public interface RestaurantOwnerProfileRepository extends CustomJPARepository<RestaurantOwnerProfile, UUID> {
 
 }

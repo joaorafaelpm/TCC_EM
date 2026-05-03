@@ -22,8 +22,8 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class ProductService {
 
-    RestaurantService restaurantService ;
-    ProductRepository productRepository;
+    private final RestaurantService restaurantService ;
+    private final ProductRepository productRepository;
 
     @Cacheable(value = "productsByRestaurant", key = "{#restaurant.id, #pageable.pageNumber, #pageable.pageSize}")
     public Page<Product> findByRestaurant(Restaurant restaurant, Pageable pageable) {

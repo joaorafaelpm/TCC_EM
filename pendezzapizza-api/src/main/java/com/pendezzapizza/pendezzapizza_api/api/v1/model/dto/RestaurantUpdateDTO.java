@@ -20,15 +20,11 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantDTO {
+public class RestaurantUpdateDTO {
 
     @Schema(example = "Pizzaria fredbear")
     @ValidationName
     private String name;
-
-    @Schema(example = "999.999.999-99")
-    @ValidCpf
-    private String ownerCpf;
 
     @Schema(example = "Descrição do restaurante")
     private String description;

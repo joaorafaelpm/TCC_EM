@@ -1,11 +1,6 @@
-/**
- * @summary     Representa o modelo de resposta de um estado brasileiro retornado pela API.
- *              Utilizado como DTO de saída em recursos que expõem dados completos de estado.
- * @difficulty  Low
- * @depends-on  None
- */
 package com.pendezzapizza.pendezzapizza_api.api.v1.model;
 
+import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,11 +11,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
-public class StateModel {
-
+public class RestaurantOwnerProfileModel {
     @Schema(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48")
     private UUID id;
 
-    @Schema(example = "São Paulo")
-    private String name;
+    private User user;
 }

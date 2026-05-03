@@ -11,6 +11,9 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Classe de DTO para representação da entidade de <b>produto</b>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

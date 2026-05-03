@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
  * <p>Faço o mapeamento partindo da minha entidade de DTO para a minha original</p>
  * <p>Toda diferença entre o modelo e a entidade original é mapeada nos métodos da interface e para evitar warning é <b>necessário<b> mapear cada um dos parâmetros mesmo que seja o mesmo</p>
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface CityDisassembler {
 
     @Bean

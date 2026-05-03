@@ -10,6 +10,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Classe de DTO para representação da entidade de <b>pedidos</b>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

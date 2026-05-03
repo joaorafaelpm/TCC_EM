@@ -2,6 +2,9 @@ package com.pendezzapizza.pendezzapizza_api.domain.exception;
 
 import java.io.Serial;
 
+/**
+ * Excessão específica para entidade não encontrada
+ */
 public class EntityNotFoundException extends BusinessException {
 
     @Serial
