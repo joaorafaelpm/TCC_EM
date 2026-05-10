@@ -1,0 +1,81 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../components/context/AuthProvider.jsx';
+import Sidebar from '../../components/MyAccount/Sidebar.jsx';
+import MyInfo from '../../components/MyAccount/MyInfo.jsx';
+import MyRestaurants from '../../components/MyAccount/MyRestaurants.jsx';
+import './MyAccount.css';
+
+const MyAccount = () => {
+  // "user" do AuthProvider contém o token decodificado, com o campo "userId"
+  const { user: tokenData, isLoading: authLoading } = useAuth();
+  const [activeSection, setActiveSection] = useState('info');
+  const [userData, setUserData] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
+  const [userError, setUserError] = useState(null);
+
+  useEffect(() => {
+    if (authLoading || !tokenData?.userId) return;
+
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`/v1/users/${tokenData.userId}`, {
+          credentials: 'include',
+        });
+
+        if (!res.ok) throw new Error('Erro ao carregar dados do usuário.');
+
+        const data = await res.json();
+        setUserData(data);
+      } catch (err) {
+        setUserError(err.message);
+      } finally {
+        setUserLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [authLoading, tokenData]);
+
+  const isLoading = authLoading || userLoading;
+
+  if (isLoading) {
+    return (
+      <div className="account-loading">
+        <div className="account-loading__spinner" />
+        <p>Carregando...</p>
+      </div>
+    );
+  }
+
+  if (userError) {
+    return (
+      <div className="account-loading">
+        <p style={{ color: '#a8222e' }}>⚠️ {userError}</p>
+      </div>
+    );
+  }
+
+  if (!userData) return null;
+
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'info':
+        return <MyInfo user={userData} userId={tokenData.userId} />;
+      case 'restaurants':
+        return <MyRestaurants userId={tokenData.userId} />;
+      default:
+        return <MyInfo user={userData} userId={tokenData.userId} />;
+    }
+  };
+
+  return (
+    <div className="account-page">
+      <Sidebar activeSection={activeSection} onNavigate={setActiveSection} user={userData} />
+      <main className="account-main">
+        {renderSection()}
+      </main>
+    </div>
+  );
+};
+
+export default MyAccount;

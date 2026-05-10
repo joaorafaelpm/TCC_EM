@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
 import semImagemPng from '../../../assets/sem-foto.png';
 import addToCartIcon from '../../../assets/add_icon_white.png';
+import menos from '../../../assets/menos.png';
 import './ProductCard.css';
 import { StoreContext } from '../../context/StoreContext';
 
 const ProductCard = ({ product}) => {
   // A URL agora utiliza o ID do restaurante e do produto conforme sua API
   const imageUrl = `http://localhost/v1/restaurants/${product.restaurantId}/products/${product.id}/photo`;
-  const { cartItems, addToCart } = useContext(StoreContext);
+  const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
   const quantity = cartItems[product.id] || 0;
   return (
     <div className="product-card">
@@ -30,17 +31,28 @@ const ProductCard = ({ product}) => {
       </div>
 
        <div className="product-add">
-        {/* Mostra a quantidade se já tiver no carrinho */}
-        {quantity > 0 && (
-          <span className="product-quantity">{quantity}</span>
-        )}
-        <button
-          className="btn-add-product"
-          onClick={() => addToCart(product.id)}
-        >
-          <img src={addToCartIcon} alt="Adicionar" />
-        </button>
-      </div>
+          {/* Mostra o botão de MENOS e a QUANTIDADE apenas se já tiver no carrinho */}
+          {quantity > 0 && (
+            <>
+              <button
+                className="btn-add-product"
+                onClick={() => removeFromCart(product.id)}
+              >
+                <img src={menos} alt="Remover" />
+              </button>
+              
+              <span className="product-quantity">{quantity}</span>
+            </>
+          )}
+
+          {/* O botão de MAIS fica sempre visível */}
+          <button
+            className="btn-add-product"
+            onClick={() => addToCart(product.id)}
+          >
+            <img src={addToCartIcon} alt="Adicionar" />
+          </button>
+        </div>
 
     </div>
   );

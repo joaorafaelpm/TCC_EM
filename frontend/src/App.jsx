@@ -1,5 +1,5 @@
 
-import { AuthProvider, useAuth } from './components/context/AuthContext.jsx'
+import { AuthProvider, useAuth } from './components/context/AuthProvider.jsx'
 import Navbar from "./components/Navbar/Navbar.jsx"
 import Footer from "./components/Footer/Footer.jsx"
 import Home from "./pages/Home/Home.jsx"
@@ -8,8 +8,11 @@ import Cart from "./pages/Cart/Cart.jsx"
 import TermsOfUser from "./pages/TermsOfUser/TermsOfUser.jsx"
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Cadastro from './pages/Cadastro/Cadastro.jsx'
-import Restaurant from './pages/Restaurant/Restaurant.jsx'
+import User from './pages/Restaurant/Restaurant.jsx'
 import StoreContextProvider from './components/context/StoreContext.jsx';
+import RestaurantForm from './pages/RestaurantForm/RestaurantForm.jsx'
+import MyAccount from './pages/MyAccount/MyAccount.jsx'
+import Restaurant from './pages/Restaurant/Restaurant.jsx'
 
 function AppContent() {
   const { user, isLoading } = useAuth()
@@ -37,7 +40,9 @@ function AppContent() {
           <Route path='/cart' element={<Cart />} />
           <Route path='/order' element={<PlaceOrder />} />
           <Route path="/terms_of_user" element={<TermsOfUser />} />
+          <Route path='/register-restaurant' element={<RestaurantForm />} />
           <Route path='/restaurant/:id' element={<Restaurant />} />
+          <Route path='/my-account' element={<MyAccount />} />
         </Routes>
       </div>
       <Footer />

@@ -72,6 +72,7 @@ public class CacheConfig {
 
         //        Users
         manager.registerCustomCache("userGroup", buildCache(1, 30));
+        manager.registerCustomCache("usersRestaurants", buildCache(1, 30));
 
         return manager;
     }

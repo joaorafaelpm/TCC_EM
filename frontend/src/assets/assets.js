@@ -52,6 +52,7 @@ import galeria1 from './galeria1.png'
 import galeria2 from './galeria2.png'
 import galeria3 from './galeria3.png'
 import close from './close.png'
+import config_user from './config-user.png'
 
 
 export const assets = {
@@ -64,8 +65,8 @@ export const assets = {
   user2,
   promoçaop,
   promoçaop2,
-  guarana1l,  
-  guarana,  
+  guarana1l,
+  guarana,
   doce2,
   doce,
   pizza_doce,
@@ -108,9 +109,9 @@ export const assets = {
   add_icon_white,
   mais,
   menos,
-  google
-
-}
+  google,
+  config_user
+};
 
 
 export const category_list= [

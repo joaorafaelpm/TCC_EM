@@ -1,10 +1,12 @@
 package com.pendezzapizza.pendezzapizza_api.domain.repository;
 
+import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
@@ -44,4 +46,9 @@ public interface UserRepository extends CustomJPARepository<User, UUID> {
 //    Resolvendo todos os objetos de usuário para evitar nullPointerException
     @Query("SELECT u FROM User u left join fetch u.groups g WHERE u.id = :userId")
     Optional<User> findByIdGroupLazy (UUID userId) ;
+
+//    Encontrar todos os restaurantes por id de usuário
+    @Query("SELECT r FROM User u JOIN u.userRestaurants r WHERE u.id = :userId")
+    Page<Restaurant> findUserRestaurantsByUserId(@Param("userId") UUID userId, Pageable pageable);
+
 }

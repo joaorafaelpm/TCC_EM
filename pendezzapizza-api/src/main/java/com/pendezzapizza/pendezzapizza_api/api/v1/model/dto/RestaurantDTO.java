@@ -26,7 +26,7 @@ public class RestaurantDTO {
     @ValidationName
     private String name;
 
-    @Schema(example = "999.999.999-99")
+    @Schema(example = "380.225.620-41")
     @ValidCpf
     private String ownerCpf;
 
@@ -46,6 +46,5 @@ public class RestaurantDTO {
     @Valid
     @NotNull
     private AddressDTO address;
-
 
 }

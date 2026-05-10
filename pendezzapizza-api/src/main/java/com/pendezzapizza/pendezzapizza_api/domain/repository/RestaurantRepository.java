@@ -62,4 +62,5 @@ public interface RestaurantRepository
     @Query("SELECT u FROM Restaurant r JOIN r.paymentMethods u WHERE r.id = :restaurantId")
     Page<PaymentMethod> findPaymentMethodsByRestaurantId(@Param("restaurantId") UUID restaurantId, Pageable pageable);
 
+
 }

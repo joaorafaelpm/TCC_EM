@@ -11,29 +11,18 @@
   overflow: hidden;
 }
 
-/* AQUI É ONDE VOCÊ CONTROLA O TAMANHO DA FOTO */
-.product-image {
-  width: 100%;
-  height: 280px;
-  object-fit: cover;
-  display: block;
-  border-bottom: 1px solid #f0f0f0;
+/* Efeito sutil ao passar o mouse por cima do card inteiro */
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 .product-info {
   padding: 20px;
-  /* O respiro do texto */
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-}
-
-.product-info {
-  padding: 20px;
-  /* O padding agora fica só aqui dentro, protegendo o texto */
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  /* Ocupa o espaço restante e empurra os botões para baixo */
 }
 
 .product-info h3 {
@@ -48,7 +37,7 @@
   line-height: 1.4;
   margin-bottom: 15px;
   flex-grow: 1;
-  /* Empurra o preço para o final do card */
+  /* Empurra o preço e os botões para o final do card */
 }
 
 .product-info .price {
@@ -56,3 +45,66 @@
   font-weight: bold;
   color: #333;
 }
+
+/* --- NOVO: CONTROLE DA ÁREA DE BOTÕES --- */
+
+.product-add {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  /* Alinha os botões à direita */
+  padding: 0 20px 20px 20px;
+  /* Mesma margem lateral do texto */
+  gap: 15px;
+  /* Espaço entre os botões e a quantidade */
+  margin-top: auto;
+}
+
+.product-quantity {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  min-width: 20px;
+  text-align: center;
+}
+
+.btn-add-product {
+  width: 45px;
+  /* Define o tamanho do botão */
+  height: 45px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+/* Efeito ao passar o mouse e ao clicar no botão */
+.btn-add-product:hover {
+  transform: scale(1.1);
+}
+
+.btn-add-product:active {
+  transform: scale(0.9);
+}
+
+/* Restringe a imagem ao tamanho exato do botão (45x45) */
+.btn-add-product img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+/* AQUI É ONDE VOCÊ CONTROLA O TAMANHO DA FOTO */
+.product-image {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid #f0f0f0;
+}
+

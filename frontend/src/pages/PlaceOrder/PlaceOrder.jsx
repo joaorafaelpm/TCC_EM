@@ -1,4 +1,4 @@
-  import React, { useState, useEffect, useContext } from 'react';
+  import React, { useState, useEffect, useContext, useCallback } from 'react';
   import './PlaceOrder.css';
   import { StoreContext } from '../../components/context/StoreContext';
   import DeliveryAddressForm from '../../components/DeliveryAddressForm/DeliveryAddressForm';
@@ -9,19 +9,12 @@
   const PlaceOrder = () => {
     const { cartItems, food_list, clearCart } = useContext(StoreContext);
 
-    const [address, setAddress] = useState({
-      zipCode: '', street: '', number: '',
-      complement: '', neighborhood: '', cityId: '', cityName: ''
-    });
-    const [cities, setCities] = useState([]);
+    const [address, setAddress] = useState([]);
     const [restaurantGroups, setRestaurantGroups] = useState({});
     const [orderResult, setOrderResult] = useState(null);
 
-    useEffect(() => {
-      fetch('/v1/cities')
-        .then(r => r.json())
-        .then(data => setCities(data['content'] || []))
-        .catch(console.error);
+    const handleAddressUpdate = useCallback((newAddress) => {
+      setAddress(newAddress);
     }, []);
 
     useEffect(() => {
@@ -36,7 +29,7 @@
         return acc;
       }, {});
 
-      const fetchRestaurantData = async () => {
+    const fetchRestaurantData = async () => {
     const enriched = { ...grouped };
     await Promise.all(
       Object.keys(grouped).map(async (rId) => {
@@ -58,49 +51,6 @@
 
       fetchRestaurantData();
     }, [cartItems, food_list]);
-
-  const ufToStateName = {
-    AC: 'Acre', AL: 'Alagoas', AP: 'Amapa', AM: 'Amazonas',
-    BA: 'Bahia', CE: 'Ceara', DF: 'Distrito Federal', ES: 'Espirito Santo',
-    GO: 'Goias', MA: 'Maranhao', MT: 'Mato Grosso', MS: 'Mato Grosso do Sul',
-    MG: 'Minas Gerais', PA: 'Para', PB: 'Paraiba', PR: 'Parana',
-    PE: 'Pernambuco', PI: 'Piaui', RJ: 'Rio de Janeiro', RN: 'Rio Grande do Norte',
-    RS: 'Rio Grande do Sul', RO: 'Rondonia', RR: 'Roraima', SC: 'Santa Catarina',
-    SP: 'Sao Paulo', SE: 'Sergipe', TO: 'Tocantins'
-  };
-
-  const handleCepBlur = async (e) => {
-    const cep = e.target.value.replace(/\D/g, '');
-    if (cep.length !== 8) return;
-    try {
-      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const data = await res.json();
-      if (!data.erro) {
-        const stateName = ufToStateName[data.uf];
-        const cityRes = await fetch(`/v1/cities/${data.localidade}/state/${stateName}`);
-        const cityData = await cityRes.json();
-
-        setAddress(prev => ({
-          ...prev,
-          street: data.logradouro,
-          neighborhood: data.bairro,
-          cityName: data.localidade, 
-          cityId: cityData.id
-        }));
-      } else alert("CEP não encontrado.");
-    } catch (e) { console.error(e); }
-  };
-
-    const handleAddressChange = (e) => {
-      const { name, value } = e.target;
-      setAddress(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleCitySelect = (e) => {
-      handleAddressChange(e);
-      const found = cities.find(c => c.name === e.target.value);
-      if (found) setAddress(prev => ({ ...prev, cityId: found.id }));
-    };
 
     const handlePaymentChange = (restaurantId, value) => {
       setRestaurantGroups(prev => ({
@@ -171,13 +121,7 @@
     return (
       <form className='place-order' onSubmit={handleSubmit}>
         <div className="place-order-left">
-          <DeliveryAddressForm
-            address={address}
-            cities={cities}
-            onAddressChange={handleAddressChange}
-            onCepBlur={handleCepBlur}
-            onCitySelect={handleCitySelect}
-          />
+          <DeliveryAddressForm onAddressUpdate={handleAddressUpdate} />
           {Object.entries(restaurantGroups).map(([restaurantId, group]) => (
             <RestaurantPaymentGroup
               key={restaurantId}

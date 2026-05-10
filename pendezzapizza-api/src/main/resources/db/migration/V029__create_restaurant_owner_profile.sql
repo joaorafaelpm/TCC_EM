@@ -5,8 +5,6 @@
     verified_at         DATETIME     NULL,
 
     CONSTRAINT pk_restaurant_owner_profile PRIMARY KEY (id),
-    CONSTRAINT uq_restaurant_owner_profile_user UNIQUE (user_id),
-    CONSTRAINT uq_restaurant_owner_profile_cpf  UNIQUE (cpf),
     CONSTRAINT fk_restaurant_owner_profile_user
         FOREIGN KEY (user_id) REFERENCES `user` (id)
         ON DELETE CASCADE

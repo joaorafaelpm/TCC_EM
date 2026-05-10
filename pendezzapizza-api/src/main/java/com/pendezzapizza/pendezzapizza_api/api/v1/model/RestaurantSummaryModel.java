@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -25,7 +24,12 @@ public class RestaurantSummaryModel {
     @Schema(example = "Thai Gourmet")
     private String name;
 
-    // Taxa de entrega exposta no resumo pois é dado relevante para exibição em listagens de pedidos
-    @Schema(example = "10.00")
-    private BigDecimal shippingFee;
+    @Schema(example = "Descrição de restaurante")
+    private String description;
+
+    @Schema(example = "true")
+    private Boolean active;
+
+    @Schema(example = "true")
+    private Boolean open;
 }

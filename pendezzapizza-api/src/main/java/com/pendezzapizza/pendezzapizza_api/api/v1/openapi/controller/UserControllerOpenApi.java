@@ -22,7 +22,8 @@ import java.util.UUID;
 public interface UserControllerOpenApi {
 
     @Operation(summary = "Busca todos os usuários")
-    ResponseEntity<Page<UserModel>>  findAll(@Parameter(hidden = true)Pageable pageable ,
+    ResponseEntity<Page<UserModel>>  findAll(@Parameter(required = false)String userName ,
+                                             @Parameter(hidden = true)Pageable pageable ,
                                              @Parameter(hidden = true)ServletWebRequest request);
 
     @Operation(summary = "Busca de um usuário por id", responses = {
@@ -51,4 +52,7 @@ public interface UserControllerOpenApi {
     })
     ResponseEntity<Void> updatePassword(@Parameter(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", description = "Id do usuário", required = true) UUID userId,
                                         @RequestBody(description = "Representação da senha de um usuário", required = true) PasswordDTO passwordDTO);
+
+
+
 }

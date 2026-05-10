@@ -39,8 +39,8 @@ public class UserController implements UserControllerOpenApi {
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public ResponseEntity<Page<UserModel>> findAll(Pageable pageable , ServletWebRequest request) {
-
+    public ResponseEntity<Page<UserModel>> findAll(@RequestParam(required = false) String userName , Pageable pageable , ServletWebRequest request) {
+        Page<User> users ;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = userService.getLastUpdateDate();
@@ -52,7 +52,13 @@ public class UserController implements UserControllerOpenApi {
             return null;
         }
 
-        Page<User> users = userService.findAll(pageable);
+        if (userName == null) {
+            users = userService.findAll(pageable);
+        }
+        else {
+            users = userService.findAllByName(userName, pageable);
+        }
+
         Page<UserModel> usersModel = users.map(userModelAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())

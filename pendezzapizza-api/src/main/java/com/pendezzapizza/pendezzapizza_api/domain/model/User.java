@@ -95,6 +95,9 @@ public class User implements Serializable {
     )
     private Set<Group> groups = new HashSet<>();
 
+    @ManyToMany(mappedBy = "responsibleUsers")
+    private Set<Restaurant> userRestaurants = new HashSet<>();
+
     /**
      * Verifica se a senha informada corresponde à senha armazenada para este usuário.
      * Usado para validação de credenciais no fluxo de autenticação.
@@ -116,6 +119,7 @@ public class User implements Serializable {
     public boolean passwordDoesNotMatch(String password) {
         return !passwordMatches(password);
     }
+
 
     /**
      * Associa um grupo de permissão a este usuário.
