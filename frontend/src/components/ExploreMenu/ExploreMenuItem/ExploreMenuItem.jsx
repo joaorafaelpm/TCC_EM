@@ -8,13 +8,11 @@ const ExploreMenuItem = ({ id, name}) => {
     <div className={`explore-menu-item`}>
       <Link to={`/restaurant/${id}`} className="explore-menu-link">
         <div className="img-wrapper">
-           {/* Assumindo que a foto do restaurante segue o padrão de id */}
           <img 
           src={`http://localhost/v1/restaurants/${id}/photo`} 
           alt={name} 
           onError={(e) => {
-            // Se a imagem falhar (ex: 404 do backend), troca a fonte para o placeholder
-            e.target.onerror = null; // Previne loop infinito se o placeholder também falhar
+            e.target.onerror = null;
             e.target.src = semImagemPng;
             }}/>
         </div>

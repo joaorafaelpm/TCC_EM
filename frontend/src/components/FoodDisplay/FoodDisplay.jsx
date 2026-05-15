@@ -35,13 +35,11 @@ const FoodDisplay = ({ category }) => {
     return <div className="loading">Preparando o cardápio...</div>;
   }
 
-  // Filtra por categoria E garante que só exibe produtos ativos
   const filteredList = products.filter(product => {
     const isCategoryMatch = category === 'all' || product.category === category;
     return isCategoryMatch && product.active; 
   });
 
-  // Controla a paginação no front-end (exibe 5 ou todos)
   const visibleItems = showAll ? filteredList : filteredList.slice(0, 5);
 
    return (

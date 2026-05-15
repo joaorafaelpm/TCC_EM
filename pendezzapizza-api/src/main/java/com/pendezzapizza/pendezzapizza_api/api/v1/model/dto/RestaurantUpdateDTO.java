@@ -1,7 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.model.dto;
 
 import com.pendezzapizza.pendezzapizza_api.core.validation.ValidationName;
-import com.pendezzapizza.pendezzapizza_api.core.validation.restaurant_owner.ValidCpf;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +13,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * Classe de DTO para representação da entidade de <b>restaurante</b>
+ * Classe de DTO para representação da entidade de atualização de <b>restaurante</b>
  */
 @Getter
 @Setter
@@ -42,6 +41,5 @@ public class RestaurantUpdateDTO {
     @Valid
     @NotNull
     private AddressDTO address;
-
 
 }

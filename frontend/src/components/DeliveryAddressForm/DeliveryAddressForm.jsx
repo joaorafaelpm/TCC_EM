@@ -68,7 +68,7 @@ const DeliveryAddressForm = ({ onAddressUpdate }) => {
 
   return (
     <div>
-      <p className='title'>Endereço de Entrega</p>
+      <p className='title'>Endereço</p>
       <div className='multi-fields'>
         <input type="text" name="zipCode" placeholder="CEP" value={address.zipCode}
           onChange={handleAddressChange} onBlur={handleCepBlur} maxLength={8} 

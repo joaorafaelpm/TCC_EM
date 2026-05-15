@@ -50,6 +50,7 @@ public class RestaurantProductController implements RestaurantProductControllerO
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = productService.findLastUpdateDateAndActivesByRestaurantId(restaurantId);
+
         if (lastUpdateDate != null) {
             eTag = String.valueOf(lastUpdateDate.toEpochSecond());
         }
@@ -91,7 +92,7 @@ public class RestaurantProductController implements RestaurantProductControllerO
     @CheckSecurity.Restaurants.CanManageOperation
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductModel add(@PathVariable UUID restaurantId, @RequestBody @Valid ProductDTO productDTO) {
+    public ProductModel add (@PathVariable UUID restaurantId, @RequestBody @Valid ProductDTO productDTO) {
         Product product = productDisassembler.productDTOToProduct(productDTO);
         return productAssembler.toModel(productService.save(restaurantId, product));
     }

@@ -67,10 +67,10 @@ public class UserService  {
     @Transactional
     public User save(User user) {
 
-        userRepository.detach(user);
+        // Sem detach — compara pelo ID para checar email duplicado
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
 
-        if (existingUser.isPresent() && !existingUser.get().equals(user)) {
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
             throw new BusinessException(String.format(
                     "The email '%s' is already in use", user.getEmail()
             ));

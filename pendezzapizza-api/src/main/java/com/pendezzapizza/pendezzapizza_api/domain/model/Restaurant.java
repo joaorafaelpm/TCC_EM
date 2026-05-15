@@ -190,7 +190,11 @@ public class Restaurant implements Serializable {
      * @return {@code true} se foi adicionado; {@code false} se já era responsável
      */
     public boolean associateResponsibleUser(User user) {
-        return this.responsibleUsers.add(user);
+        boolean added = this.responsibleUsers.add(user);
+        if (added) {
+            user.getUserRestaurants().add(this); // sincroniza o lado inverso
+        }
+        return added;
     }
 
     /**
@@ -200,9 +204,12 @@ public class Restaurant implements Serializable {
      * @return {@code true} se foi removido; {@code false} se não era responsável
      */
     public boolean disassociateResponsibleUser(User user) {
-        return this.responsibleUsers.remove(user);
+        boolean removed = this.responsibleUsers.remove(user);
+        if (removed) {
+            user.getUserRestaurants().remove(this); // sincroniza o lado inverso
+        }
+        return removed;
     }
-
     /**
      * Adiciona um produto ao cardápio deste restaurante.
      *

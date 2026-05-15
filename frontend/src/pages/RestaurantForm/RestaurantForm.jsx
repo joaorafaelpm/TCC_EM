@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import './RestaurantForm.css'; // Usando o mesmo CSS para manter o estilo
 import DeliveryAddressForm from '../../components/DeliveryAddressForm/DeliveryAddressForm';
+import { useAuth } from '../../components/context/AuthProvider';
 
 const RestaurantForm = () => {
+  const { user: tokenData} = useAuth();
   const [restaurantInfo, setRestaurantInfo] = useState({
     name: '',
     shippingFee: '',
@@ -25,39 +27,45 @@ const RestaurantForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // Montagem do JSON seguindo rigorosamente a sua estrutura
-    const payload = {
-      name: restaurantInfo.name,
-      shippingFee: parseFloat(restaurantInfo.shippingFee),
-      ownerCpf: restaurantInfo.ownerCpf,
-      // Campos Opcionais: se estiverem vazios, enviamos null ou a string vazia
-      description: restaurantInfo.description || null,
-      averageDeliveryTimeMinutes: restaurantInfo.averageDeliveryTimeMinutes ? parseInt(restaurantInfo.averageDeliveryTimeMinutes) : null,
-      minimumOrderValue: restaurantInfo.minimumOrderValue ? parseFloat(restaurantInfo.minimumOrderValue) : null,
-      address: {
-        zipCode: address.zipCode,
-        street: address.street,
-        number: address.number,
-        complement: address.complement || null, // Opcional
-        neighborhood: address.neighborhood,
-        city: {
-          id: address.cityId
-        }
+  const payload = {
+    name: restaurantInfo.name,
+    shippingFee: parseFloat(restaurantInfo.shippingFee),
+    ownerCpf: restaurantInfo.ownerCpf,
+    description: restaurantInfo.description || null,
+    averageDeliveryTimeMinutes: restaurantInfo.averageDeliveryTimeMinutes ? parseInt(restaurantInfo.averageDeliveryTimeMinutes) : null,
+    minimumOrderValue: restaurantInfo.minimumOrderValue ? parseFloat(restaurantInfo.minimumOrderValue) : null,
+    address: {
+      zipCode: address.zipCode,
+      street: address.street,
+      number: address.number,
+      complement: address.complement || null,
+      neighborhood: address.neighborhood,
+      city: {
+        id: address.cityId
       }
-    };
-
-    try {
-      await fetch('/v1/restaurants', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-    } catch (err) {
-      console.error("Erro na requisição:", err);
     }
+  };
+
+  try {
+    const response = await fetch('/v1/restaurants', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (response.status === 201) {
+      const createdRestaurant = await response.json();
+
+      await fetch(`/v1/restaurants/${createdRestaurant.id}/responsible-users/${tokenData.userId}`, {
+        method: 'PUT'
+      });
+    }
+
+  } catch (err) {
+    console.error("Erro na requisição:", err);
+  }
   };
 
   return (

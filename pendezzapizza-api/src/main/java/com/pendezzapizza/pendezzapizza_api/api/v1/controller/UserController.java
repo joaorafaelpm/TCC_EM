@@ -109,8 +109,8 @@ public class UserController implements UserControllerOpenApi {
     public UserModel save(@PathVariable UUID userId, @RequestBody @Valid UserDTO userDTO) {
         User existingUser = userService.findById(userId);
         userDisassembler.updateUserFromDto(userDTO, existingUser);
-        userService.save(existingUser);
-        return userModelAssembler.toModel(existingUser);
+        User updatedUser = userService.save(existingUser);
+        return userModelAssembler.toModel(updatedUser);
     }
 
     @CheckSecurity.UsersGroupsPermissions.CanChangeOwnPassword

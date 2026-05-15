@@ -25,17 +25,4 @@ public interface UserRestaurantsControllerOpenApi {
                                                @Parameter(hidden = true)Pageable pageable ,
                                                @Parameter(hidden = true) ServletWebRequest request);
 
-    @Operation(summary = "Desassociação de um restaurante a um usuário por id", responses = {
-            @ApiResponse(responseCode = "204", description = "Usuário desassociado"),
-            @ApiResponse(responseCode = "404", description = "Restaurante ou usuário não encontrado", content = @Content(schema = @Schema(ref = "ApiError")))
-    })
-    ResponseEntity<Void> disassociate(@Parameter(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", description = "Id do usuário", required = true) UUID userId,
-                                      @Parameter(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", description = "Id do restaurante", required = true) UUID restaurantId);
-
-    @Operation(summary = "Associação de um restaurante a um usuário por id", responses = {
-            @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "404", description = "Restaurante ou usuário não encontrado", content = @Content(schema = @Schema(ref = "ApiError")))
-    })
-    ResponseEntity<Void> associate(@Parameter(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", description = "Id do usuário", required = true) UUID userId,
-                                   @Parameter(example = "943af7ca-3ae8-41fa-a1b0-5cd1d9f82e48", description = "Id do restaurante", required = true) UUID restaurantId);
 }

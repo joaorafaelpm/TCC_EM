@@ -1,6 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.RestaurantsActionCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.UsersActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.RestaurantsSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
@@ -10,12 +11,12 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.model.RestaurantOwnerProfile;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.RestaurantRepository;
+import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +32,7 @@ public class RestaurantService {
     private final RestaurantOwnerProfileService restaurantOwnerProfileService;
     private final CityService cityService ;
     private final PaymentMethodService paymentMethodService ;
-    private final UserService userService ;
-    private final PasswordEncoder encoder ;
+    private final UserRepository userRepository ;
     private final PendezzaPizzaSecurity pendezzaPizzaSecurity ;
 
     @Cacheable(value = "restaurants")
@@ -82,7 +82,7 @@ public class RestaurantService {
         UUID userId = pendezzaPizzaSecurity.getUserId();
 
         if (!restaurantRepository.existsById(userId)) {
-            User user = userService.findById(userId);
+            User user = userRepository.findByIdOrThrowException(userId);
             var profile = new RestaurantOwnerProfile();
             profile.setUser(user);
             profile.setCpf(ownerCpf);
@@ -163,17 +163,22 @@ public class RestaurantService {
     @Transactional
     public void disassociateResponsibleUser(UUID restaurantId , UUID userId) {
         Restaurant restaurant = findById(restaurantId);
-        User user = userService.findById(userId);
+        User user = userRepository.findByIdOrThrowException(userId);
 
         restaurant.disassociateResponsibleUser(user);
     }
+    @UsersActionCacheEvict
     @RestaurantsActionCacheEvict
     @Transactional
     public void associateResponsibleUser(UUID restaurantId , UUID userId) {
         Restaurant restaurant = findById(restaurantId);
-        User user = userService.findById(userId);
+        User user = userRepository.findByIdOrThrowException(userId);
 
         restaurant.associateResponsibleUser(user);
+    }
+
+    public Boolean existsResponsible (UUID restaurantId) {
+        return restaurantRepository.existsResponsible(restaurantId, pendezzaPizzaSecurity.getUserId()) ;
     }
 
 

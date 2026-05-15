@@ -1,3 +1,5 @@
+/* Estrutura e Layout da Página de Pedido */
+
 .place-order {
   display: flex;
   align-items: start;
@@ -26,17 +28,20 @@
   max-width: max(50%, 500px);
 }
 
-.place-order-left .title {
+.place-order-right {
+  width: 40%;
+  max-width: max(40%, 400px);
+}
+
+/* Mantendo os estilos para a coluna da direita caso haja um formulário diferente lá */
+.place-order-right .title {
   font-size: max(2vw, 20px);
   color: color-mix(in srgb, var(--bg-color) 30%, black);
   margin-bottom: 35px;
   font-weight: 600;
 }
 
-/* Aplicando o estilo de input e select para AMBAS as colunas */
-.place-order-left input,
 .place-order-right input,
-.place-order-left select,
 .place-order-right select {
   width: 100%;
   padding: 12px 15px;
@@ -49,46 +54,18 @@
   background-color: white;
 }
 
-/* Aplicando aparência do select para AMBAS as colunas */
-.place-order-left select,
 .place-order-right select {
   cursor: pointer;
   appearance: auto;
 }
 
-/* Aplicando o display flex dos campos múltiplos para AMBAS as colunas */
-.place-order-left .multi-fields,
 .place-order-right .multi-fields {
   display: flex;
   gap: 15px;
 }
 
-.place-order-right {
-  width: 40%;
-  max-width: max(40%, 400px);
-}
-
-.place-order-right .title {
-  font-size: max(2vw, 20px);
-  color: color-mix(in srgb, var(--bg-color) 30%, black);
-  margin-bottom: 35px;
-  font-weight: 600;
-}
-
-.place-order-left textarea {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
-  border-radius: 6px;
-  font-size: max(1vw, 12px);
-  margin-bottom: 15px;
-  outline-color: var(--button-color);
-  font-family: 'Poppins', sans-serif;
-  resize: vertical;
-  min-height: 80px;
-}
-
-@media (max-width:1200px) {
+/* Responsividade do Layout */
+@media (max-width: 1200px) {
   .place-order {
     flex-direction: column;
     margin-left: 40px;
@@ -104,7 +81,20 @@
   }
 }
 
-@media (max-width:768px) {
+.place-order-left textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
+  border-radius: 6px;
+  font-size: max(1vw, 12px);
+  margin-bottom: 15px;
+  outline-color: var(--button-color);
+  font-family: 'Poppins', sans-serif;
+  resize: vertical;
+  min-height: 80px;
+}
+
+@media (max-width: 768px) {
   .place-order {
     margin: 40px 20px 80px 20px;
   }

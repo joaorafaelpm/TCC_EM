@@ -88,6 +88,12 @@ public class RestaurantController implements RestaurantControllerOpenApi {
                 .eTag(eTag)
                 .body(restaurantAssembler.toModel(restaurantService.findById(restaurantId)));
     }
+    @CheckSecurity.Restaurants.CanConsult
+    @GetMapping("/exists-responsible/{restaurantId}")
+    public ResponseEntity<Boolean> existsResponsible(@PathVariable UUID restaurantId) {
+        return ResponseEntity.ok()
+                .body(restaurantService.existsResponsible(restaurantId));
+    }
 
     @CheckSecurity.Restaurants.CanManageRegistration
     @ResponseStatus(HttpStatus.CREATED)

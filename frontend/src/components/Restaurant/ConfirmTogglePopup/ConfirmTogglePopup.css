@@ -1,0 +1,152 @@
+.confirm-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: overlay-in 0.15s ease;
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.confirm-popup {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px 32px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: popup-in 0.2s ease;
+  overflow: hidden;
+}
+
+@keyframes popup-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.confirm-popup__icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.confirm-popup__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 10px;
+}
+
+.confirm-popup__message {
+  font-size: 0.875rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+/* Progress bar */
+.confirm-popup__progress {
+  height: 4px;
+  background: #f0f0f0;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.confirm-popup__progress-bar {
+  height: 100%;
+  background: #a8222e;
+  border-radius: 2px;
+  animation: progress-fill linear forwards;
+  animation-duration: 2s;
+  width: 0%;
+}
+
+@keyframes progress-fill {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+/* Actions */
+.confirm-popup__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.confirm-popup__btn {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border: 1.5px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.confirm-popup__btn--cancel {
+  background: #fff;
+  border-color: #ddd;
+  color: #666;
+}
+
+.confirm-popup__btn--cancel:hover {
+  border-color: #bbb;
+  color: #333;
+}
+
+.confirm-popup__btn--danger {
+  background: #a8222e;
+  color: #fff;
+  border-color: #a8222e;
+}
+
+.confirm-popup__btn--danger:hover:not(:disabled) {
+  background: #8e1c26;
+  border-color: #8e1c26;
+}
+
+.confirm-popup__btn--success {
+  background: #16a34a;
+  color: #fff;
+  border-color: #16a34a;
+}
+
+.confirm-popup__btn--success:hover:not(:disabled) {
+  background: #15803d;
+  border-color: #15803d;
+}
+
+.confirm-popup__btn--waiting {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.confirm-popup__btn:disabled {
+  cursor: not-allowed;
+}

@@ -5,24 +5,51 @@
   border: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   height: 100%;
   padding: 0 !important;
   overflow: hidden;
 }
 
-/* Efeito sutil ao passar o mouse por cima do card inteiro */
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
+/* Card expandido (modo edição do dono) */
+.product-card--expanded {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.14);
+  border-color: #a8222e;
+  z-index: 2;
+  position: relative;
+}
+
+/* Card inativo — apenas visível para o dono */
+.product-card--inactive {
+  opacity: 0.6;
+  border-style: dashed;
+}
+
+.product-card--inactive:hover {
+  opacity: 0.8;
+}
+
+/* Imagem */
+.product-image {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Info section */
 .product-info {
   padding: 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  /* Ocupa o espaço restante e empurra os botões para baixo */
 }
 
 .product-info h3 {
@@ -37,7 +64,6 @@
   line-height: 1.4;
   margin-bottom: 15px;
   flex-grow: 1;
-  /* Empurra o preço e os botões para o final do card */
 }
 
 .product-info .price {
@@ -46,17 +72,156 @@
   color: #333;
 }
 
-/* --- NOVO: CONTROLE DA ÁREA DE BOTÕES --- */
+/* Linha superior do info: título + botão editar */
+.product-info__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Botão de editar (ícone lápis) */
+.product-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1.5px solid #e0e0e0;
+  background: #fff;
+  color: #999;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.product-edit-btn:hover,
+.product-edit-btn--active {
+  border-color: #a8222e;
+  color: #a8222e;
+  background: #fff5f5;
+}
+
+/* ===========================
+   Inline Edit Form
+   =========================== */
+
+.product-edit-form {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+  margin: 0 -20px;
+  /* compensa o padding do product-info para o border-top ir de ponta a ponta */
+}
+
+.product-edit-form--open {
+  max-height: 420px;
+  opacity: 1;
+}
+
+.product-edit-form__inner {
+  padding: 14px 20px 4px;
+  /* 20px lateral restaura o recuo original */
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-edit-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.product-edit-form__field label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.product-edit-form__field input,
+.product-edit-form__field textarea {
+  font-size: 0.875rem;
+  padding: 8px 10px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 6px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  outline: none;
+  resize: none;
+  transition: border-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.product-edit-form__field input:focus,
+.product-edit-form__field textarea:focus {
+  border-color: #a8222e;
+}
+
+.product-edit-form__error {
+  font-size: 0.8rem;
+  color: #a8222e;
+  margin: 0;
+}
+
+.product-edit-form__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.product-edit-form__btn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.15s;
+}
+
+.product-edit-form__btn--cancel {
+  background: #fff;
+  border: 1.5px solid #ddd;
+  color: #666;
+}
+
+.product-edit-form__btn--cancel:hover {
+  border-color: #bbb;
+}
+
+.product-edit-form__btn--save {
+  background: #a8222e;
+  border: 1.5px solid #a8222e;
+  color: #fff;
+}
+
+.product-edit-form__btn--save:hover:not(:disabled) {
+  background: #8e1c26;
+}
+
+.product-edit-form__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   Área de botões (product-add)
+   =========================== */
 
 .product-add {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  /* Alinha os botões à direita */
   padding: 0 20px 20px 20px;
-  /* Mesma margem lateral do texto */
   gap: 15px;
-  /* Espaço entre os botões e a quantidade */
   margin-top: auto;
 }
 
@@ -68,9 +233,9 @@
   text-align: center;
 }
 
+/* Botões do carrinho (modo visitante) */
 .btn-add-product {
   width: 45px;
-  /* Define o tamanho do botão */
   height: 45px;
   border: none;
   background: transparent;
@@ -82,7 +247,6 @@
   transition: transform 0.2s ease;
 }
 
-/* Efeito ao passar o mouse e ao clicar no botão */
 .btn-add-product:hover {
   transform: scale(1.1);
 }
@@ -91,20 +255,61 @@
   transform: scale(0.9);
 }
 
-/* Restringe a imagem ao tamanho exato do botão (45x45) */
 .btn-add-product img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-
-/* AQUI É ONDE VOCÊ CONTROLA O TAMANHO DA FOTO */
-.product-image {
-  width: 100%;
-  height: 280px;
-  object-fit: cover;
-  display: block;
-  border-bottom: 1px solid #f0f0f0;
+/* Toggle ativo/inativo (modo dono) */
+.product-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  cursor: pointer;
+  border: 1.5px solid;
+  transition: all 0.15s ease;
+  margin-right: auto;
+  /* alinha à esquerda, espelhando os botões de carrinho à direita */
 }
 
+.product-toggle-btn--active {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.product-toggle-btn--active:hover {
+  background-color: #dcfce7;
+}
+
+.product-toggle-btn--inactive {
+  background-color: #f9fafb;
+  color: #6b7280;
+  border-color: #e5e7eb;
+}
+
+.product-toggle-btn--inactive:hover {
+  background-color: #f3f4f6;
+}
+
+.product-toggle-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.product-toggle-dot.on {
+  background-color: #16a34a;
+}
+
+.product-toggle-dot.off {
+  background-color: #9ca3af;
+}

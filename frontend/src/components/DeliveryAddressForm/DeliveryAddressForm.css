@@ -1,0 +1,37 @@
+/* Estilos isolados para o componente DeliveryAddressForm */
+
+.delivery-address-form .title {
+    font-size: max(2vw, 20px);
+    color: color-mix(in srgb, var(--bg-color) 30%, black);
+    margin-bottom: 35px;
+    font-weight: 600;
+}
+
+.delivery-address-form input,
+.delivery-address-form select,
+.delivery-address-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
+    border-radius: 6px;
+    font-size: max(1vw, 12px);
+    margin-bottom: 15px;
+    outline-color: var(--button-color);
+    font-family: 'Poppins', sans-serif;
+    background-color: white;
+}
+
+.delivery-address-form select {
+    cursor: pointer;
+    appearance: auto;
+}
+
+.delivery-address-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.delivery-address-form .multi-fields {
+    display: flex;
+    gap: 15px;
+}
