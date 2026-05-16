@@ -311,6 +311,150 @@ SELECT
     (SELECT id FROM city WHERE name = 'Rio de Janeiro' LIMIT 1),
     'Rua Visconde de Pirajá', '120', 'Ipanema', '22410-003', UTC_TIMESTAMP();
 
+-- 15. ITENS DOS PEDIDOS DE EXEMPLO
+
+-- Item do Pedido 1: Lasagna alla Bolognese na Trattoria da Mamma
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT
+    UUID_TO_BIN(UUID()),
+    o.id,
+    p.id,
+    1,
+    58.00,
+    58.00,
+    NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Trattoria da Mamma'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Lasagna alla Bolognese'
+LIMIT 1;
+
+-- Item do Pedido 2: Pizza Diavola na Pizzeria Napoli Centrale
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT
+    UUID_TO_BIN(UUID()),
+    o.id,
+    p.id,
+    1,
+    54.00,
+    54.00,
+    NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Pizzeria Napoli Centrale'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Pizza Diavola'
+LIMIT 1;
+
+-- Item do Pedido 3: Fettuccine Alfredo na Trattoria da Mamma (ontem)
+INSERT INTO `order` (
+    id, subtotal, shipping_fee, total_cost, creation_date, order_status,
+    payment_method_id, restaurant_id, customer_user_id,
+    address_city_id, address_street, address_number,
+    address_neighborhood, address_zip_code, update_date
+)
+SELECT
+    UUID_TO_BIN(UUID()),
+    45.50, 12.50, 58.00,
+    DATE_SUB(NOW(), INTERVAL 1 DAY), 'DELIVERED',
+    (SELECT id FROM payment_method WHERE description = 'Pix' LIMIT 1),
+    (SELECT id FROM restaurant WHERE name = 'Trattoria da Mamma' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'joao.ger@pendezzapizza.com' LIMIT 1),
+    (SELECT id FROM city WHERE name = 'São Paulo' LIMIT 1),
+    'Rua Augusta', '200', 'Consolação', '01305-000', UTC_TIMESTAMP();
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 1, 45.50, 45.50, NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Trattoria da Mamma'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Fettuccine Alfredo'
+WHERE o.total_cost = 58.00
+ORDER BY o.creation_date DESC
+LIMIT 1;
+
+-- Pedido 4: Risotto ai Funghi na Pasta & Vino (2 dias atrás)
+INSERT INTO `order` (
+    id, subtotal, shipping_fee, total_cost, creation_date, order_status,
+    payment_method_id, restaurant_id, customer_user_id,
+    address_city_id, address_street, address_number,
+    address_neighborhood, address_zip_code, update_date
+)
+SELECT
+    UUID_TO_BIN(UUID()),
+    64.90, 9.00, 73.90,
+    DATE_SUB(NOW(), INTERVAL 2 DAY), 'CONFIRMED',
+    (SELECT id FROM payment_method WHERE description = 'Pix' LIMIT 1),
+    (SELECT id FROM restaurant WHERE name = 'Pasta & Vino' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'alele.cad@pendezzapizza.com' LIMIT 1),
+    (SELECT id FROM city WHERE name = 'São Paulo' LIMIT 1),
+    'Rua Haddock Lobo', '595', 'Cerqueira César', '01414-001', UTC_TIMESTAMP();
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 1, 64.90, 64.90, NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Pasta & Vino'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Risotto ai Funghi'
+WHERE o.total_cost = 73.90
+ORDER BY o.creation_date DESC
+LIMIT 1;
+
+-- Pedido 5: 2x Pizza Margherita Verace na Pizzeria Napoli Centrale (3 dias atrás)
+INSERT INTO `order` (
+    id, subtotal, shipping_fee, total_cost, creation_date, order_status,
+    payment_method_id, restaurant_id, customer_user_id,
+    address_city_id, address_street, address_number,
+    address_neighborhood, address_zip_code, update_date
+)
+SELECT
+    UUID_TO_BIN(UUID()),
+    96.00, 7.50, 103.50,
+    DATE_SUB(NOW(), INTERVAL 3 DAY), 'DELIVERED',
+    (SELECT id FROM payment_method WHERE description = 'Cartão de Débito' LIMIT 1),
+    (SELECT id FROM restaurant WHERE name = 'Pizzeria Napoli Centrale' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'maria.vnd@pendezzapizza.com' LIMIT 1),
+    (SELECT id FROM city WHERE name = 'Rio de Janeiro' LIMIT 1),
+    'Rua Farme de Amoedo', '34', 'Ipanema', '22420-020', UTC_TIMESTAMP();
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 2, 48.00, 96.00, 'Sem azeitona'
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Pizzeria Napoli Centrale'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Pizza Margherita Verace'
+WHERE o.total_cost = 103.50
+ORDER BY o.creation_date DESC
+LIMIT 1;
+
+-- Pedido 6: Spaghetti allo Scoglio + Tiramisù na Osteria del Porto (5 dias atrás)
+INSERT INTO `order` (
+    id, subtotal, shipping_fee, total_cost, creation_date, order_status,
+    payment_method_id, restaurant_id, customer_user_id,
+    address_city_id, address_street, address_number,
+    address_neighborhood, address_zip_code, update_date
+)
+SELECT
+    UUID_TO_BIN(UUID()),
+    106.00, 15.00, 121.00,
+    DATE_SUB(NOW(), INTERVAL 5 DAY), 'DELIVERED',
+    (SELECT id FROM payment_method WHERE description = 'Cartão de Crédito' LIMIT 1),
+    (SELECT id FROM restaurant WHERE name = 'Osteria del Porto' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'cocoxixicocopinto@gmail.com' LIMIT 1),
+    (SELECT id FROM city WHERE name = 'Belo Horizonte' LIMIT 1),
+    'Rua da Bahia', '1148', 'Centro', '30160-011', UTC_TIMESTAMP();
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 1, 78.00, 78.00, NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Osteria del Porto'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Spaghetti allo Scoglio'
+WHERE o.total_cost = 121.00
+ORDER BY o.creation_date DESC
+LIMIT 1;
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 1, 28.00, 28.00, NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Osteria del Porto'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Tiramisù Clássico'
+WHERE o.total_cost = 121.00
+ORDER BY o.creation_date DESC
+LIMIT 1;
 
 -- clients:
 

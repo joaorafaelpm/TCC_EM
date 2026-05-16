@@ -3,10 +3,10 @@ import { useAuth } from '../../components/context/AuthProvider.jsx';
 import Sidebar from '../../components/MyAccount/Sidebar.jsx';
 import MyInfo from '../../components/MyAccount/MyInfo.jsx';
 import MyRestaurants from '../../components/MyAccount/MyRestaurants.jsx';
+import SalesReport from '../../components/SalesReport/SalesReport.jsx';
 import './MyAccount.css';
 
 const MyAccount = () => {
-  // "user" do AuthProvider contém o token decodificado, com o campo "userId"
   const { user: tokenData, isLoading: authLoading } = useAuth();
   const [activeSection, setActiveSection] = useState('info');
   const [userData, setUserData] = useState(null);
@@ -63,6 +63,8 @@ const MyAccount = () => {
         return <MyInfo user={userData} userId={tokenData.userId} />;
       case 'restaurants':
         return <MyRestaurants userId={tokenData.userId} />;
+      case 'sales-report':
+        return <SalesReport userId={tokenData.userId} />;
       default:
         return <MyInfo user={userData} userId={tokenData.userId} />;
     }

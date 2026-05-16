@@ -18,7 +18,6 @@ const MyRestaurants = ({ userId }) => {
 
         const data = await res.json();
         setRestaurants(data.content || []);
-        console.log('Restaurantes carregados:', data);
       } catch (err) {
         setError(err.message);
       } finally {

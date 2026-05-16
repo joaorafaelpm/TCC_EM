@@ -4,6 +4,8 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.StatisticsC
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.dto.DailySale;
+import com.pendezzapizza.pendezzapizza_api.domain.model.dto.EnrichedDailySale;
+import com.pendezzapizza.pendezzapizza_api.domain.model.enuns.SaleIncludeField;
 import com.pendezzapizza.pendezzapizza_api.domain.service.SaleQueryService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.SaleReportService;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/statistics")
@@ -47,4 +51,28 @@ public class StatisticsController implements StatisticsControllerOpenApi {
                 .headers(headers)
                 .body(bytesPdf);
     }
+
+    @CheckSecurity.Statistics.CanConsult
+    @GetMapping(path = "/daily-sales/enriched", produces = MediaType.APPLICATION_JSON_VALUE)
+    public EnrichedDailySale consultEnrichedDailySales(
+            DailySalesFilter filter,
+            @RequestParam(required = false, defaultValue = "+00:00") String timeOffset,
+            @RequestParam(required = false, defaultValue = "") List<String> include) {
+
+        // Converte ["products", "customers"] → Set<SaleIncludeField>
+        // Valores inválidos são silenciosamente ignorados para não quebrar o front
+        Set<SaleIncludeField> includeFields = include.stream()
+                .filter(s -> !s.isBlank())
+                .flatMap(s -> {
+                    try {
+                        return java.util.stream.Stream.of(SaleIncludeField.fromString(s));
+                    } catch (IllegalArgumentException e) {
+                        return java.util.stream.Stream.empty(); // ignora campo desconhecido
+                    }
+                })
+                .collect(Collectors.toSet());
+
+        return saleQueryService.viewEnrichedDailySales(filter, timeOffset, includeFields);
+    }
+
 }

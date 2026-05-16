@@ -141,59 +141,7 @@ public class Order extends AbstractAggregateRoot<Order> {
     @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL)
     private List<OrderItem> itens = new ArrayList<>();
 
-    public void calculateTotalOrderCost() {
-        getItens().forEach(OrderItem::setTotalPrice);
-
-        this.subtotal = getItens().stream()
-                .map(OrderItem::getPrecoTotal)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        this.totalCost = this.subtotal.add(this.feeShipping);
-    }
-
-
-    public void confirmar () {
-        setOrderStatus(OrderStatus.CONFIRMED);
-        setConfirmationDate(OffsetDateTime.now());
-
-        registerEvent(new ConfirmOrderEvent(this));
-    }
-    public void entregar () {
-        setOrderStatus(OrderStatus.DELIVERED);
-        setDeliveryDate(OffsetDateTime.now());
-    }
-    public void cancelar () {
-        setOrderStatus(OrderStatus.CANCELED);
-        setCancelDate(OffsetDateTime.now());
-
-        registerEvent(new OrderCanceledEvent(this));
-    }
-
-    public boolean canBeConfirmed() {
-        return getOrderStatus().canAlterTo(OrderStatus.CONFIRMED);
-    }
-    public boolean canBeDelivered() {
-        return getOrderStatus().canAlterTo(OrderStatus.DELIVERED);
-    }
-    public boolean canBeCanceled() {
-        return getOrderStatus().canAlterTo(OrderStatus.CANCELED);
-    }
-
-    private void setOrderStatus (OrderStatus newStatus){
-        if (getOrderStatus().cantAlterTo(newStatus)) {
-            throw new NegocioException(String.format(
-                "Order status '%s' cannot be altered from '%s' to '%s'" ,
-                    getCodigo(), getOrderStatus().getDescription() , newStatus.getDescription()
-            ));
-        }
-
-        this.orderStatus = newStatus;
-    }
-
-    @PrePersist
-    private void generateCode () {
-        setCode(UUID.randomUUID().toString());
-    }
-
+    // Funções complementares
 }
 
 ## 2. Domain Service -- OrderEmissionService

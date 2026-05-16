@@ -25,9 +25,9 @@ const Sobre = () => {
               cada pedido inesquecível.
             </p>
 
-            <Link to="#explore-menu" className="btn-s">
+            <a href="#explore-menu" className="btn-s">
               Ver Cardápio Geral
-            </Link>
+            </a>
 
           </div>
 
