@@ -77,7 +77,7 @@ public class Restaurant implements Serializable {
      * Independente do status de ativação — um restaurante pode estar ativo mas fechado.
      * Inicializado como {@code FALSE} pois um restaurante recém-cadastrado não deve receber pedidos automaticamente.
      */
-    private Boolean open = Boolean.FALSE;
+    private Boolean open = Boolean.TRUE;
 
     /** Preenchida automaticamente pelo Hibernate no momento em que o registro é inserido no banco. */
     @CreationTimestamp

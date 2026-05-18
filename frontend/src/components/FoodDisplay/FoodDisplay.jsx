@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './FoodDisplay.css';
-import ProductCardDisplay from '../ProductCardDisplay/ProductCardDisplay.jsx';
+import ProductCardDisplay from './ProductCardDisplay/ProductCardDisplay.jsx';
+import { StoreContext } from '../context/StoreContext.jsx';
 
 const FoodDisplay = ({ category }) => {
+  const { registerProducts } = useContext(StoreContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
@@ -13,21 +15,20 @@ const FoodDisplay = ({ category }) => {
   }, [category]);
 
   // Busca os produtos na API
-  useEffect(() => {
+   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost/v1/products', { credentials: 'include' });
+        const response = await fetch('/v1/products', { credentials: 'include' });
         const data = await response.json();
-        
-        // Verifica se a API retorna um array direto ou um objeto paginado (data.content)
-        setProducts(data.content || data || []);
+        const list = data.content || data || [];
+        setProducts(list);
+        registerProducts(list); // ← registra no catálogo global
       } catch (error) {
         console.error("Erro ao buscar produtos do cardápio:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -35,7 +36,7 @@ const FoodDisplay = ({ category }) => {
     return <div className="loading">Preparando o cardápio...</div>;
   }
 
-  const filteredList = products.filter(product => {
+  const filteredList = Array.from(products).filter(product => {
     const isCategoryMatch = category === 'all' || product.category === category;
     return isCategoryMatch && product.active; 
   });

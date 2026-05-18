@@ -15,13 +15,14 @@ const Restaurant = () => {
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
-
+  
   const [showEditRestaurant, setShowEditRestaurant] = useState(false);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  
+  const { registerProducts } = useContext(StoreContext);
 
-  const { food_list, setFoodList } = useContext(StoreContext);
+  const [products , setProducts] = useState([]);
 
-  // Verifica se o usuário tem a authority e é responsável pelo restaurante
   const hasAuthority = tokenData?.authorities?.includes('EDITAR_RESTAURANTES');
 
   useEffect(() => {
@@ -40,7 +41,9 @@ const Restaurant = () => {
         const productsData = await productsRes.json();
 
         setRestaurant(restaurantData);
-        setFoodList(productsData.content || []);
+        const list = productsData.content || [];
+        setProducts(list);
+        registerProducts(list);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       } finally {
@@ -49,15 +52,14 @@ const Restaurant = () => {
     };
 
     fetchData();
-  }, [id, setFoodList]);
+  }, [id]);
 
-  // Checa se o usuário logado é responsável por este restaurante
   useEffect(() => {
     if (!hasAuthority) return;
 
     const checkResponsible = async () => {
       try {
-        const res = await fetch(`http://localhost:80/v1/restaurants/exists-responsible/${id}`, {
+        const res = await fetch(`/v1/restaurants/exists-responsible/${id}`, {
           credentials: 'include',
         });
         const data = await res.json();
@@ -94,7 +96,7 @@ const Restaurant = () => {
   if (!restaurant) return <div className="error">Restaurante não encontrado.</div>;
 
   // Mostra todos os produtos para o dono, só os ativos para visitantes
-  const displayedProducts = canEdit ? food_list : food_list.filter(p => p.active);
+  const displayedProducts = canEdit ? products : products.filter(p => p.active);
 
   return (
     <div className="restaurant-page">

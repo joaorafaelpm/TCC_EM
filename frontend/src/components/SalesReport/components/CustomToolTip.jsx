@@ -1,5 +1,5 @@
 import React from 'react';
-import { fmt } from '../utils/formatters';
+import { fmt } from '../utils/formatter';
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;

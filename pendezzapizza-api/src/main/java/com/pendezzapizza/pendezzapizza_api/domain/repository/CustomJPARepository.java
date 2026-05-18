@@ -18,5 +18,4 @@ public interface CustomJPARepository<T , ID> extends JpaRepository<T , ID> {
     T findByIdOrThrowException(UUID id) ;
     T findByIdOrThrowException(Object foreignEntity , UUID entityId , UUID foreignId) ;
 
-    void detach(T entity) ;
 }

@@ -39,9 +39,9 @@ public class ProductService {
         return productRepository.findAllActives(pageable);
     }
 
-    @Cacheable(value = "productsName", key = "{#pageable.pageNumber, #pageable.pageSize, #productName}")
-    public Page<Product> findAllActivesByName(String productName, Pageable pageable) {
-        return productRepository.findAllActivesByName(productName, pageable);
+    @Cacheable(value = "productsName", key = "{#productName , #pageable.pageNumber, #pageable.pageSize}")
+    public Page<Product> findAllByNameAndActives(String productName, Pageable pageable) {
+        return productRepository.findByName(productName, pageable);
     }
 
     @Cacheable(value = "productsActivesByRestaurant", key = "{#restaurant.id, #pageable.pageNumber, #pageable.pageSize}")
@@ -100,10 +100,6 @@ public class ProductService {
     @Cacheable(value = "productsLastUpdateDateActivesByRestaurantId" , key = "#restaurantId")
     public OffsetDateTime findLastUpdateDateAndActivesByRestaurantId (UUID restaurantId) {
         return productRepository.getLastUpdateDateById(restaurantId);
-    }
-    @Cacheable(value = "productsLastUpdateDateByRestaurantId" , key = "#restaurantId")
-    public OffsetDateTime findLastUpdateDateByRestaurantId (UUID restaurantId) {
-        return productRepository.getLastUpdateDateByIdGetAll(restaurantId);
     }
     @Cacheable(value = "productsLastUpdateDateById" , key = "#productId")
     public OffsetDateTime findLastUpdateDateById (UUID productId) {

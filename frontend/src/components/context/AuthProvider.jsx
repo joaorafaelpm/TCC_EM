@@ -12,23 +12,23 @@ export function AuthProvider({ children }) {
       .then(data => {
         setUser(data)
 
-        const noCadastro = window.location.pathname.includes('/cadastro')
+        const noCadastro = globalThis.location.pathname.includes('/cadastro')
 
         if (data && noCadastro) {
-          window.location.href = '/'
+          globalThis.location.href = '/'
           return
         }
 
         if (!data && !redirecting && !noCadastro) {
           setRedirecting(true)
-          window.location.href = '/oauth2/iniciar-login'
+          globalThis.location.href = '/oauth2/iniciar-login'
         }
       })
       .catch(() => {
         setUser(null)
-        if (!redirecting && !window.location.pathname.includes('/cadastro')) {
+        if (!redirecting && !globalThis.location.pathname.includes('/cadastro')) {
           setRedirecting(true)
-          window.location.href = '/oauth2/iniciar-login'
+          globalThis.location.href = '/oauth2/iniciar-login'
         }
       })
   }, [])

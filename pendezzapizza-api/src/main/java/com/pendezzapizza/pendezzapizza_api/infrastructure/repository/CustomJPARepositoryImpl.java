@@ -51,18 +51,6 @@ public class CustomJPARepositoryImpl<T, ID>
     }
 
     /**
-     * Remove a entidade do contexto de persistência atual (first-level cache).
-     * Útil quando é necessário recarregar o estado da entidade do banco sem encerrar a transação,
-     * evitando que alterações não persistidas sejam propagadas acidentalmente.
-     *
-     * @param entity entidade a ser desanexada do contexto de persistência
-     */
-    @Override
-    public void detach(T entity) {
-        manager.detach(entity);
-    }
-
-    /**
      * Busca entidades pelo campo {@code name} usando correspondência fuzzy,
      * retornando os resultados paginados e ordenados por relevância.
      * <p>

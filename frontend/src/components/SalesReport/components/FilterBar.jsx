@@ -1,5 +1,5 @@
 import React from 'react';
-import { today } from '../utils/formatters';
+import { today } from '../utils/formatter';
 
 const FilterBar = ({
   restaurants,

@@ -8,7 +8,6 @@ const Cart = () => {
   const { cartItems, food_list, removeFromCart } = useContext(StoreContext);
   const navigate = useNavigate();
 
-  // Extraímos o cálculo do total para fora do JSX para maior clareza
   const totalCart = food_list.reduce((total, item) => {
     return total + item.price * (cartItems[item.id] || 0);
   }, 0);
@@ -26,21 +25,20 @@ const Cart = () => {
         </div>
         <hr />
 
-        {/* Agora o map chama apenas o componente CartItem */}
         {food_list.map((item) => {
           const quantity = cartItems[item.id];
           
           if (quantity > 0) {
             return (
-              <CartItem 
-                key={item.id} // Troquei 'index' por 'item.id', que é mais seguro no React
+              <CartItem
+                key={item.id}
                 item={item} 
                 quantity={quantity} 
                 onRemove={removeFromCart} 
               />
             );
           }
-          return null; // Sempre retorne null se a condição não for atendida num map
+          return null;
         })}
       </div>
 

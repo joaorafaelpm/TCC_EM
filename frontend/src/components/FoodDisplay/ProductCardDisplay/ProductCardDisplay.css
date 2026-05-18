@@ -57,3 +57,36 @@
   font-weight: bold;
   color: #333;
 }
+
+.btn-add-product {
+  width: 45px;
+  height: 45px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.btn-add-product:hover {
+  transform: scale(1.1);
+}
+
+.product-quantity {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  min-width: 20px;
+  text-align: center;
+}
+.product-add {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 20px 20px 20px;
+  gap: 15px;
+  margin-top: auto;
+}
