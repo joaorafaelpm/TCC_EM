@@ -7,6 +7,7 @@
       proxy: {
         "/v1": "http://localhost:80",
         "/auth": "http://localhost:80",
+        "/auth/refresh": "http://localhost:80",
         "/oauth2": "http://localhost:80",
         "/redirect": "http://localhost:80",
         "/restaurants": "http://localhost:80",

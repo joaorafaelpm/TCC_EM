@@ -58,7 +58,7 @@ const RestaurantForm = () => {
 
     if (response.ok) {
       await refreshUser()
-      globalThis.location.href = `/restaurantes/${(await response.json()).id}`
+      globalThis.location.href = `/restaurant/${(await response.json()).id}`
     }
 
   } catch (err) {
@@ -82,7 +82,7 @@ const RestaurantForm = () => {
             value={restaurantInfo.ownerCpf} onChange={handleChange} required 
           />
           <input 
-            type="number" step="0.01" name="shippingFee" placeholder="Taxa de Entrega" 
+            type="number" step="0.1" name="shippingFee" placeholder="Taxa de Entrega" 
             value={restaurantInfo.shippingFee} onChange={handleChange} required 
           />
         </div>
@@ -110,7 +110,7 @@ const RestaurantForm = () => {
             value={restaurantInfo.averageDeliveryTimeMinutes} onChange={handleChange} 
           />
           <input 
-            type="number" step="0.01" name="minimumOrderValue" placeholder="Pedido Mínimo - Opcional" 
+            type="number" step="0.1" name="minimumOrderValue" placeholder="Pedido Mínimo - Opcional" 
             value={restaurantInfo.minimumOrderValue} onChange={handleChange} 
           />
         </div>

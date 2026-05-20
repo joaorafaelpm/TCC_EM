@@ -12,7 +12,6 @@ import com.pendezzapizza.pendezzapizza_api.domain.model.Permission;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -44,8 +43,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -58,10 +55,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AuthorizationServerConfig {
 
-    private final SecurityController securityController ;
+    private final SecurityController securityController;
 
-    @Value("${pendezzapizza.auth.rsa-key-size:2048}")
-    private static int rsaKeySize;
+    // REMOVIDO: @Value("${pendezzapizza.auth.rsa-key-size:2048}") private static int rsaKeySize
+    // Spring não injeta @Value em campos estáticos — o valor sempre seria 0.
+    // O método generateRsaKey() também foi removido pois não era chamado em lugar nenhum.
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -79,19 +77,20 @@ public class AuthorizationServerConfig {
                 .formLogin(loginFormConfigurer ->
                         loginFormConfigurer.loginPage("/login").permitAll())
                 .authorizeHttpRequests(authorize ->
-                        authorize
-                       .anyRequest().authenticated()
+                        authorize.anyRequest().authenticated()
                 );
         return http.build();
     }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder, JdbcOperations jdbcOperation) {
+    public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder,
+                                                                 JdbcOperations jdbcOperation) {
         return new JdbcRegisteredClientRepository(jdbcOperation);
     }
 
     @Bean
-    public JWKSource<SecurityContext> jwkSource(JwtKeyStoreProperties properties) throws KeyStoreException, JOSEException, NoSuchAlgorithmException, CertificateException, IOException {
+    public JWKSource<SecurityContext> jwkSource(JwtKeyStoreProperties properties)
+            throws KeyStoreException, JOSEException, NoSuchAlgorithmException, CertificateException, IOException {
         char[] keyStorePass = properties.getPassword().toCharArray();
         String keypairAlias = properties.getKeypairAlias();
 
@@ -101,37 +100,19 @@ public class AuthorizationServerConfig {
         keyStore.load(inputStream, keyStorePass);
 
         RSAKey rsaKey = RSAKey.load(keyStore, keypairAlias, keyStorePass);
-
         return new ImmutableJWKSet<>(new JWKSet(rsaKey));
     }
-
-    private static KeyPair generateRsaKey() {
-        KeyPair keyPair;
-        try {
-
-            // Obtém o gerador de chaves para do algorítmo RSA (é assimétrico e usa um par de chaves: pública e privada)
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-
-            // Inicializa o gerador com um tamanho de chave de 2048 bits
-            // Quanto maior o número, mais difícil é quebrar a criptografia, mas mais lento é o processamento
-            // 2048 é o padrão de segurança recomendado atualmente.
-            keyPairGenerator.initialize(rsaKeySize);
-
-            // Gera o par de chaves pública e privada
-            keyPair = keyPairGenerator.generateKeyPair();
-
-        } catch (Exception ex) {
-            throw new IllegalStateException("Erro ao gerar chaves RSA", ex);
-        }
-        return keyPair;
-    }
-
 
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer(UserRepository userRepository) {
         return context -> {
-            Authentication authentication = context.getPrincipal();
             String grantType = context.getAuthorizationGrantType().getValue();
+
+            // Log em DEBUG — só aparece se logging.level estiver configurado para DEBUG.
+            // Nunca vai vazar em produção com logging.level.root=INFO.
+            log.debug("JWT customizer — grantType: {}, principalType: {}",
+                    grantType,
+                    context.getPrincipal().getPrincipal().getClass().getName());
 
             if ("client_credentials".equals(grantType)) {
                 String clientId = context.getRegisteredClient().getClientId();
@@ -154,23 +135,58 @@ public class AuthorizationServerConfig {
                 return;
             }
 
-            if (authentication.getPrincipal() instanceof User springUser) {
+            // Extrai o email do principal independente do grant type.
+            // Necessário porque no refresh_token o principal não é um User completo —
+            // o Spring Authorization Server usa o getName() que retorna o email/username.
+            String email = extractEmail(context);
+            if (email == null) return;
 
-                var user = userRepository.findByEmail(springUser.getUsername())
-                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+            var user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuário não encontrado: " + email));
 
-                Set<String> authorities = springUser.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toSet());
+            // Sempre busca as permissões atualizadas do banco —
+            // garante que promoções de grupo (ex: cadastrar restaurante) refletem no novo token.
+            Set<String> authorities = user.getGroups().stream()
+                    .flatMap(group -> group.getPermission().stream())
+                    .map(Permission::getName)
+                    .collect(Collectors.toSet());
 
-                context.getClaims().claim("user_id", user.getId());
-                context.getClaims().claim("email", user.getEmail());
-                context.getClaims().claim("authorities", authorities);
-            }
+            context.getClaims().claim("user_id", user.getId());
+            context.getClaims().claim("email", user.getEmail());
+            context.getClaims().claim("authorities", authorities);
         };
     }
 
-    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+    // Extrai o email do principal de forma defensiva, cobrindo todos os grant types:
+    // - authorization_code: principal é User do Spring Security → getUsername()
+    // - refresh_token: principal pode ser String ou outro tipo → getName()
+    // A guarda com contains("@") evita buscar "anonymousUser" ou outros valores
+    // inválidos no banco, o que causaria uma RuntimeException desnecessária.
+    private String extractEmail(JwtEncodingContext context) {
+        Authentication authentication = context.getPrincipal();
+
+        if (authentication.getPrincipal() instanceof User springUser) {
+            return springUser.getUsername();
+        }
+
+        if (authentication.getPrincipal() instanceof String str) {
+            return str.contains("@") ? str : null;
+        }
+
+        // Fallback para refresh_token e outros fluxos
+        String name = authentication.getName();
+        return (name != null && name.contains("@")) ? name : null;
+    }
+
+    // CORRIGIDO: era um método privado sem @Bean — o Spring nunca registrava este converter,
+    // então as authorities do claim "authorities" no JWT nunca eram lidas pelo resource server.
+    // Agora é um @Bean e deve ser referenciado no seu ResourceServerConfig/WebSecurityConfig assim:
+    //
+    //   http.oauth2ResourceServer(oauth2 -> oauth2
+    //       .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+    //   );
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
         converter.setJwtGrantedAuthoritiesConverter(jwt -> {
@@ -179,20 +195,23 @@ public class AuthorizationServerConfig {
                 return Collections.emptyList();
             }
 
-            JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
-            Collection<GrantedAuthority> grantedAuthorities = authoritiesConverter.convert(jwt);
+            JwtGrantedAuthoritiesConverter scopeConverter = new JwtGrantedAuthoritiesConverter();
+            Collection<GrantedAuthority> grantedAuthorities = scopeConverter.convert(jwt);
 
-            grantedAuthorities.addAll(authorities
-                    .stream()
-                    .map(SimpleGrantedAuthority::new)
-                    .toList()
+            // Adiciona as permissões customizadas (GERENCIAR_RESTAURANTE, etc.)
+            // além dos escopos padrão (SCOPE_READ, SCOPE_WRITE)
+            grantedAuthorities.addAll(
+                    authorities.stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .toList()
             );
 
             return grantedAuthorities;
         });
 
-        return converter ;
+        return converter;
     }
+
     @Bean
     public OAuth2AuthorizationService oAuth2AuthorizationService(JdbcOperations jdbcOperations,
                                                                  RegisteredClientRepository clientRepository) {
@@ -219,15 +238,15 @@ public class AuthorizationServerConfig {
     }
 
     @Bean
-    public OAuth2AuthorizationConsentService consentService (JdbcOperations jdbcOperations
-            , RegisteredClientRepository clientRepository) {
-        return new JdbcOAuth2AuthorizationConsentService(jdbcOperations , clientRepository);
+    public OAuth2AuthorizationConsentService consentService(JdbcOperations jdbcOperations,
+                                                            RegisteredClientRepository clientRepository) {
+        return new JdbcOAuth2AuthorizationConsentService(jdbcOperations, clientRepository);
     }
 
     @Bean
-    public OAuth2AuthorizationQueryService auth2AuthorizationQueryService (JdbcOperations jdbcOperations
-            , RegisteredClientRepository clientRepository) {
-        return new JdbcOAuth2AuthorizationQueryService(jdbcOperations , clientRepository);
+    public OAuth2AuthorizationQueryService auth2AuthorizationQueryService(JdbcOperations jdbcOperations,
+                                                                          RegisteredClientRepository clientRepository) {
+        return new JdbcOAuth2AuthorizationQueryService(jdbcOperations, clientRepository);
     }
 
     @Bean
