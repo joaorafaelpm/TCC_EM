@@ -109,6 +109,7 @@ public class UserService  {
         // Cobre $2a$, $2b$, $2y$ e qualquer versão futura do bcrypt
         return password.startsWith("$2");
     }
+
     @Cacheable("usersRestaurants")
     public Page<Restaurant> findRestaurantByUserId(UUID userId , Pageable pageable) {
         return userRepository.findUserRestaurantsByUserId(userId , pageable);

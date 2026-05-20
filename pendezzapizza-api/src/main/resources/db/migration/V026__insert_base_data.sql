@@ -42,31 +42,73 @@ INSERT INTO payment_method (id, description, update_date) VALUES
 (UUID_TO_BIN(UUID()), 'Pix',               UTC_TIMESTAMP()),
 (UUID_TO_BIN("3ee42ee7-3d35-4680-afe0-e01a24e649dc"), 'Dinheiro',          UTC_TIMESTAMP());
 
--- 4. PERMISSÕES
 
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_COZINHAS', 'Permite editar cozinhas', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_FORMAS_PAGAMENTO', 'Permite criar ou editar formas de pagamento', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_CIDADES', 'Permite criar ou editar cidades', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_ESTADOS', 'Permite criar ou editar estados', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'CONSULTAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite consultar usuários', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite criar ou editar usuários', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_RESTAURANTES', 'Permite criar, editar ou gerenciar restaurantes', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'CONSULTAR_PEDIDOS', 'Permite consultar pedidos', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'GERENCIAR_PEDIDOS', 'Permite gerenciar pedidos', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'GERAR_RELATORIOS', 'Permite gerar relatórios', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN("1925eff2-a761-49ff-ab2a-fd471828cb9d"), 'GANHAR_AURA', 'Permite gerar aura', UTC_TIMESTAMP());
-
--- 5. GRUPOS
-
+-- 4. Grupos
 insert into `group` (id, name, update_date) values
-(UUID_TO_BIN(UUID()), 'Gerente', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Vendedor', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Secretária', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Cadastrador', UTC_TIMESTAMP()),
-(UUID_TO_BIN("4a3fdd17-542f-4f6c-b450-871ff0f21092"), 'Tester', UTC_TIMESTAMP());
+(UUID_TO_BIN(UUID()), 'Admin', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Dono_de_Restaurante', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Chefe_de_Restaurante', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Analista_de_Restaurante', UTC_TIMESTAMP());
 
--- 6. USUÁRIOS (com senha BCRYPT)
+-- 5. Permissões
+insert into permission (id, name, description, update_date) values
+(UUID_TO_BIN(UUID()), 'EDITAR_FORMAS_PAGAMENTO',           'Permite criar ou editar formas de pagamento',                        UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_CIDADES',                    'Permite criar ou editar cidades',                                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_ESTADOS',                    'Permite criar ou editar estados',                                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_RESTAURANTES',               'Permite criar, editar ou gerenciar restaurantes',                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'CONSULTAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite consultar usuários, grupos e permissões',                 UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite criar ou editar usuários',                                   UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'GERENCIAR_RESTAURANTE',             'Permite criar, editar ou gerenciar restaurantes',                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_LOGICA_RESTAURANTES',        'Permite adicionar produtos a um restaurante, abrir e fechar ele',   UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'GERAR_RELATORIOS',                  'Permite gerar relatórios',                                           UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'CONSULTAR_USUARIOS',                'Permite consultar usuários, somente',                                UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'CONSULTAR_PEDIDOS',                 'Permite consultar pedidos',                                          UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'GERENCIAR_PEDIDOS',                 'Permite alterar o status de fluxo do pedido',                       UTC_TIMESTAMP());
 
+-- 6. Grupos e permissoes
+
+-- Admin → tudo
+INSERT INTO group_permission (group_id, permission_id)
+SELECT (SELECT id FROM `group` WHERE name = 'Admin'), id
+FROM permission;
+
+-- Analista → base da hierarquia
+INSERT INTO group_permission (group_id, permission_id)
+SELECT (SELECT id FROM `group` WHERE name = 'Analista_de_Restaurante'), id
+FROM permission
+WHERE name IN (
+    'GERAR_RELATORIOS',
+    'CONSULTAR_PEDIDOS',
+    'GERENCIAR_PEDIDOS',
+    'CONSULTAR_USUARIOS'
+);
+
+-- Chefe → tudo do Analista + EDITAR_LOGICA_RESTAURANTES
+INSERT INTO group_permission (group_id, permission_id)
+SELECT (SELECT id FROM `group` WHERE name = 'Chefe_de_Restaurante'), id
+FROM permission
+WHERE name IN (
+    'EDITAR_LOGICA_RESTAURANTES',
+    'GERAR_RELATORIOS',
+    'CONSULTAR_PEDIDOS',
+    'GERENCIAR_PEDIDOS',
+    'CONSULTAR_USUARIOS'
+);
+
+-- Dono → tudo do Chefe + GERENCIAR_RESTAURANTE
+INSERT INTO group_permission (group_id, permission_id)
+SELECT (SELECT id FROM `group` WHERE name = 'Dono_de_Restaurante'), id
+FROM permission
+WHERE name IN (
+    'GERENCIAR_RESTAURANTE',
+    'EDITAR_LOGICA_RESTAURANTES',
+    'GERAR_RELATORIOS',
+    'CONSULTAR_PEDIDOS',
+    'GERENCIAR_PEDIDOS',
+    'CONSULTAR_USUARIOS'
+);
+
+-- 7. USUÁRIOS (com senha BCRYPT)
 INSERT INTO `user` (id, name, email, phone , password, update_date) VALUES
 (UUID_TO_BIN(UUID()), 'João da Silva', 'joao.ger@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'Maria Joaquina', 'maria.vnd@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
@@ -75,73 +117,14 @@ INSERT INTO `user` (id, name, email, phone , password, update_date) VALUES
 (UUID_TO_BIN(UUID()), 'José Souza', 'email.teste.pendezzapizza.tcc+hubert@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'Sebastião Martins', 'email.teste.pendezzapizza.tcc+sebastiao@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'Ronaldo Pinto', 'cocoxixicocopinto@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN("a6162eb1-df44-471b-aef3-9feee0d9d267"), 'João Mohammed Pendezza', 'joaomohammed@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP());
+(UUID_TO_BIN(UUID()), 'João Mohammed Pendezza', 'joaorafael@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP());
 
--- 7. RELAÇÃO GRUPO_PERMISSAO
+-- 8. RELAÇÃO USUÁRIO_GRUPO (o resto é feito in-code)
 
--- Gerente (antigo ID 1) - Pode fazer tudo
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Gerente'), id
-FROM permission;
-
--- Vendedor (antigo ID 2) - Permissões de CONSULTA + GERENCIAR_PEDIDOS
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Vendedor'), id
-FROM permission WHERE name LIKE 'CONSULTAR_%';
-
--- Adicionando especificamente GERENCIAR_PEDIDOS para Vendedor
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Vendedor'), id
-FROM permission WHERE name = 'GERENCIAR_PEDIDOS';
-
--- Secretária (antigo ID 3) - Permissões de CONSULTA
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Secretária'), id
-FROM permission WHERE name LIKE 'CONSULTAR_%';
-
--- Cadastrador (antigo ID 4) - Permissões de RESTAURANTES
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Cadastrador'), id
-FROM permission WHERE name LIKE '%_RESTAURANTES';
-
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Tester'), id
-FROM permission WHERE name = 'GANHAR_AURA';
-
--- 8. RELAÇÃO USUÁRIO_GRUPO
-
--- João da Silva -> Gerente
 INSERT INTO user_group (user_id, group_id)
 VALUES (
     (SELECT id FROM `user` WHERE email = 'joao.ger@pendezzapizza.com'),
-    (SELECT id FROM `group` WHERE name = 'Gerente')
-);
-
--- Maria Joaquina -> Vendedor
-INSERT INTO user_group (user_id, group_id)
-VALUES (
-    (SELECT id FROM `user` WHERE email = 'maria.vnd@pendezzapizza.com'),
-    (SELECT id FROM `group` WHERE name = 'Vendedor')
-);
-
--- Roberto fazbear -> Secretária
-INSERT INTO user_group (user_id, group_id)
-VALUES (
-    (SELECT id FROM `user` WHERE email = 'guinas.sec@pendezzapizza.com'),
-    (SELECT id FROM `group` WHERE name = 'Secretária')
-);
-
--- La ele da silva -> Cadastrador
-INSERT INTO user_group (user_id, group_id)
-VALUES (
-    (SELECT id FROM `user` WHERE email = 'alele.cad@pendezzapizza.com'),
-    (SELECT id FROM `group` WHERE name = 'Cadastrador')
-);
-
-INSERT INTO user_group (user_id, group_id)
-VALUES (
-    (SELECT id FROM `user` WHERE email = 'joaomohammed@gmail.com'),
-    (SELECT id FROM `group` WHERE name = 'Tester')
+    (SELECT id FROM `group` WHERE name = 'Admin')
 );
 
 -- 9. RESTAURANTES

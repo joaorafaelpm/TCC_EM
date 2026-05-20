@@ -41,3 +41,16 @@
     border-color: #ff6a6a;
     padding: 3px;
 }
+
+.explore-pagination {
+    display: flex;
+    justify-content: center;
+    /* Centraliza os itens horizontalmente */
+    align-items: center;
+    /* Alinha os itens verticalmente */
+    gap: 20px;
+    /* Espaçamento entre os botões e o texto */
+    margin-top: 50px;
+    /* Espaço entre os cards de comida e a paginação */
+    margin-bottom: 30px;
+}

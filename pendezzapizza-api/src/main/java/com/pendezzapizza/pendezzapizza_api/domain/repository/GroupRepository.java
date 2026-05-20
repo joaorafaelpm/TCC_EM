@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -21,6 +22,8 @@ public interface GroupRepository extends CustomJPARepository<Group ,  UUID> {
 //    EntityGraph é usado para durante a requisição receber esse objeto primeiro e é uma solução um pouco mais refinadas que definir o Fetch como LAZY ou EAGER na própria entidade
     @EntityGraph(attributePaths = {"permission"})
     Page<Group> findAll(Pageable pageable);
+
+    Optional<Group> findByName (String name);
 
 //    Seleciona ultima data de atualização de todos os grupos
     @Query("select max(g.updateDate) from Group g")

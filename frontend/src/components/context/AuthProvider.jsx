@@ -4,12 +4,15 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined)
-  const [redirecting, setRedirecting] = useState(false) // evita múltiplos redirects
+  const [redirecting, setRedirecting] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
+
     fetch('/auth/me', { credentials: 'include' })
       .then(res => res.ok ? res.json() : null)
       .then(data => {
+        if (cancelled) return
         setUser(data)
 
         const noCadastro = globalThis.location.pathname.includes('/cadastro')
@@ -19,28 +22,44 @@ export function AuthProvider({ children }) {
           return
         }
 
-        if (!data && !redirecting && !noCadastro) {
+        if (!data && !noCadastro) {
           setRedirecting(true)
           globalThis.location.href = '/oauth2/iniciar-login'
         }
       })
       .catch(() => {
+        if (cancelled) return
         setUser(null)
-        if (!redirecting && !globalThis.location.pathname.includes('/cadastro')) {
+        if (!globalThis.location.pathname.includes('/cadastro')) {
           setRedirecting(true)
           globalThis.location.href = '/oauth2/iniciar-login'
         }
       })
+
+    return () => { cancelled = true }
   }, [])
+
+  // Chame isso após qualquer ação que mude as authorities do usuário no backend
+  // (ex: cadastrar restaurante → usuário é promovido para "Dono de Restaurante").
+  // O /auth/me relê o token da sessão atual e retorna as authorities atualizadas.
+  const refreshUser = async () => {
+    try {
+      const res = await fetch('/auth/me', { credentials: 'include' })
+      const data = res.ok ? await res.json() : null
+      setUser(data)
+    } catch {
+      setUser(null)
+    }
+  }
 
   const logout = async () => {
     await fetch('/auth/logout', { method: 'POST', credentials: 'include' })
     setUser(null)
-    window.location.href = '/'
+    globalThis.location.href = '/'
   }
 
   return (
-    <AuthContext.Provider value={{ user, logout, isLoading: user === undefined }}>
+    <AuthContext.Provider value={{ user, logout, refreshUser, isLoading: user === undefined }}>
       {children}
     </AuthContext.Provider>
   )

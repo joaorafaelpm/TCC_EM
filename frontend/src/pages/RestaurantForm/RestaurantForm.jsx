@@ -2,9 +2,10 @@ import React, { useState, useCallback } from 'react';
 import './RestaurantForm.css'; // Usando o mesmo CSS para manter o estilo
 import DeliveryAddressForm from '../../components/DeliveryAddressForm/DeliveryAddressForm';
 import { useAuth } from '../../components/context/AuthProvider';
+import { Navigate } from 'react-router-dom';
 
 const RestaurantForm = () => {
-  const { user: tokenData} = useAuth();
+  const { refreshUser } = useAuth();
   const [restaurantInfo, setRestaurantInfo] = useState({
     name: '',
     shippingFee: '',
@@ -55,12 +56,9 @@ const RestaurantForm = () => {
       body: JSON.stringify(payload)
     });
 
-    if (response.status === 201) {
-      const createdRestaurant = await response.json();
-
-      await fetch(`/v1/restaurants/${createdRestaurant.id}/responsible-users/${tokenData.userId}`, {
-        method: 'PUT'
-      });
+    if (response.ok) {
+      await refreshUser()
+      globalThis.location.href = `/restaurantes/${(await response.json()).id}`
     }
 
   } catch (err) {

@@ -35,7 +35,7 @@ public class CityController implements CityControllerOpenApi {
     private final CityModelAssembler cityAssembler;
     private final CityDisassembler cityDisassembler;
 
-    @CheckSecurity.PaymentMethods.CanConsult
+    @CheckSecurity.Cities.CanConsult
     @GetMapping
     public ResponseEntity<Page<CityModel>> all(@RequestParam(required = false) String cityName , Pageable pageable, ServletWebRequest request) {
         Page<City> cities;

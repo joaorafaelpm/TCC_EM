@@ -7,7 +7,7 @@ import Sobre from '../../components/Sobre/Sobre'
 import Banner from '../../components/Banner/Banner'
 import Testimonials from '../../components/Testimonias/Testimonials'
 import Botao from '../../components/Botao/Botao'
-
+import SearchResults from '../../components/SearchResults/SearchResults'
 
 
 
@@ -21,7 +21,7 @@ const Home = () => {
       <Banner />
       <Testimonials/>
       <Botao/>
-    </div>
+  </div>
   )
 }
 

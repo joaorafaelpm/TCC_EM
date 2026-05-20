@@ -95,7 +95,7 @@ public class RestaurantController implements RestaurantControllerOpenApi {
                 .body(restaurantService.existsResponsible(restaurantId));
     }
 
-    @CheckSecurity.Restaurants.CanManageRegistration
+    @CheckSecurity.Restaurants.CanRegister
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public RestaurantModel add(@RequestBody @Valid RestaurantDTO restaurantDTO) {
@@ -104,7 +104,7 @@ public class RestaurantController implements RestaurantControllerOpenApi {
         return restaurantAssembler.toModel(restaurantService.save(restaurant,encode));
     }
 
-    @CheckSecurity.Restaurants.CanManageRegistration
+    @CheckSecurity.Restaurants.CanManageOperation
     @PutMapping("/{restaurantId}")
     public RestaurantModel save(@PathVariable UUID restaurantId, @RequestBody @Valid RestaurantUpdateDTO restaurantDTO) {
         Restaurant existingRestaurant = restaurantService.findById(restaurantId);

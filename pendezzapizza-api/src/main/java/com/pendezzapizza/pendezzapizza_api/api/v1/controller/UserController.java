@@ -66,7 +66,7 @@ public class UserController implements UserControllerOpenApi {
                 .body(usersModel);
     }
 
-    @CheckSecurity.UsersGroupsPermissions.CanConsult
+    @CheckSecurity.UsersGroupsPermissions.CanConsultOwnUser
     @GetMapping("/{userId}")
     public ResponseEntity<UserModel> findById(@PathVariable UUID userId , ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());

@@ -3,13 +3,13 @@ package com.pendezzapizza.pendezzapizza_api.domain.service;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.RestaurantsActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.UsersActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.RestaurantsSaveCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.UsersSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
+import com.pendezzapizza.pendezzapizza_api.domain.exception.GroupNotFoundException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.RestaurantNotFoundException;
-import com.pendezzapizza.pendezzapizza_api.domain.model.PaymentMethod;
-import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
-import com.pendezzapizza.pendezzapizza_api.domain.model.RestaurantOwnerProfile;
-import com.pendezzapizza.pendezzapizza_api.domain.model.User;
+import com.pendezzapizza.pendezzapizza_api.domain.model.*;
+import com.pendezzapizza.pendezzapizza_api.domain.repository.GroupRepository;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.RestaurantRepository;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -33,6 +33,8 @@ public class RestaurantService {
     private final CityService cityService ;
     private final PaymentMethodService paymentMethodService ;
     private final UserRepository userRepository ;
+    private final GroupRepository groupRepository ;
+    private final GroupService groupService ;
     private final PendezzaPizzaSecurity pendezzaPizzaSecurity ;
 
     @Cacheable(value = "restaurants")
@@ -75,11 +77,14 @@ public class RestaurantService {
     }
 
     @RestaurantsSaveCacheEvict
+    @UsersSaveCacheEvict
     @Transactional
     public Restaurant save (Restaurant restaurant , String ownerCpf) {
         UUID cityId = restaurant.getAddress().getCity().getId();
         restaurant.getAddress().setCity(cityService.findById(cityId));
         UUID userId = pendezzaPizzaSecurity.getUserId();
+
+        Group newGroup = groupRepository.findByName("Dono_de_Restaurante").orElseThrow(()-> new GroupNotFoundException("Dono_de_Restaurante"));
 
         if (!restaurantRepository.existsById(userId)) {
             User user = userRepository.findByIdOrThrowException(userId);
@@ -87,12 +92,19 @@ public class RestaurantService {
             profile.setUser(user);
             profile.setCpf(ownerCpf);
             restaurantOwnerProfileService.save(profile);
+//            Depois de salvar o novo perfil de usuário como dono de restaurante, a gente já promove ele para um dono de restaurante
+            if (!user.getGroups().contains(newGroup)) {
+                UUID groupId = newGroup.getId();
+                groupService.associateGroup(userId , groupId);
+                userRepository.save(user);
+            }
         }
 
         Restaurant savedRestaurant = restaurantRepository.saveAndFlush(restaurant);
+        associateResponsibleUser(savedRestaurant.getId() , userId);
         return  findByIdWithAllDependencies(savedRestaurant.getId());
-
     }
+
     @RestaurantsSaveCacheEvict
     @Transactional
     public Restaurant update (Restaurant restaurant) {

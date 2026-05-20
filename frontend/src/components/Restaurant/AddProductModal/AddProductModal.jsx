@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './AddProductModal.css';
 
-const AddProductModal = ({ restaurantId, onClose, onProductAdded }) => {
+const AddProductModal = ({ restaurantId, onClose}) => {
   const [form, setForm] = useState({
     name: '',
     description: '',
@@ -35,8 +35,8 @@ const AddProductModal = ({ restaurantId, onClose, onProductAdded }) => {
 
       if (!res.ok) throw new Error('Erro ao criar produto.');
 
-      const newProduct = await res.json();
-      onProductAdded(newProduct);
+      // const newProduct = await res.json();
+      // onProductAdded(newProduct);
       onClose();
     } catch (err) {
       setError(err.message);

@@ -29,7 +29,7 @@ public class UserRestaurantController implements UserRestaurantsControllerOpenAp
     private final RestaurantService restaurantService;
     private final RestaurantModelAssembler restaurantModelAssembler;
 
-    @CheckSecurity.Restaurants.CanManageRegistration
+    @CheckSecurity.Restaurants.CanConsult
     @GetMapping
     public ResponseEntity<Page<RestaurantModel>> list(
             @PathVariable UUID userId,

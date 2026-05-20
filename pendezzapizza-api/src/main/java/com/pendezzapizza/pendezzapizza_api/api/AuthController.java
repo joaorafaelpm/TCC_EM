@@ -1,5 +1,6 @@
 package com.pendezzapizza.pendezzapizza_api.api;
 
+import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.core.security.session.TokenSessionService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class AuthController {
 
     private final TokenSessionService tokenSessionService;
+    private final PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
     @GetMapping("/me")
     public ResponseEntity<?> me(@AuthenticationPrincipal Jwt jwt) {

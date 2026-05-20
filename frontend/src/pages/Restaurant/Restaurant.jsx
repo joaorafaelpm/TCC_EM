@@ -23,7 +23,7 @@ const Restaurant = () => {
 
   const [products , setProducts] = useState([]);
 
-  const hasAuthority = tokenData?.authorities?.includes('EDITAR_RESTAURANTES');
+  const hasAuthority = tokenData?.authorities?.includes('GERENCIAR_RESTAURANTE');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,22 +72,6 @@ const Restaurant = () => {
     checkResponsible();
   }, [id, hasAuthority]);
 
-  const handleProductToggle = (productId, newActive) => {
-    setFoodList(prev =>
-      prev.map(p => p.id === productId ? { ...p, active: newActive } : p)
-    );
-  };
-
-  const handleProductUpdate = (updatedProduct) => {
-    setFoodList(prev =>
-      prev.map(p => p.id === updatedProduct.id ? { ...p, ...updatedProduct } : p)
-    );
-  };
-
-  const handleProductAdded = (newProduct) => {
-    setFoodList(prev => [...prev, newProduct]);
-  };
-
   const handleRestaurantUpdate = (updatedRestaurant) => {
     setRestaurant(prev => ({ ...prev, ...updatedRestaurant }));
   };
@@ -95,7 +79,6 @@ const Restaurant = () => {
   if (loading) return <div className="loading">Carregando detalhes...</div>;
   if (!restaurant) return <div className="error">Restaurante não encontrado.</div>;
 
-  // Mostra todos os produtos para o dono, só os ativos para visitantes
   const displayedProducts = canEdit ? products : products.filter(p => p.active);
 
   return (
@@ -131,8 +114,6 @@ const Restaurant = () => {
                 product={product}
                 canEdit={canEdit}
                 restaurantId={id}
-                onToggle={handleProductToggle}
-                onUpdate={handleProductUpdate}
               />
             ))
           ) : (
@@ -153,7 +134,6 @@ const Restaurant = () => {
         <AddProductModal
           restaurantId={id}
           onClose={() => setShowAddProduct(false)}
-          onProductAdded={handleProductAdded}
         />
       )}
     </div>

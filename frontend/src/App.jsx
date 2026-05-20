@@ -13,6 +13,7 @@ import StoreContextProvider from './components/context/StoreContext.jsx';
 import RestaurantForm from './pages/RestaurantForm/RestaurantForm.jsx'
 import MyAccount from './pages/MyAccount/MyAccount.jsx'
 import Restaurant from './pages/Restaurant/Restaurant.jsx'
+import { SearchProvider } from './components/context/SearchContext.jsx'
 
 function AppContent() {
   const { user, isLoading } = useAuth()
@@ -33,19 +34,19 @@ function AppContent() {
 
   return (
     <div className="app">
-      <Navbar />
-      <div className="page-content">
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/cart' element={<Cart />} />
-          <Route path='/order' element={<PlaceOrder />} />
-          <Route path="/terms_of_user" element={<TermsOfUser />} />
-          <Route path='/register-restaurant' element={<RestaurantForm />} />
-          <Route path='/restaurant/:id' element={<Restaurant />} />
-          <Route path='/my-account' element={<MyAccount />} />
-        </Routes>
-      </div>
-      <Footer />
+        <Navbar />
+        <div className="page-content">
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/cart' element={<Cart />} />
+            <Route path='/order' element={<PlaceOrder />} />
+            <Route path="/terms_of_user" element={<TermsOfUser />} />
+            <Route path='/register-restaurant' element={<RestaurantForm />} />
+            <Route path='/restaurant/:id' element={<Restaurant />} />
+            <Route path='/my-account' element={<MyAccount />} />
+          </Routes>
+        </div>
+        <Footer />
     </div>
   )
 }
@@ -53,9 +54,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <StoreContextProvider>
-        <AppContent />
-      </StoreContextProvider>
+      <SearchProvider>
+        <StoreContextProvider>
+          <AppContent />
+        </StoreContextProvider>
+      </SearchProvider>
     </AuthProvider>
   )
 }

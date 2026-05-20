@@ -32,6 +32,59 @@
   transition: 0.4s;
 }
 /* ============================= */
+/* ======== PAGINAÇÃO ========== */
+/* ============================= */
+
+.food-pagination {
+  display: flex;
+  justify-content: center;
+  /* Centraliza os itens horizontalmente */
+  align-items: center;
+  /* Alinha os itens verticalmente */
+  gap: 20px;
+  /* Espaçamento entre os botões e o texto */
+  margin-top: 50px;
+  /* Espaço entre os cards de comida e a paginação */
+  margin-bottom: 30px;
+}
+
+.page-btn {
+  padding: 10px 24px;
+  background: transparent;
+  color: #742b2b;
+  border: 2px solid #742b2b;
+  border-radius: 25px;
+  /* Deixa o botão arredondado */
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Efeito ao passar o mouse (apenas se o botão não estiver desativado) */
+.page-btn:hover:not(:disabled) {
+  background: #742b2b;
+  color: #ffffff;
+}
+
+/* Estilo para quando o botão estiver desativado (ex: na primeira ou última página) */
+.page-btn:disabled {
+  border-color: #cccccc;
+  color: #cccccc;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+.page-info {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333333;
+  min-width: 80px;
+  /* Evita que o layout "pule" dependendo do número da página */
+  text-align: center;
+}
+
+/* ============================= */
 /* ======= RESPONSIVO ========= */
 /* ============================= */
 
@@ -70,6 +123,19 @@
 
 /* 600px */
 @media (max-width: 600px) {
+  .food-pagination {
+      margin-top: 35px;
+      gap: 15px;
+    }
+
+    .page-btn {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+    }
+
+    .page-info {
+      font-size: 1rem;
+    }
   .food-display {
     margin: 10px 18px;
   }
