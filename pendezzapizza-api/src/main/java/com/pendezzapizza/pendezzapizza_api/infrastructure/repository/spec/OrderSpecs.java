@@ -32,7 +32,7 @@ public class OrderSpecs {
 
 //            Filtramos por id de restaurante
             if(filter.getRestaurantId() != null) {
-                predicates.add(builder.equal(root.get("restaurant").get("id") , filter.getCustomerId()));
+                predicates.add(builder.equal(root.get("restaurant").get("id") , filter.getRestaurantId()));
             }
 
 //            Filtramos pelo inicio da data de criação do pedido

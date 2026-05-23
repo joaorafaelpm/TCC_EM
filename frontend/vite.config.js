@@ -11,6 +11,8 @@
         "/oauth2": "http://localhost:80",
         "/redirect": "http://localhost:80",
         "/restaurants": "http://localhost:80",
+        "/restaurants/*/payment-methods": "http://localhost:80",
+        "/payment-methods": "http://localhost:80",
         "/statistics": "http://localhost:80",
         "/products": "http://localhost:80",
         "/cities": "http://localhost:80",

@@ -1,0 +1,319 @@
+/* ─── Overlay ─────────────────────────────────────────────────── */
+.photo-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.48);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+    animation: photo-overlay-in 0.15s ease;
+}
+
+@keyframes photo-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ─── Modal ───────────────────────────────────────────────────── */
+.photo-modal {
+    background: #fff;
+    border-radius: 14px;
+    padding: 24px 28px 28px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: photo-modal-in 0.2s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@keyframes photo-modal-in {
+    from {
+        opacity: 0;
+        transform: scale(0.93) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ─── Header ──────────────────────────────────────────────────── */
+.photo-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.photo-modal__header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.photo-modal__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Botões de ícone no header (lixeira + fechar) */
+.photo-modal__icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.photo-modal__icon-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.photo-modal__icon-btn--delete {
+    color: #c0392b;
+}
+
+.photo-modal__icon-btn--delete:hover:not(:disabled) {
+    background-color: #fdf0f0;
+    color: #a8222e;
+}
+
+.photo-modal__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    padding: 5px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.photo-modal__close:hover:not(:disabled) {
+    color: #333;
+    background-color: #f0f0f0;
+}
+
+.photo-modal__close:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ─── Confirmação de deleção ──────────────────────────────────── */
+.photo-modal__delete-confirm {
+    text-align: center;
+    padding: 8px 0 4px;
+    animation: photo-modal-in 0.15s ease;
+}
+
+.photo-modal__delete-icon {
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+}
+
+.photo-modal__delete-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 8px;
+}
+
+.photo-modal__delete-msg {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+    margin: 0 0 20px;
+}
+
+/* ─── Preview ─────────────────────────────────────────────────── */
+.photo-modal__preview-wrapper {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f4f4f4;
+    margin-bottom: 12px;
+    border: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.photo-modal__preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-modal__preview-placeholder {
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+/* ─── File info pills ─────────────────────────────────────────── */
+.photo-modal__file-info {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.photo-modal__pill {
+    background: #f0f0f0;
+    color: #555;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ─── Field ───────────────────────────────────────────────────── */
+.photo-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+}
+
+.photo-modal__field label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.photo-modal__field label span {
+    color: #a8222e;
+}
+
+.photo-modal__field input {
+    padding: 9px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: inherit;
+    color: #333;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.photo-modal__field input:focus {
+    border-color: #a8222e;
+}
+
+.photo-modal__field input:disabled {
+    background: #f8f8f8;
+    color: #aaa;
+}
+
+.photo-modal__field-error {
+    font-size: 0.78rem;
+    color: #a8222e;
+    margin: 0;
+}
+
+/* ─── Upload error ────────────────────────────────────────────── */
+.photo-modal__upload-error {
+    font-size: 0.82rem;
+    color: #a8222e;
+    background: #fdf0f0;
+    border: 1px solid #f5c6c6;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 0 0 16px;
+}
+
+/* ─── Actions ─────────────────────────────────────────────────── */
+.photo-modal__actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.photo-modal__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.photo-modal__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.photo-modal__btn--cancel {
+    background: #fff;
+    border-color: #ddd;
+    color: #666;
+}
+
+.photo-modal__btn--cancel:hover:not(:disabled) {
+    border-color: #bbb;
+    color: #333;
+}
+
+.photo-modal__btn--save {
+    background: #a8222e;
+    color: #fff;
+    border-color: #a8222e;
+}
+
+.photo-modal__btn--save:hover:not(:disabled) {
+    background: #8e1c26;
+    border-color: #8e1c26;
+}
+
+.photo-modal__btn--delete {
+    background: #a8222e;
+    color: #fff;
+    border-color: #a8222e;
+}
+
+.photo-modal__btn--delete:hover:not(:disabled) {
+    background: #8e1c26;
+    border-color: #8e1c26;
+}
+
+/* ─── Spinner inline ──────────────────────────────────────────── */
+.photo-modal__spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: photo-spin 0.6s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes photo-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

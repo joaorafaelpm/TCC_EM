@@ -1,0 +1,152 @@
+.put-root {
+    position: relative;
+    display: inline-block;
+    /* envolve o filho sem quebrar o layout */
+}
+
+/* Input nunca visível — NÃO usar display:none pois bloqueia .click() no browser */
+.put-hidden-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Erro de validação */
+.put-error {
+    margin: 4px 0 0;
+    font-size: 0.75rem;
+    color: #a8222e;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.3;
+}
+
+/* ─── Variante: pencil-corner ─────────────────────────────────────────────── */
+/*
+   Ícone circular pequeno no canto inferior direito do filho.
+   Aparece apenas no hover do wrapper (.put-root).
+*/
+
+.put-root--pencil-corner .put-corner-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease, background-color 0.15s ease;
+    z-index: 2;
+    backdrop-filter: blur(2px);
+}
+
+.put-root--pencil-corner:hover .put-corner-btn {
+    opacity: 1;
+}
+
+.put-root--pencil-corner .put-corner-btn:hover {
+    background: rgba(168, 34, 46, 0.88);
+}
+
+/* ─── Variante: pencil-overlay ────────────────────────────────────────────── */
+/*
+   Overlay centralizado semi-transparente sobre o filho.
+   Ideal para fotos de hero/banner. Aparece no hover do wrapper.
+*/
+
+.put-root--pencil-overlay {
+    overflow: hidden;
+    /* o overlay não vaza */
+}
+
+.put-root--pencil-overlay .put-overlay-btn {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0);
+    color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: 0.03em;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    z-index: 2;
+}
+
+.put-root--pencil-overlay:hover .put-overlay-btn {
+    background: rgba(0, 0, 0, 0.42);
+    color: #fff;
+}
+
+.put-root--pencil-overlay .put-overlay-btn svg {
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.put-root--pencil-overlay:hover .put-overlay-btn svg {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.put-root--pencil-overlay .put-overlay-btn span {
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.2s ease 0.04s, transform 0.2s ease 0.04s;
+}
+
+.put-root--pencil-overlay:hover .put-overlay-btn span {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ─── Variante: button ────────────────────────────────────────────────────── */
+/*
+   Botão explícito abaixo (ou onde for colocado no layout do pai).
+   Não precisa de children.
+*/
+
+.put-root--button {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.put-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    background-color: #a8222e;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.put-btn:hover {
+    background-color: #8e1c26;
+    transform: translateY(-1px);
+}

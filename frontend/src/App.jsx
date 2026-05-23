@@ -13,6 +13,7 @@ import StoreContextProvider from './components/context/StoreContext.jsx';
 import RestaurantForm from './pages/RestaurantForm/RestaurantForm.jsx'
 import MyAccount from './pages/MyAccount/MyAccount.jsx'
 import Restaurant from './pages/Restaurant/Restaurant.jsx'
+import OrderHandler from './pages/OrderHandler/OrderHandler.jsx'
 import { SearchProvider } from './components/context/SearchContext.jsx'
 
 function AppContent() {
@@ -43,6 +44,7 @@ function AppContent() {
             <Route path="/terms_of_user" element={<TermsOfUser />} />
             <Route path='/register-restaurant' element={<RestaurantForm />} />
             <Route path='/restaurant/:id' element={<Restaurant />} />
+            <Route path='/restaurant/:id/orders' element={<OrderHandler />} />
             <Route path='/my-account' element={<MyAccount />} />
           </Routes>
         </div>

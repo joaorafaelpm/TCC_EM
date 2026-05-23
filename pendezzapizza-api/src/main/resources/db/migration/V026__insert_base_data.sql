@@ -55,6 +55,7 @@ insert into permission (id, name, description, update_date) values
 (UUID_TO_BIN(UUID()), 'EDITAR_FORMAS_PAGAMENTO',           'Permite criar ou editar formas de pagamento',                        UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'EDITAR_CIDADES',                    'Permite criar ou editar cidades',                                    UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'EDITAR_ESTADOS',                    'Permite criar ou editar estados',                                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_PEDIDOS',                    'Permite controlar todos os pedidos de todo mundo',                                    UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'EDITAR_RESTAURANTES',               'Permite criar, editar ou gerenciar restaurantes',                    UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'CONSULTAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite consultar usuários, grupos e permissões',                 UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'EDITAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite criar ou editar usuários',                                   UTC_TIMESTAMP()),

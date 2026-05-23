@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 /**
  * Objeto de filtro de pedidos
@@ -15,8 +16,8 @@ import java.time.OffsetDateTime;
 @Setter
 public class OrderFilter {
 
-    private Long customerId ;
-    private Long restaurantId ;
+    private UUID customerId ;
+    private UUID restaurantId ;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private OffsetDateTime startCreationDate;

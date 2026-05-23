@@ -1,6 +1,6 @@
 import React from 'react'
 import './Banner.css'
-import { assets } from '../../assets/assets'
+import { assets } from '../../../assets/assets'
 import { Link } from 'react-router-dom';
 
 const Banner = () => {

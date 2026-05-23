@@ -70,32 +70,38 @@
 }
 
 /* ── buttons ───────────────────────────────────────────────────────────────── */
-
 .sr-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     font-size: 13px;
     font-weight: 500;
-    padding: 7px 16px;
+    padding: 8px 16px;
+    /* Ajuste leve para ficar da mesma altura dos inputs */
     border-radius: 8px;
     cursor: pointer;
-    transition: opacity 0.15s;
+    transition: all 0.2s ease;
+    /* Transição mais suave para todas as props */
 }
 
 .sr-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .sr-btn--export {
     background: #fff;
     border: 1px solid #d1d5db;
     color: #374151;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .sr-btn--export:hover:not(:disabled) {
     background: #f9fafb;
+    border-color: #9ca3af;
 }
 
 .sr-btn--apply {
@@ -103,61 +109,122 @@
     border: 1px solid #111;
     color: #fff;
     align-self: flex-end;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .sr-btn--apply:hover:not(:disabled) {
     background: #374151;
     border-color: #374151;
+    transform: translateY(-1px);
+    /* Efeito tátil de elevação */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+.sr-btn--apply:active:not(:disabled) {
+    transform: translateY(0);
+    /* Efeito de "clique" */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
 /* ── filters ───────────────────────────────────────────────────────────────── */
-
 .sr-filters {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    gap: 12px;
-    padding: 1rem;
+    gap: 16px;
+    /* Aumentado um pouquinho para respiro */
+    padding: 1.25rem;
     background: #f9fafb;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
+    border-radius: 12px;
+    /* Arredondamento um pouco mais moderno */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    /* Sombra super sutil */
 }
 
 .sr-filters__group {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .sr-filters__label {
     font-size: 11px;
-    font-weight: 500;
-    color: #6b7280;
+    font-weight: 600;
+    /* Mais peso para leitura rápida */
+    color: #4b5563;
+    /* Levemente mais escuro que o anterior */
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .sr-filters__select,
 .sr-filters__input {
+    font-family: inherit;
     font-size: 13px;
-    padding: 6px 10px;
+    padding: 8px 12px;
+    /* Área de clique melhorada */
     border: 1px solid #d1d5db;
-    border-radius: 7px;
+    border-radius: 8px;
     background: #fff;
     color: #111;
     outline: none;
-    transition: border-color 0.15s;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) inset;
 }
 
 .sr-filters__select {
-    min-width: 160px;
+    min-width: 180px;
+    /* Um pouco mais largo para nomes de restaurantes */
+    cursor: pointer;
 }
 
+.sr-filters__input {
+    color: #374151;
+}
+
+/* Focus Ring moderno estilo Stripe/Tailwind */
 .sr-filters__select:focus,
 .sr-filters__input:focus {
-    border-color: #9ca3af;
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
 }
 
+/* ── checkboxes (Adicionados!) ── */
+.sr-filters__checkboxes {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 35px;
+    /* Mantém alinhado verticalmente com os inputs (padding + border) */
+}
+
+.sr-filters__checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s;
+}
+
+.sr-filters__checkbox-label:hover {
+    color: #111;
+}
+
+.sr-filters__checkbox-label input[type="checkbox"] {
+    appearance: auto;
+    accent-color: #111;
+    /* Cor da caixinha (suportado nos navegadores modernos) */
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin: 0;
+    /* Remove margens nativas esquisitas do Safari/Chrome */
+    border-radius: 4px;
+}
 /* ── metrics ───────────────────────────────────────────────────────────────── */
 
 .sr-metrics {

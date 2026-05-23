@@ -9,6 +9,10 @@ const FilterBar = ({
   endDate,
   onStartDate,
   onEndDate,
+  includeProducts,
+  onIncludeProducts,
+  includeCustomers,
+  onIncludeCustomers,
   onApply,
   loading,
 }) => (
@@ -47,6 +51,28 @@ const FilterBar = ({
         max={today()}
         onChange={(e) => onEndDate(e.target.value)}
       />
+    </div>
+
+    <div className="sr-filters__group">
+      <label className="sr-filters__label">Incluir</label>
+      <div className="sr-filters__checkboxes">
+        <label className="sr-filters__checkbox-label">
+          <input
+            type="checkbox"
+            checked={includeProducts}
+            onChange={(e) => onIncludeProducts(e.target.checked)}
+          />
+          Produtos
+        </label>
+        <label className="sr-filters__checkbox-label">
+          <input
+            type="checkbox"
+            checked={includeCustomers}
+            onChange={(e) => onIncludeCustomers(e.target.checked)}
+          />
+          Clientes
+        </label>
+      </div>
     </div>
 
     <button className="sr-btn sr-btn--apply" onClick={onApply} disabled={loading}>

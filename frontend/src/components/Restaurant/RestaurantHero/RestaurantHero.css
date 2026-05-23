@@ -15,15 +15,24 @@
     transition: all 0.3s ease;
 }
 
-/* Removido o espaço entre as classes para aplicar ao mesmo elemento e adicionado o border */
+.status-image-restaurant {
+    width: clamp(80px, 10vw, 160px);
+    height: clamp(80px, 10vw, 160px);
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.25s ease;
+    border: 6px solid transparent;
+}
+
 .status-image-restaurant.open {
-    border: 6px solid #4caf50;
-    /* Verde */
+    border-color: #4caf50;
+    box-shadow: 0 8px 18px rgba(76, 159, 80, 0.18);
 }
 
 .status-image-restaurant.closed {
-    border: 6px solid #5c0f18;
-    /* Um tom de vinho/vermelho bem escuro para destacar do fundo */
+    border-color: #bdbdbd;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
 }
 
 .hero-content {
@@ -45,19 +54,26 @@
 }
 
 .status-badge {
-    padding: 4px 12px;
+    padding: 6px 14px;
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
+    font-size: 0.85rem;
+    font-weight: 700;
     text-transform: uppercase;
+    transition: background-color 0.2s ease, color 0.2s ease, border 0.2s ease;
+    display: inline-block;
 }
 
 .status-badge.open {
     background-color: #4caf50;
+    color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .status-badge.closed {
-    background-color: #757575;
+    background-color: #a8222e;
+    /* vermelho da identidade */
+    color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .delivery-info {
@@ -85,25 +101,193 @@
   backdrop-filter: blur(4px);
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
+
+.hero-edit-close-div{
+    marginTop: 12;
+    display: 'flex';
+    gap: 8;
+}
  
-.hero-edit-btn:hover {
+.hero-edit-close-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 12px;
+    padding: 9px 18px;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #000;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    backdrop-filter: blur(4px);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.hero-edit-btn:hover , .hero-edit-close-btn{
   background-color: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.8);
 }
  
+/* Modal overlay */
+.status-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+}
+
+/* Modal box */
+.status-modal {
+    background: #fff;
+    color: #222;
+    border-radius: 12px;
+    padding: 20px;
+    width: min(520px, 92%);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.status-modal h3 {
+    margin: 0 0 12px 0;
+    color: #a8222e;
+}
+
+.status-modal h4 {
+    margin: 12px 0 8px 0;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.modal-section {
+    margin-bottom: 12px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: transform 0.08s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+    min-width: 140px;
+}
+
+.action-btn.primary {
+    background: #4caf50;
+    color: white;
+}
+
+
+/* Footer messages */
+.modal-footer {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.error-message {
+    color: #c62828;
+    font-weight: 600;
+}
+
+.info-message {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.muted {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.restaurant-hero.inactive {
+    opacity: 0.78;
+    filter: grayscale(0.06);
+    transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+.action-btn.available-danger {
+    background: #c62828;
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(198, 40, 40, 0.18);
+}
+
+.action-btn.muted {
+    background: #dcdcdc;
+    color: #6b6b6b;
+    cursor: not-allowed;
+    box-shadow: none;
+    border: 1px solid #d0d0d0;
+}
+
+.action-btn.available-primary {
+    background: #2e7d32;
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(46, 125, 50, 0.18);
+}
+
+.action-btn.available-primary:hover,
+.action-btn.available-danger:hover {
+    transform: translateY(-2px);
+}
+
+.action-btn:focus {
+    outline: 3px solid rgba(168, 24, 46, 0.12);
+    outline-offset: 2px;
+}
+
+.action-btn[disabled] {
+    pointer-events: none;
+}
+
+.hero-orders-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    background-color: rgba(255, 255, 255, 0.92);
+    color: #a8222e;
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.hero-orders-btn:hover {
+    background-color: #ffffff;
+    transform: translateY(-1px);
+}
 
 @media (max-width: 768px) {
     .hero-content {
         flex-direction: column;
         align-items: center;
-        /* Centraliza também no mobile */
         text-align: center;
-        /* Centraliza o texto no mobile */
         gap: 20px;
     }
 
     .title-group {
         justify-content: center;
-        /* Centraliza o título e o badge no mobile */
     }
 }

@@ -124,7 +124,7 @@ public class PendezzaPizzaSecurity {
 
     public boolean canManageOrders(UUID orderCode) {
         return hasAuthorityWrite()
-                && (hasAuthority("GERENCIAR_PEDIDOS") || managesRestaurantOfOrder(orderCode));
+                && ((hasAuthority("GERENCIAR_PEDIDOS") && managesRestaurantOfOrder(orderCode)) || hasAuthority("EDITAR_PEDIDOS"));
     }
 
     public boolean canCreateOrders() {

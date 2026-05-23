@@ -4,6 +4,7 @@ import RestaurantHero from '../../components/Restaurant/RestaurantHero/Restauran
 import ProductCard from '../../components/Restaurant/ProductCard/ProductCard.jsx';
 import EditRestaurantModal from '../../components/Restaurant/EditRestaurantModal/EditRestaurantModal.jsx';
 import AddProductModal from '../../components/Restaurant/AddProductModal/AddProductModal.jsx';
+import PaymentMethodsSection from '../../components/Restaurant/PaymentMethodSecction/PaymentMethodsSection.jsx';
 import './Restaurant.css';
 import { StoreContext } from '../../components/context/StoreContext.jsx';
 import { useAuth } from '../../components/context/AuthProvider.jsx';
@@ -15,13 +16,13 @@ const Restaurant = () => {
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
-  
+
   const [showEditRestaurant, setShowEditRestaurant] = useState(false);
   const [showAddProduct, setShowAddProduct] = useState(false);
-  
+
   const { registerProducts } = useContext(StoreContext);
 
-  const [products , setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const hasAuthority = tokenData?.authorities?.includes('GERENCIAR_RESTAURANTE');
 
@@ -29,12 +30,12 @@ const Restaurant = () => {
     const fetchData = async () => {
       try {
         const productsUrl = hasAuthority
-          ? `http://localhost:80/v1/restaurants/${id}/products?includeInactives=true`
-          : `http://localhost/v1/restaurants/${id}/products`;
+          ? `/v1/restaurants/${id}/products?includeInactives=true`
+          : `/v1/restaurants/${id}/products`;
 
         const [restaurantRes, productsRes] = await Promise.all([
-          fetch(`http://localhost/v1/restaurants/${id}`, { credentials: 'include' }),
-          fetch(productsUrl, { credentials: 'include' })
+          fetch(`/v1/restaurants/${id}`, { credentials: 'include' }),
+          fetch(productsUrl, { credentials: 'include' }),
         ]);
 
         const restaurantData = await restaurantRes.json();
@@ -45,7 +46,7 @@ const Restaurant = () => {
         setProducts(list);
         registerProducts(list);
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        console.error('Erro ao buscar dados:', error);
       } finally {
         setLoading(false);
       }
@@ -76,6 +77,20 @@ const Restaurant = () => {
     setRestaurant(prev => ({ ...prev, ...updatedRestaurant }));
   };
 
+  // Atualiza um produto na lista local após edição no ProductCard
+  const handleProductUpdate = (updatedProduct) => {
+    setProducts(prev =>
+      prev.map(p => (p.id === updatedProduct.id ? { ...p, ...updatedProduct } : p))
+    );
+  };
+
+  // Atualiza o campo `active` de um produto na lista local
+  const handleProductToggle = (productId, newActive) => {
+    setProducts(prev =>
+      prev.map(p => (p.id === productId ? { ...p, active: newActive } : p))
+    );
+  };
+
   if (loading) return <div className="loading">Carregando detalhes...</div>;
   if (!restaurant) return <div className="error">Restaurante não encontrado.</div>;
 
@@ -86,6 +101,7 @@ const Restaurant = () => {
       <RestaurantHero
         restaurant={restaurant}
         canEdit={canEdit}
+        authorities={tokenData?.authorities || []}
         onEditClick={() => setShowEditRestaurant(true)}
       />
 
@@ -114,6 +130,8 @@ const Restaurant = () => {
                 product={product}
                 canEdit={canEdit}
                 restaurantId={id}
+                onUpdate={handleProductUpdate}
+                onToggle={handleProductToggle}
               />
             ))
           ) : (
@@ -121,6 +139,11 @@ const Restaurant = () => {
           )}
         </div>
       </main>
+
+      {/* Seção de formas de pagamento — visível apenas para gestores */}
+      {canEdit && (
+        <PaymentMethodsSection restaurantId={id} hasAuthority={hasAuthority} />
+      )}
 
       {showEditRestaurant && (
         <EditRestaurantModal

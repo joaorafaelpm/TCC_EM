@@ -126,15 +126,15 @@ public class RestaurantController implements RestaurantControllerOpenApi {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurants.CanManageOperation
+    @CheckSecurity.Restaurants.CanEditLogic
     @PutMapping("/{restaurantId}/opening")
     public ResponseEntity<Void> open(@PathVariable UUID restaurantId) {
         restaurantService.open(restaurantId);
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurants.CanManageOperation
-    @PutMapping("/{restaurantId}/closing")
+    @CheckSecurity.Restaurants.CanEditLogic
+    @DeleteMapping("/{restaurantId}/opening")
     public ResponseEntity<Void> close(@PathVariable UUID restaurantId) {
         restaurantService.close(restaurantId);
         return ResponseEntity.noContent().build();

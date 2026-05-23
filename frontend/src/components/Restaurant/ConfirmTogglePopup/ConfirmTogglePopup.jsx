@@ -1,46 +1,100 @@
 import React, { useEffect, useState } from 'react';
 import './ConfirmTogglePopup.css';
 
-const ConfirmTogglePopup = ({ currentActive, productName, onConfirm, onCancel }) => {
-  const [cooldown, setCooldown] = useState(2);
-  const [ready, setReady] = useState(false);
+
+// Claude inovou nessa aqui:
+/**
+ * Props (dois modos de uso):
+ *
+ * MODO LEGADO — compatibilidade com ProductCard:
+ *   currentActive, productName, onConfirm, onCancel
+ *
+ * MODO GENÉRICO:
+ *   title          string  — título do popup
+ *   message        node    — corpo (aceita JSX)
+ *   confirmLabel   string  — texto do botão de confirmação
+ *   confirmVariant 'danger' | 'success' | 'warning'  — cor do botão
+ *   icon           string  — emoji/ícone exibido no topo
+ *   cooldownSeconds number — segundos de cooldown (padrão: 2)
+ *   onConfirm, onCancel
+ */
+const ConfirmTogglePopup = ({
+  // legado
+  currentActive,
+  productName,
+
+  // genérico
+  title,
+  message,
+  confirmLabel,
+  confirmVariant,
+  icon,
+  cooldownSeconds = 2,
+
+  onConfirm,
+  onCancel,
+}) => {
+  const isLegacyMode = productName !== undefined;
+
+  const resolvedCooldown = cooldownSeconds;
+  const [remaining, setRemaining] = useState(resolvedCooldown);
+  const [ready, setReady] = useState(resolvedCooldown <= 0);
 
   useEffect(() => {
-    if (cooldown <= 0) {
+    if (remaining <= 0) {
       setReady(true);
       return;
     }
-    const timer = setTimeout(() => setCooldown(c => c - 1), 1000);
+    const timer = setTimeout(() => setRemaining(c => c - 1), 1000);
     return () => clearTimeout(timer);
-  }, [cooldown]);
+  }, [remaining]);
 
-  const action = currentActive ? 'desativar' : 'ativar';
-  const actionLabel = currentActive ? 'Desativar' : 'Ativar';
-  const actionClass = currentActive ? 'confirm-popup__btn--danger' : 'confirm-popup__btn--success';
+  // Derivação para modo legado
+  const resolvedTitle = isLegacyMode
+    ? (currentActive ? 'Desativar produto?' : 'Ativar produto?')
+    : title;
+
+  const resolvedMessage = isLegacyMode ? (
+    <p className="confirm-popup__message">
+      Você está prestes a <strong>{currentActive ? 'desativar' : 'ativar'}</strong>{' '}
+      <strong>"{productName}"</strong>.{' '}
+      {currentActive
+        ? 'Ele deixará de aparecer para os clientes.'
+        : 'Ele voltará a aparecer para os clientes.'}
+    </p>
+  ) : (
+    typeof message === 'string'
+      ? <p className="confirm-popup__message">{message}</p>
+      : message
+  );
+
+  const resolvedLabel = isLegacyMode
+    ? (currentActive ? 'Desativar' : 'Ativar')
+    : confirmLabel ?? 'Confirmar';
+
+  const resolvedVariant = isLegacyMode
+    ? (currentActive ? 'danger' : 'success')
+    : (confirmVariant ?? 'danger');
+
+  const resolvedIcon = isLegacyMode
+    ? (currentActive ? '⚠️' : '✅')
+    : (icon ?? (resolvedVariant === 'danger' ? '⚠️' : resolvedVariant === 'success' ? '✅' : 'ℹ️'));
+
+  const variantClass = `confirm-popup__btn--${resolvedVariant}`;
 
   return (
     <div className="confirm-popup-overlay" onClick={onCancel}>
       <div className="confirm-popup" onClick={e => e.stopPropagation()}>
-        <div className="confirm-popup__icon">
-          {currentActive ? '⚠️' : '✅'}
-        </div>
+        <div className="confirm-popup__icon">{resolvedIcon}</div>
 
-        <h3 className="confirm-popup__title">
-          {currentActive ? 'Desativar produto?' : 'Ativar produto?'}
-        </h3>
+        <h3 className="confirm-popup__title">{resolvedTitle}</h3>
 
-        <p className="confirm-popup__message">
-          Você está prestes a <strong>{action}</strong>{' '}
-          <strong>"{productName}"</strong>.{' '}
-          {currentActive
-            ? 'Ele deixará de aparecer para os clientes.'
-            : 'Ele voltará a aparecer para os clientes.'}
-        </p>
+        {resolvedMessage}
 
         <div className="confirm-popup__progress">
           <div
             className="confirm-popup__progress-bar"
-            style={{ animationDuration: '2s' }}
+            style={{ animationDuration: `${resolvedCooldown}s` }}
           />
         </div>
 
@@ -49,11 +103,11 @@ const ConfirmTogglePopup = ({ currentActive, productName, onConfirm, onCancel })
             Cancelar
           </button>
           <button
-            className={`confirm-popup__btn ${actionClass} ${!ready ? 'confirm-popup__btn--waiting' : ''}`}
+            className={`confirm-popup__btn ${variantClass} ${!ready ? 'confirm-popup__btn--waiting' : ''}`}
             onClick={ready ? onConfirm : undefined}
             disabled={!ready}
           >
-            {ready ? actionLabel : `${actionLabel} (${cooldown}s)`}
+            {ready ? resolvedLabel : `${resolvedLabel} (${remaining}s)`}
           </button>
         </div>
       </div>

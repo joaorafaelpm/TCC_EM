@@ -5,13 +5,13 @@ import menos from '../../../assets/menos.png';
 import './ProductCard.css';
 import { StoreContext } from '../../context/StoreContext';
 import ConfirmTogglePopup from '../ConfirmTogglePopup/ConfirmTogglePopup.jsx';
+import PhotoUploadTrigger from '../../PhotoHandler/PhotoUploadTrigger/PhotoUploadTrigger.jsx';
 
 const ProductCard = ({ product, canEdit, restaurantId, onToggle, onUpdate }) => {
   const imageUrl = `http://localhost/v1/restaurants/${product.restaurantId}/products/${product.id}/photo`;
   const { cartItems, addToCart, removeFromCart } = useContext(StoreContext);
   const quantity = cartItems[product.id] || 0;
 
-  // Edit form state
   const [expanded, setExpanded] = useState(false);
   const [editForm, setEditForm] = useState({
     name: product.name,
@@ -20,9 +20,8 @@ const ProductCard = ({ product, canEdit, restaurantId, onToggle, onUpdate }) => 
   });
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
-
-  // Toggle active/inactive state
   const [showConfirm, setShowConfirm] = useState(false);
+  const [photoKey, setPhotoKey] = useState(0);
 
   const handleEditChange = (e) => {
     setEditForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -58,7 +57,6 @@ const ProductCard = ({ product, canEdit, restaurantId, onToggle, onUpdate }) => 
   const handleToggleConfirm = async () => {
     const newActive = !product.active;
     const method = newActive ? 'PUT' : 'DELETE';
-
     try {
       const res = await fetch(
         `http://localhost/v1/restaurants/${restaurantId}/products/${product.id}/active`,
@@ -81,16 +79,34 @@ const ProductCard = ({ product, canEdit, restaurantId, onToggle, onUpdate }) => 
   return (
     <>
       <div className={`product-card ${expanded ? 'product-card--expanded' : ''} ${!product.active && canEdit ? 'product-card--inactive' : ''}`}>
-        <img
-          src={imageUrl}
-          alt={`Foto de ${product.name}`}
-          className="product-image"
-          loading="lazy"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = semImagemPng;
-          }}
-        />
+
+        {canEdit ? (
+          <PhotoUploadTrigger
+            uploadUrl={`http://localhost/v1/restaurants/${restaurantId}/products/${product.id}/photo`}
+            deleteUrl={`http://localhost/v1/restaurants/${restaurantId}/products/${product.id}/photo`}
+            triggerVariant="pencil-corner"
+            cropShape="square"
+            label="Alterar foto do produto"
+            onSuccess={() => setPhotoKey(k => k + 1)}
+          >
+            <img
+              key={photoKey}
+              src={`${imageUrl}?v=${photoKey}`}
+              alt={`Foto de ${product.name}`}
+              className="product-image"
+              loading="lazy"
+              onError={(e) => { e.target.onerror = null; e.target.src = semImagemPng; }}
+            />
+          </PhotoUploadTrigger>
+        ) : (
+          <img
+            src={imageUrl}
+            alt={`Foto de ${product.name}`}
+            className="product-image"
+            loading="lazy"
+            onError={(e) => { e.target.onerror = null; e.target.src = semImagemPng; }}
+          />
+        )}
 
         <div className="product-info">
           <div className="product-info__top">
@@ -113,61 +129,29 @@ const ProductCard = ({ product, canEdit, restaurantId, onToggle, onUpdate }) => 
           <p className="description">{product.description}</p>
           <span className="price">{formattedPrice}</span>
 
-          {/* Inline edit form — dentro do product-info para não ser empurrado pelo flex-grow */}
           <div className={`product-edit-form ${expanded ? 'product-edit-form--open' : ''}`}>
             <div className="product-edit-form__inner">
               <div className="product-edit-form__field">
                 <label>Nome</label>
-                <input
-                  name="name"
-                  value={editForm.name}
-                  onChange={handleEditChange}
-                  placeholder="Nome do produto"
-                />
+                <input name="name" value={editForm.name} onChange={handleEditChange} placeholder="Nome do produto" />
               </div>
               <div className="product-edit-form__field">
                 <label>Descrição</label>
-                <textarea
-                  name="description"
-                  value={editForm.description}
-                  onChange={handleEditChange}
-                  placeholder="Descrição"
-                  rows={2}
-                />
+                <textarea name="description" value={editForm.description} onChange={handleEditChange} placeholder="Descrição" rows={2} />
               </div>
               <div className="product-edit-form__field">
                 <label>Preço (R$)</label>
-                <input
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={editForm.price}
-                  onChange={handleEditChange}
-                />
+                <input name="price" type="number" step="0.01" min="0" value={editForm.price} onChange={handleEditChange} />
               </div>
               {saveError && <p className="product-edit-form__error">{saveError}</p>}
               <div className="product-edit-form__actions">
-                <button
-                  className="product-edit-form__btn product-edit-form__btn--cancel"
-                  onClick={() => { setExpanded(false); setSaveError(null); }}
-                  disabled={saving}
-                >
-                  Cancelar
-                </button>
-                <button
-                  className="product-edit-form__btn product-edit-form__btn--save"
-                  onClick={handleEditSave}
-                  disabled={saving}
-                >
-                  {saving ? 'Salvando...' : 'Salvar'}
-                </button>
+                <button className="product-edit-form__btn product-edit-form__btn--cancel" onClick={() => { setExpanded(false); setSaveError(null); }} disabled={saving}>Cancelar</button>
+                <button className="product-edit-form__btn product-edit-form__btn--save" onClick={handleEditSave} disabled={saving}>{saving ? 'Salvando...' : 'Salvar'}</button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom row: toggle + cart */}
         <div className="product-add">
           {canEdit && (
             <button
@@ -183,15 +167,11 @@ const ProductCard = ({ product, canEdit, restaurantId, onToggle, onUpdate }) => 
             <>
               {quantity > 0 && (
                 <>
-                  <button className="btn-add-product" onClick={() => removeFromCart(product.id)}>
-                    <img src={menos} alt="Remover" />
-                  </button>
+                  <button className="btn-add-product" onClick={() => removeFromCart(product.id)}><img src={menos} alt="Remover" /></button>
                   <span className="product-quantity">{quantity}</span>
                 </>
               )}
-              <button className="btn-add-product" onClick={() => addToCart(product.id)}>
-                <img src={addToCartIcon} alt="Adicionar" />
-              </button>
+              <button className="btn-add-product" onClick={() => addToCart(product.id)}><img src={addToCartIcon} alt="Adicionar" /></button>
             </>
           )}
         </div>

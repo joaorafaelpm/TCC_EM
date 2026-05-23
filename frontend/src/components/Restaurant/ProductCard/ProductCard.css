@@ -313,3 +313,56 @@
 .product-toggle-dot.off {
   background-color: #9ca3af;
 }
+
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* Mantenha aqui o mesmo border-radius que .product-image tinha, se houver */
+}
+
+/* Botão lápis posicionado no canto inferior direito da foto */
+.product-photo-edit-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  /* oculto por padrão */
+  transition: opacity 0.2s ease, background-color 0.15s ease;
+  z-index: 2;
+  backdrop-filter: blur(2px);
+}
+
+/* Aparece ao passar o mouse no wrapper */
+.product-image-wrapper:hover .product-photo-edit-btn {
+  opacity: 1;
+}
+
+.product-photo-edit-btn:hover {
+  background: rgba(168, 34, 46, 0.85);
+  /* vermelho da identidade */
+}
+
+/* Input file oculto — nunca visível */
+.product-photo-input {
+  display: none;
+}
+
+/* Mensagem de erro de validação logo abaixo da foto */
+.product-photo-error {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: #a8222e;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.3;
+}
