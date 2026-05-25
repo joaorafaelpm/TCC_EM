@@ -14,6 +14,8 @@ import java.lang.annotation.Target;
         @CacheEvict(value = "orders", allEntries = true),
         @CacheEvict(value = "ordersLastUpdate", allEntries = true),
         @CacheEvict(value = "order", key = "#result.id"),
-        @CacheEvict(value = "ordersLastUpdateById", key = "#result.id")
+        @CacheEvict(value = "ordersLastUpdateById", key = "#result.id"),
+        @CacheEvict(value = "ordersRestaurant", key = "#result.id"),
+        @CacheEvict(value = "ordersCustomer", key = "#result.id")
 })
 public @interface OrdersSaveCacheEvict {}

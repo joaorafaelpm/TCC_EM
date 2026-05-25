@@ -17,6 +17,7 @@
         "/products": "http://localhost:80",
         "/cities": "http://localhost:80",
         "/orders": "http://localhost:80",
+        "/orders/*": "http://localhost:80",
         "/users": "http://localhost:80",
         "/users/*/restaurants": "http://localhost:80",
         "/restaurants/exists-responsible/*": "http://localhost:80",

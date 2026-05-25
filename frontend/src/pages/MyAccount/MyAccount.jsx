@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../components/context/AuthProvider.jsx';
-import Sidebar from '../../components/MyAccount/Sidebar.jsx';
-import MyInfo from '../../components/MyAccount/MyInfo.jsx';
-import MyRestaurants from '../../components/MyAccount/MyRestaurants.jsx';
+import Sidebar from '../../components/MyAccount/SideBar/Sidebar.jsx';
+import MyInfo from '../../components/MyAccount/MyInfo/MyInfo.jsx';
+import MyRestaurants from '../../components/MyAccount/MyRestaurants/MyRestaurants.jsx';
 import SalesReport from '../../components/SalesReport/SalesReport.jsx';
 import './MyAccount.css';
+import MyOrders from '../../components/MyAccount/MyOrders/MyOrders.jsx';
 
 const MyAccount = () => {
   const { user: tokenData, isLoading: authLoading } = useAuth();
@@ -59,8 +60,10 @@ const MyAccount = () => {
 
   const renderSection = () => {
     switch (activeSection) {
+      case 'orders':
+        return <MyOrders userId={tokenData.userId} />;
       case 'info':
-        return <MyInfo user={userData} userId={tokenData.userId} />;
+        return <MyInfo user={userData} />;
       case 'restaurants':
         return <MyRestaurants userId={tokenData.userId} />;
       case 'sales-report':

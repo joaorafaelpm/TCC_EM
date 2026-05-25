@@ -4,6 +4,7 @@ import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.Or
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.OrdersSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.OrderNotFoundException;
+import com.pendezzapizza.pendezzapizza_api.domain.filter.OrderTimeFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.OrderRepository;
 import lombok.AllArgsConstructor;
@@ -27,8 +28,18 @@ public class OrderService {
 
     @Cacheable("orders")
     public Page<Order> findAll (Specification<Order> specification , Pageable pageable) {
-            return orderRepository.findAll(specification , pageable);
-        }
+        return orderRepository.findAll(specification , pageable);
+    }
+
+    @Cacheable(value = "ordersUser" , key = "#userId")
+    public Page<Order> findAllByCustomerId(OrderTimeFilter orderTimeFilter, UUID userId, Pageable pageable) {
+        return orderRepository.findAllByCustomerId(orderTimeFilter , userId, pageable);
+    }
+
+    @Cacheable(value = "ordersRestaurant" , key = "#restaurantId")
+    public Page<Order> findAllByRestaurantId(OrderTimeFilter orderTimeFilter, UUID restaurantId, Pageable pageable) {
+        return orderRepository.findAllByRestaurantId(orderTimeFilter , restaurantId, pageable);
+    }
 
     @Cacheable("ordersLastUpdate")
     public OffsetDateTime getLastUpdateDate() {
@@ -67,4 +78,6 @@ public class OrderService {
             throw new EntityInUseException(orderId);
         }
     }
+
+
 }

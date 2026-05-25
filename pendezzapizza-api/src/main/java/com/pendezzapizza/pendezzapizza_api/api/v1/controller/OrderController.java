@@ -8,18 +8,16 @@ import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.OrderBatchDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.OrderDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.OrderControllerOpenApi;
-import com.pendezzapizza.pendezzapizza_api.core.data.PageWrapper;
 import com.pendezzapizza.pendezzapizza_api.core.data.PageableTranslator;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityNotFoundException;
-import com.pendezzapizza.pendezzapizza_api.domain.filter.OrderFilter;
+import com.pendezzapizza.pendezzapizza_api.domain.filter.OrderTimeFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
 import com.pendezzapizza.pendezzapizza_api.domain.model.OrderBatchModel;
 import com.pendezzapizza.pendezzapizza_api.domain.service.OrderBatchIssuanceService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.OrderIssuanceService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.OrderService;
-import com.pendezzapizza.pendezzapizza_api.infrastructure.repository.spec.OrderSpecs;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,9 +47,23 @@ public class OrderController implements OrderControllerOpenApi {
     private final OrderDisassembler orderDisassembler;
     private final OrderBatchIssuanceService orderBatchIssuanceService;
 
-    @CheckSecurity.Orders.CanList
-    @GetMapping
-    public ResponseEntity<Page<OrderSummaryModel>> search(OrderFilter orderFilter, Pageable pageable , ServletWebRequest request) {
+    /**
+     * Lista os pedidos do próprio usuário autenticado.
+     *
+     * <p>O {@code userId} recebido como parâmetro é validado contra o JWT dentro de
+     * {@code @CheckSecurity.Orders.CanListOwnOrders} — se não corresponder ao usuário
+     * autenticado, a requisição é rejeitada antes de chegar aqui.</p>
+     *
+     * Sugestão de implementação para CanListOwnOrders:
+     *   hasAuthorityRead() && isAuthenticatedUserEquals(userId)
+     */
+    @CheckSecurity.Orders.CanListOwnOrders
+    @GetMapping("/user")
+    public ResponseEntity<Page<OrderSummaryModel>> searchByCustomer(
+            @RequestParam(required = true) UUID userId,
+            OrderTimeFilter orderTimeFilter,
+            Pageable pageable,
+            ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = orderService.getLastUpdateDate();
@@ -62,15 +74,47 @@ public class OrderController implements OrderControllerOpenApi {
         if (request.checkNotModified(eTag)) {
             return null;
         }
+        Page<Order> ordersPage = orderService.findAllByCustomerId(orderTimeFilter, userId, pageable);
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePrivate())
+                .eTag(eTag)
+                .body(ordersPage.map(orderSummaryModelAssembler::toModel));
+    }
 
-        Pageable translatedPageable = translatePageable(pageable);
-        Page<Order> ordersPage = orderService.findAll(OrderSpecs.withFilter(orderFilter), translatedPageable);
-        ordersPage = new PageWrapper<>(ordersPage, pageable);
+    /**
+     * Lista os pedidos de um restaurante específico.
+     *
+     * <p>Acessível pelo gestor do restaurante informado ou por admins com
+     * {@code CONSULTAR_PEDIDOS}. A validação de vínculo gestor/restaurante
+     * fica no {@code @CheckSecurity.Orders.CanListOwnRestaurantOrders}.</p>
+     *
+     * Sugestão de implementação para CanListOwnRestaurantOrders:
+     *   hasAuthority("CONSULTAR_PEDIDOS") || (hasAuthorityRead() && managesRestaurant(restaurantId))
+     */
+    @CheckSecurity.Orders.CanListOwnRestaurantOrders
+    @GetMapping("/restaurant")
+    public ResponseEntity<Page<OrderSummaryModel>> searchByRestaurant(
+            @RequestParam(required = true) UUID restaurantId,
+            OrderTimeFilter orderTimeFilter,
+            Pageable pageable,
+            ServletWebRequest request) {
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+        String eTag = "0";
+        OffsetDateTime lastUpdateDate = orderService.getLastUpdateDate();
+        if (lastUpdateDate != null) {
+            eTag = String.valueOf(lastUpdateDate.toEpochSecond());
+        }
+
+        if (request.checkNotModified(eTag)) {
+            return null;
+        }
+        Page<Order> ordersPage = orderService.findAllByRestaurantId(orderTimeFilter, restaurantId, pageable);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
                 .eTag(eTag)
                 .body(ordersPage.map(orderSummaryModelAssembler::toModel));
     }
+
 
     @CheckSecurity.Orders.CanSearch
     @GetMapping("/{orderId}")

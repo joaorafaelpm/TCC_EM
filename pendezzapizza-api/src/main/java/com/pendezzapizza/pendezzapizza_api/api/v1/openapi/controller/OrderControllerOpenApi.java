@@ -23,13 +23,6 @@ import java.util.UUID;
 @Tag(name = "Pedidos")
 public interface OrderControllerOpenApi {
 
-    @PageableParameter
-    @PedidoFilterAnnotation
-    @Operation(summary = "Lista de pedidos")
-    ResponseEntity<Page<OrderSummaryModel>> search(@Parameter(hidden = true) OrderFilter orderFilter,
-                                                   @Parameter(hidden = true) Pageable pageable,
-                                                   @Parameter(hidden = true) ServletWebRequest request);
-
     @Operation(summary = "Cadastra um novo pedido", responses = {
             @ApiResponse(responseCode = "201", description = "Pedido cadastrado")
     })

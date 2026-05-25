@@ -40,7 +40,7 @@ export default function OrderHandler() {
         endCreationDate: end,
       });
 
-      const res = await fetch(`/v1/orders?${params}`, { credentials: 'include' });
+      const res = await fetch(`/v1/orders/restaurant?${params}`, { credentials: 'include' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setOrders(data.content ?? data ?? []);

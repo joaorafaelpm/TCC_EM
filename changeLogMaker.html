@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog Generator</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f5f5f3;--bg3:#ececea;
+  --text:#1a1a1a;--text2:#555550;--text3:#888882;
+  --border:rgba(0,0,0,0.11);--border2:rgba(0,0,0,0.2);
+  --radius:8px;--radius-lg:12px;
+  --accent:#a8222e;--accent-bg:#fdf0f0;
+  --accent-hover:#8a1a24;
+  --select-bg:rgba(168,34,46,0.07);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;
+    --text:#f0f0ee;--text2:#aaaaaa;--text3:#666660;
+    --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.18);
+    --accent:#e05560;--accent-bg:#2a1517;--accent-hover:#f06570;
+    --select-bg:rgba(224,85,96,0.1);
+  }
+}
+html{font-size:15px}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg2);color:var(--text);min-height:100vh;line-height:1.6;user-select:none}
+/* ── Layout ── */
+.app{display:flex;min-height:100vh}
+.sidebar{width:260px;flex-shrink:0;background:var(--bg);border-right:0.5px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
+.main{flex:1;padding:2rem 2.5rem;max-width:860px}
+/* ── Sidebar ── */
+.sb-brand{padding:18px 16px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-brand-icon{font-size:1.25rem}
+.sb-brand-name{font-size:.95rem;font-weight:600;color:var(--accent)}
+.sb-section{padding:10px 10px 2px}
+.sb-section-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);padding:0 6px;margin-bottom:3px}
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;font-size:.84rem;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:background .12s,color .12s;font-family:inherit}
+.sb-item:hover{background:var(--bg2);color:var(--text)}
+.sb-item.active{background:var(--accent-bg);color:var(--accent);font-weight:600}
+.sb-version-list{padding:2px 10px 10px}
+.sb-ver-entry{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:var(--radius);cursor:pointer;font-size:.78rem;color:var(--text2);transition:background .12s}
+.sb-ver-entry:hover{background:var(--bg2)}
+.sb-ver-del{opacity:0;border:none;background:none;cursor:pointer;color:var(--accent);font-size:.72rem;padding:2px 5px;border-radius:4px;font-family:inherit}
+.sb-ver-entry:hover .sb-ver-del{opacity:1}
+.sb-footer{margin-top:auto;padding:10px;border-top:0.5px solid var(--border);display:flex;flex-direction:column;gap:6px}
+/* ── Topbar ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;gap:12px;flex-wrap:wrap}
+.topbar h1{font-size:1.15rem;font-weight:600}
+/* ── Meta row ── */
+.meta-grid{display:grid;grid-template-columns:110px 145px 1fr;gap:10px;margin-bottom:1.2rem}
+.meta-group{display:flex;flex-direction:column;gap:4px}
+.field-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
+input[type=text],textarea,select{width:100%;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:.86rem;padding:7px 10px;outline:none;transition:border-color .15s}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--accent)}
+/* ── Tag + Area picker ── */
+.pickers{display:flex;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap}
+.picker-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:160px}
+.pill-row{display:flex;flex-wrap:wrap;gap:6px}
+.pill{padding:5px 13px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;border:0.5px solid transparent;transition:all .12s;white-space:nowrap}
+.pill.unsel{background:var(--bg3);color:var(--text2);border-color:var(--border)}
+.pill.unsel:hover{border-color:var(--border2);color:var(--text)}
+.pill.sel{color:#fff}
+/* tag colors */
+.pill[data-tag="Desenvolvimento Inicial"].sel{background:#5a3e9e;border-color:#5a3e9e}
+.pill[data-tag="Adicionado"].sel{background:#2e7d32;border-color:#2e7d32}
+.pill[data-tag="Alterado"].sel{background:#1565c0;border-color:#1565c0}
+.pill[data-tag="Removido"].sel{background:#b71c1c;border-color:#b71c1c}
+.pill[data-tag="Resolvido"].sel{background:#e65100;border-color:#e65100}
+.pill[data-tag="custom"].sel,.pill[data-tag="custom-pill"].sel{background:#555;border-color:#555}
+/* area colors */
+.pill[data-area="Backend"].sel{background:#1565c0}
+.pill[data-area="Frontend"].sel{background:#6a1b9a}
+.pill[data-area="App Mobile"].sel{background:#00695c}
+.pill[data-area="QA"].sel{background:#e65100}
+.pill[data-area="Infraestrutura"].sel{background:#37474f}
+.pill[data-area="Análise de Dados"].sel{background:#4a148c}
+.add-pill-row{display:flex;gap:6px;margin-top:6px}
+.add-pill-row input{font-size:.8rem;max-width:180px}
+/* ── Items panel ── */
+.items-panel{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.2rem}
+.items-toolbar{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:0.5px solid var(--border);background:var(--bg2);gap:8px;flex-wrap:wrap}
+.items-toolbar-left{display:flex;align-items:center;gap:8px}
+.items-toolbar-title{font-size:.82rem;font-weight:600;color:var(--text)}
+.items-list{padding:8px 0}
+.item-row{display:flex;align-items:flex-start;gap:10px;padding:5px 16px;transition:background .08s;cursor:default}
+.item-row.drag-over{background:var(--select-bg)}
+.item-row input[type=checkbox]{margin-top:3px;cursor:pointer;flex-shrink:0;accent-color:var(--accent);width:15px;height:15px}
+.item-row label{font-size:.83rem;color:var(--text);line-height:1.5;cursor:pointer;flex:1}
+.item-row .del-item{opacity:0;border:none;background:none;cursor:pointer;color:var(--text3);font-size:.8rem;padding:0 4px;border-radius:4px;font-family:inherit;transition:opacity .1s,color .1s}
+.item-row:hover .del-item{opacity:1}
+.item-row:hover .del-item:hover{color:var(--accent)}
+.custom-add-row{display:flex;gap:8px;padding:8px 16px 10px;border-top:0.5px solid var(--border)}
+.custom-add-row input{font-size:.83rem}
+.empty-state{padding:24px 16px;text-align:center;color:var(--text3);font-size:.82rem}
+/* ── Stack table ── */
+.stack-panel{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);margin-bottom:1.2rem;overflow:hidden}
+.stack-header{padding:9px 14px;border-bottom:0.5px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between}
+.stack-title{font-size:.82rem;font-weight:600;color:var(--text)}
+.stack-table{width:100%;border-collapse:collapse}
+.stack-table th{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);padding:8px 16px;text-align:left;border-bottom:0.5px solid var(--border)}
+.stack-table td{padding:6px 12px;border-bottom:0.5px solid var(--border)}
+.stack-table tr:last-child td{border-bottom:none}
+.stack-table input{border:none;background:none;font-size:.84rem;color:var(--text);padding:2px 4px;border-radius:4px;width:100%}
+.stack-table input:focus{background:var(--bg2);outline:none}
+.stack-add-row{display:flex;gap:8px;padding:8px 12px;border-top:0.5px solid var(--border)}
+/* ── Buttons ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:.82rem;font-family:inherit;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);cursor:pointer;transition:background .12s,border-color .12s;white-space:nowrap}
+.btn:hover{background:var(--bg2)}
+.btn:active{transform:scale(.98)}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-accent:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn-sm{padding:4px 10px;font-size:.76rem}
+.actions{display:flex;gap:10px;margin-top:1.2rem;flex-wrap:wrap}
+/* ── Output ── */
+.output-section{margin-top:1.4rem}
+.output-box{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.output-toolbar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:0.5px solid var(--border);background:var(--bg2)}
+.output-toolbar span{font-size:.78rem;color:var(--text3)}
+textarea.out{border:none;border-radius:0;background:var(--bg);font-family:'Consolas','SF Mono',monospace;font-size:.77rem;min-height:200px;resize:vertical;padding:14px;line-height:1.65;color:var(--text);width:100%}
+textarea.out:focus{outline:none}
+/* ── History ── */
+.history-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
+.history-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer}
+.history-card-header:hover{background:var(--bg2)}
+.hv-title{font-size:.88rem;font-weight:500}
+.hv-meta{font-size:.73rem;color:var(--text3)}
+.history-card-body{border-top:0.5px solid var(--border);padding:14px 16px;display:none}
+.history-card-body pre{font-family:'Consolas','SF Mono',monospace;font-size:.76rem;white-space:pre-wrap;color:var(--text2);line-height:1.65}
+/* ── Drag select overlay ── */
+#dragOverlay{position:fixed;pointer-events:none;border:1.5px dashed var(--accent);background:var(--select-bg);border-radius:4px;z-index:9999;display:none}
+/* ── Misc ── */
+.divider{height:0.5px;background:var(--border);margin:1rem 0}
+@media(max-width:720px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:static}
+  .main{padding:1.2rem}
+  .meta-grid{grid-template-columns:1fr 1fr}
+  .pickers{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div id="dragOverlay"></div>
+
+<div class="app">
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <span class="sb-brand-icon">📋</span>
+    <span class="sb-brand-name">Changelog Gen</span>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-title">Navegação</div>
+    <button class="sb-item active" id="nav-editor" onclick="showView('editor')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Nova entrada
+    </button>
+    <button class="sb-item" id="nav-history" onclick="showView('history')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Histórico
+    </button>
+  </div>
+  <div class="sb-section"><div class="sb-section-title">Versões salvas</div></div>
+  <div class="sb-version-list" id="sbVersionList"></div>
+  <div class="sb-footer">
+    <button class="btn" style="width:100%;justify-content:center" onclick="exportAll()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar CHANGELOG.md
+    </button>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<main class="main">
+
+<!-- EDITOR VIEW -->
+<div id="view-editor">
+  <div class="topbar">
+    <h1>Nova entrada</h1>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="selectAllVisible()">☑ Sel. tudo</button>
+      <button class="btn btn-sm" onclick="deselectAll()">☐ Limpar sel.</button>
+      <button class="btn btn-sm" onclick="clearForm()">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-grid">
+    <div class="meta-group"><label class="field-label">Versão</label><input type="text" id="ver" value="0.1.0" placeholder="0.1.0"></div>
+    <div class="meta-group"><label class="field-label">Data</label><input type="text" id="dt"></div>
+    <div class="meta-group"><label class="field-label">Nome (opcional)</label><input type="text" id="verName" placeholder="ex: MVP Backend"></div>
+  </div>
+
+  <!-- Tag picker -->
+  <div class="pickers">
+    <div class="picker-group">
+      <div class="field-label">Tipo de mudança</div>
+      <div class="pill-row" id="tagPills"></div>
+      <div class="add-pill-row">
+        <input type="text" id="newTagInput" placeholder="Novo tipo…" style="max-width:160px" onkeydown="if(event.key==='Enter')addCustomTag()">
+        <button class="btn btn-sm" onclick="addCustomTag()">+ Tipo</button>
+      </div>
+    </div>
+    <div class="picker-group">
+      <div class="field-label">Área</div>
+      <div class="pill-row" id="areaPills"></div>
+      <div class="add-pill-row">
+        <input type="text" id="newAreaInput" placeholder="Nova área…" style="max-width:160px" onkeydown="if(event.key==='Enter')addCustomArea()">
+        <button class="btn btn-sm" onclick="addCustomArea()">+ Área</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Items panel -->
+  <div class="items-panel" id="itemsPanel">
+    <div class="items-toolbar">
+      <div class="items-toolbar-left">
+        <span class="items-toolbar-title" id="panelTitle">Selecione um tipo e uma área</span>
+        <span id="selCount" style="font-size:.75rem;color:var(--text3)"></span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="selectAllInPanel()">☑ Todos</button>
+        <button class="btn btn-sm" onclick="deselectInPanel()">☐ Nenhum</button>
+      </div>
+    </div>
+    <div class="items-list" id="itemsList">
+      <div class="empty-state">Selecione um tipo de mudança e uma área para ver os itens sugeridos.</div>
+    </div>
+    <div class="custom-add-row">
+      <input type="text" id="customItemInput" placeholder="Adicionar item personalizado para esta combinação…" onkeydown="if(event.key==='Enter')addCustomItem()">
+      <button class="btn btn-sm" onclick="addCustomItem()">+ Add</button>
+    </div>
+  </div>
+
+  <!-- Stack -->
+  <div class="stack-panel">
+    <div class="stack-header">
+      <span class="stack-title">Stack tecnológica (opcional)</span>
+      <button class="btn btn-sm" onclick="clearStack()">Limpar</button>
+    </div>
+    <table class="stack-table">
+      <thead><tr><th>Tecnologia</th><th>Versão</th><th style="width:36px"></th></tr></thead>
+      <tbody id="stackBody"></tbody>
+    </table>
+    <div class="stack-add-row">
+      <input type="text" id="stkTech" placeholder="Tecnologia" style="flex:1" onkeydown="if(event.key==='Tab'||event.key==='Enter'){event.preventDefault();document.getElementById('stkVer').focus()}">
+      <input type="text" id="stkVer" placeholder="Versão" style="max-width:120px" onkeydown="if(event.key==='Enter')addStackRow()">
+      <button class="btn btn-sm" onclick="addStackRow()">+ Linha</button>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <button class="btn btn-accent" onclick="generate()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Gerar markdown
+    </button>
+    <button class="btn" onclick="saveVersion()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar versão
+    </button>
+  </div>
+
+  <div id="outputSection" style="display:none" class="output-section">
+    <div class="field-label" style="margin-bottom:6px">Markdown gerado</div>
+    <div class="output-box">
+      <div class="output-toolbar">
+        <span id="outMeta"></span>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm" onclick="copyOutput()">Copiar</button>
+          <button class="btn btn-sm" onclick="downloadCurrent()">Baixar .md</button>
+        </div>
+      </div>
+      <textarea class="out" id="mdOut" readonly></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY VIEW -->
+<div id="view-history" style="display:none">
+  <div class="topbar"><h1>Histórico de versões</h1></div>
+  <div id="historyList"></div>
+  <p id="historyEmpty" style="color:var(--text3);font-size:.85rem;display:none">Nenhuma versão salva ainda.</p>
+</div>
+
+</main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const DEFAULT_TAGS = ['Desenvolvimento Inicial','Adicionado','Alterado','Removido','Resolvido'];
+const DEFAULT_AREAS = ['Backend','Frontend','App Mobile','QA','Infraestrutura','Análise de Dados'];
+
+// Sugestões de itens por [tag][area]
+const SUGGESTIONS = {
+  'Desenvolvimento Inicial': {
+    'Backend': [
+      'Estrutura base do projeto com Spring Boot',
+      'Configuração do Spring Data JPA + Hibernate',
+      'Configuração do banco de dados (MySQL/PostgreSQL)',
+      'Estrutura de pacotes (controller / service / domain / repository)',
+      'Tratamento global de exceções com @ControllerAdvice',
+      'Documentação OpenAPI/Swagger via SpringDoc',
+      'Validação de entrada com Bean Validation',
+      'Configuração do Spring Security base',
+      'Autenticação OAuth2 / JWT',
+      'Configuração do HikariCP',
+      'Spring Boot Actuator para monitoramento',
+    ],
+    'Frontend': [
+      'Estrutura base do projeto com React + Vite',
+      'Configuração de rotas com React Router',
+      'Configuração do Tailwind CSS',
+      'AuthProvider com contexto global de autenticação',
+      'Estrutura de componentes (pages / components / hooks / services)',
+      'Interceptor HTTP com credentials',
+      'Página de login',
+      'Página principal / dashboard',
+    ],
+    'App Mobile': [
+      'Estrutura base com React Native + Expo',
+      'Configuração de navegação (React Navigation)',
+      'Tela inicial / splash screen',
+      'Integração com API REST',
+      'Configuração de ambiente (dev/prod)',
+    ],
+    'QA': [
+      'Estrutura de testes com JUnit 5 + Mockito',
+      'Configuração do banco H2 para testes de integração',
+      'Configuração do MockMvc para testes de controller',
+      'Testes de repositório com @DataJpaTest',
+    ],
+    'Infraestrutura': [
+      'Dockerfile para o backend',
+      'Dockerfile para o frontend',
+      'Docker Compose com orquestração dos serviços',
+      'Health checks para todos os serviços',
+      'Rede Docker compartilhada entre os containers',
+      'Volumes para persistência de dados',
+      'Container separado para banco de testes',
+      'Pipeline CI/CD inicial',
+    ],
+    'Análise de Dados': [
+      'Estrutura base de relatórios',
+      'Configuração de fonte de dados para análise',
+      'Dashboard inicial',
+    ],
+  },
+  'Adicionado': {
+    'Backend': [
+      'Endpoint GET /v1/orders — listagem paginada',
+      'Endpoint GET /v1/orders/{id} — detalhe com ETag',
+      'Endpoint POST /v1/orders — criação de pedido',
+      'Endpoint POST /v1/orders/batch — criação em lote (207)',
+      'Endpoint GET /v1/orders/user — pedidos do cliente autenticado',
+      'Endpoint GET /v1/orders/restaurant — pedidos por restaurante',
+      'Endpoint GET /v1/users/{id}',
+      'Endpoint PUT /v1/users/{id}',
+      'Endpoint GET /v1/users/{id}/restaurants',
+      'Cache distribuído com Redis',
+      'Cache local com Caffeine',
+      'CacheInvalidationAspect',
+      'ETag por recurso e por listagem (ShallowETagHeaderFilter)',
+      'Paginação real no banco (setFirstResult/setMaxResults + COUNT separada)',
+      'OrderSpecs com filtro dinâmico via Criteria API',
+      'Emissão de pedidos em lote com captura individual de falhas',
+    ],
+    'Frontend': [
+      'Página /my-account com sidebar de navegação',
+      'Seção Minhas informações — edição inline',
+      'Seção Meus restaurantes — listagem paginada',
+      'Seção Meus pedidos — listagem com expansão e detalhe lazy',
+      'Seção Relatório de vendas',
+      'Hook useHasAuthority para verificação de permissões',
+      'Fluxo de cadastro de restaurante com atribuição automática de role',
+    ],
+    'App Mobile': [
+      'Tela de listagem de pedidos',
+      'Tela de detalhe do pedido',
+      'Notificações push',
+      'Suporte a AbortController para cancelar requisições ao desmontar',
+      'Atualização otimista do estado local',
+    ],
+    'QA': [
+      'Testes de controller com MockMvc',
+      'Testes de serviço com Mockito',
+      'Testes de repositório com banco H2',
+      'Testes de mapper Entity↔DTO',
+      'Testes de modelo e DTOs',
+      'Testes de integração end-to-end',
+    ],
+    'Infraestrutura': [
+      'Configuração de cache Redis distribuído',
+      'JAR em camadas para build Docker otimizado',
+      'Configuração de variáveis de ambiente por perfil',
+      'Stage de build multi-stage no Dockerfile',
+    ],
+    'Análise de Dados': [
+      'Endpoint de relatório de vendas',
+      'Agregações por restaurante / período',
+      'Exportação de dados em CSV',
+    ],
+  },
+  'Alterado': {
+    'Backend': [
+      'Paginação de queries customizadas migrada para o banco',
+      'Endpoints de listagem de pedidos separados por contexto',
+      'Refatoração do serviço de pedidos',
+      'Atualização de dependências do pom.xml',
+    ],
+    'Frontend': [
+      'Fluxo de edição consolidado em componente compartilhado',
+      'Refatoração do hook de estado para consumir camada de serviço',
+      'Atualização de dependências do package.json',
+    ],
+    'App Mobile': [
+      'Lógica de estado consolidada em App.tsx',
+      'Hook useTasks refatorado para usar useCallback',
+      'Modelo Task simplificado (remoção de campos opcionais)',
+    ],
+    'QA': ['Cobertura de testes ampliada','Refatoração de fixtures e helpers de teste'],
+    'Infraestrutura': ['Atualização de versão de imagem base Docker','Ajuste de variáveis de ambiente'],
+    'Análise de Dados': ['Ajuste de query de relatório','Mudança no formato de exportação'],
+  },
+  'Removido': {
+    'Backend': ['Endpoint depreciado removido','Dependência não utilizada removida do pom.xml'],
+    'Frontend': ['Componente não utilizado removido','Dependência não utilizada removida do package.json'],
+    'App Mobile': ['Tela removida por consolidação','Dependência legada removida'],
+    'QA': ['Teste duplicado removido'],
+    'Infraestrutura': ['Container legado removido do Compose'],
+    'Análise de Dados': ['Relatório descontinuado removido'],
+  },
+  'Resolvido': {
+    'Backend': [
+      'Erro de entidade JPA detached corrigido',
+      'Mapeamento bidirecional @ManyToMany corrigido com mappedBy',
+      'Invalidação de cache em múltiplas instâncias',
+      'Vazamento de conexão HikariCP corrigido',
+      'NullPointerException em validação de filtro',
+    ],
+    'Frontend': [
+      'Bug de comparação response.status como string ao invés de número',
+      'Re-render desnecessário no componente de listagem',
+      'Problema de autenticação com token userId vs id',
+    ],
+    'App Mobile': ['Crash ao navegar de volta na tela de detalhes','Requisição não cancelada ao desmontar componente'],
+    'QA': ['Teste flaky corrigido por dependência de ordem de execução'],
+    'Infraestrutura': ['Health check falhando por timeout muito curto','Volume Docker não persistindo entre restarts'],
+    'Análise de Dados': ['Query de relatório retornando dados duplicados'],
+  },
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let tags   = [...DEFAULT_TAGS];
+let areas  = [...DEFAULT_AREAS];
+let selTag  = null;
+let selArea = null;
+// checked[tag][area] = Set of item strings
+let checked = {};
+// customItems[tag][area] = []
+let customItems = {};
+// stack rows
+let stackRows = [];
+// versions
+let versions = JSON.parse(localStorage.getItem('cl_versions2') || '[]');
+let currentView = 'editor';
+
+// drag-select state
+let isDragging = false;
+let dragMode   = null; // 'check' | 'uncheck'
+let dragStart  = {x:0,y:0};
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+document.getElementById('dt').value = new Date().toISOString().slice(0,10);
+renderTagPills();
+renderAreaPills();
+renderSidebarVersions();
+setupDragSelect();
+
+// ═══════════════════════════════════════════════
+// VIEWS
+// ═══════════════════════════════════════════════
+function showView(v) {
+  currentView = v;
+  document.getElementById('view-editor').style.display = v==='editor'?'block':'none';
+  document.getElementById('view-history').style.display = v==='history'?'block':'none';
+  document.getElementById('nav-editor').className='sb-item'+(v==='editor'?' active':'');
+  document.getElementById('nav-history').className='sb-item'+(v==='history'?' active':'');
+  if (v==='history') renderHistory();
+}
+
+// ═══════════════════════════════════════════════
+// PILLS
+// ═══════════════════════════════════════════════
+function renderTagPills() {
+  const row = document.getElementById('tagPills');
+  row.innerHTML = '';
+  tags.forEach(t => {
+    const p = document.createElement('button');
+    p.className = 'pill '+(selTag===t?'sel':'unsel');
+    p.dataset.tag = DEFAULT_TAGS.includes(t) ? t : 'custom-pill';
+    p.textContent = t;
+    p.onclick = () => { selTag = selTag===t?null:t; renderTagPills(); renderAreaPills(); renderPanel(); };
+    row.appendChild(p);
+  });
+}
+
+function renderAreaPills() {
+  const row = document.getElementById('areaPills');
+  row.innerHTML = '';
+  areas.forEach(a => {
+    const p = document.createElement('button');
+    p.className = 'pill '+(selArea===a?'sel':'unsel');
+    p.dataset.area = DEFAULT_AREAS.includes(a) ? a : 'custom-pill';
+    p.textContent = a;
+    p.onclick = () => { selArea = selArea===a?null:a; renderAreaPills(); renderPanel(); };
+    row.appendChild(p);
+  });
+}
+
+function addCustomTag() {
+  const inp = document.getElementById('newTagInput');
+  const v = inp.value.trim();
+  if (!v || tags.includes(v)) return;
+  tags.push(v);
+  inp.value = '';
+  renderTagPills();
+}
+
+function addCustomArea() {
+  const inp = document.getElementById('newAreaInput');
+  const v = inp.value.trim();
+  if (!v || areas.includes(v)) return;
+  areas.push(v);
+  inp.value = '';
+  renderAreaPills();
+}
+
+// ═══════════════════════════════════════════════
+// PANEL
+// ═══════════════════════════════════════════════
+function getKey() { return selTag && selArea ? `${selTag}||${selArea}` : null; }
+
+function getCheckedSet() {
+  const k = getKey(); if (!k) return new Set();
+  if (!checked[k]) checked[k] = new Set();
+  return checked[k];
+}
+
+function getSuggestions() {
+  if (!selTag || !selArea) return [];
+  return (SUGGESTIONS[selTag] && SUGGESTIONS[selTag][selArea]) || [];
+}
+
+function getCustom() {
+  const k = getKey(); if (!k) return [];
+  return customItems[k] || [];
+}
+
+function renderPanel() {
+  const k = getKey();
+  const title = k ? `${selTag} · ${selArea}` : 'Selecione um tipo e uma área';
+  document.getElementById('panelTitle').textContent = title;
+  const list = document.getElementById('itemsList');
+  const sugg = getSuggestions();
+  const cust = getCustom();
+  const all  = [...sugg, ...cust];
+  if (!k || all.length === 0) {
+    list.innerHTML = `<div class="empty-state">${k ? 'Nenhum item sugerido. Adicione abaixo.' : 'Selecione um tipo de mudança e uma área.'}</div>`;
+    updateSelCount();
+    return;
+  }
+  const cs = getCheckedSet();
+  list.innerHTML = all.map((item, i) => `
+    <div class="item-row" data-item="${escAttr(item)}" onmousedown="rowMouseDown(event,'${escAttr(item)}')" onmouseenter="rowMouseEnter(event,'${escAttr(item)}')">
+      <input type="checkbox" id="ir_${i}" ${cs.has(item)?'checked':''} onchange="toggleItem('${escAttr(item)}')">
+      <label for="ir_${i}">${escHtml(item)}</label>
+      ${cust.includes(item) ? `<button class="del-item" onclick="delCustomItem('${escAttr(item)}')">✕</button>` : ''}
+    </div>`).join('');
+  updateSelCount();
+}
+
+function toggleItem(item, force) {
+  const cs = getCheckedSet();
+  if (force === true) cs.add(item);
+  else if (force === false) cs.delete(item);
+  else cs.has(item) ? cs.delete(item) : cs.add(item);
+  // sync checkbox
+  const all = [...getSuggestions(), ...getCustom()];
+  const i = all.indexOf(item);
+  if (i>=0) { const cb = document.getElementById('ir_'+i); if(cb) cb.checked = cs.has(item); }
+  updateSelCount();
+}
+
+function updateSelCount() {
+  const k = getKey();
+  const n = k ? getCheckedSet().size : 0;
+  document.getElementById('selCount').textContent = n>0 ? `${n} selecionado${n>1?'s':''}` : '';
+}
+
+function addCustomItem() {
+  const inp = document.getElementById('customItemInput');
+  const v = inp.value.trim();
+  const k = getKey();
+  if (!v || !k) return;
+  if (!customItems[k]) customItems[k] = [];
+  if (!customItems[k].includes(v) && !getSuggestions().includes(v)) {
+    customItems[k].push(v);
+    getCheckedSet().add(v); // auto-check novos
+  }
+  inp.value = '';
+  renderPanel();
+}
+
+function delCustomItem(item) {
+  const k = getKey(); if (!k) return;
+  customItems[k] = (customItems[k]||[]).filter(x => x!==item);
+  getCheckedSet().delete(item);
+  renderPanel();
+}
+
+function selectAllInPanel() {
+  const all = [...getSuggestions(), ...getCustom()];
+  const cs = getCheckedSet();
+  all.forEach(i => cs.add(i));
+  renderPanel();
+}
+
+function deselectInPanel() {
+  const k = getKey(); if (k) checked[k] = new Set();
+  renderPanel();
+}
+
+function selectAllVisible() {
+  Object.keys(checked).forEach(k => {
+    const [t,a] = k.split('||');
+    const all = [...(SUGGESTIONS[t]?.[a]||[]), ...(customItems[k]||[])];
+    all.forEach(i => checked[k].add(i));
+  });
+  // also init current
+  if (getKey()) { selectAllInPanel(); return; }
+  renderPanel();
+}
+
+function deselectAll() {
+  checked = {};
+  renderPanel();
+}
+
+// ═══════════════════════════════════════════════
+// DRAG SELECT
+// ═══════════════════════════════════════════════
+function rowMouseDown(e, item) {
+  if (e.button !== 0) return;
+  const cs = getCheckedSet();
+  dragMode = cs.has(item) ? 'uncheck' : 'check';
+  toggleItem(item, dragMode==='check');
+  isDragging = true;
+  e.preventDefault();
+}
+
+function rowMouseEnter(e, item) {
+  if (!isDragging) return;
+  toggleItem(item, dragMode==='check');
+}
+
+function setupDragSelect() {
+  document.addEventListener('mouseup', () => { isDragging = false; dragMode = null; });
+  document.addEventListener('mouseleave', () => { isDragging = false; dragMode = null; });
+}
+
+// ═══════════════════════════════════════════════
+// STACK
+// ═══════════════════════════════════════════════
+function addStackRow() {
+  const t = document.getElementById('stkTech').value.trim();
+  const v = document.getElementById('stkVer').value.trim();
+  if (!t) return;
+  stackRows.push({tech:t, ver:v});
+  document.getElementById('stkTech').value='';
+  document.getElementById('stkVer').value='';
+  renderStack();
+  document.getElementById('stkTech').focus();
+}
+
+function delStackRow(i) { stackRows.splice(i,1); renderStack(); }
+
+function renderStack() {
+  const tbody = document.getElementById('stackBody');
+  tbody.innerHTML = stackRows.map((r,i)=>`
+    <tr>
+      <td><input type="text" value="${escAttr(r.tech)}" oninput="stackRows[${i}].tech=this.value"></td>
+      <td><input type="text" value="${escAttr(r.ver)}"  oninput="stackRows[${i}].ver=this.value" style="max-width:120px"></td>
+      <td><button class="btn btn-sm" onclick="delStackRow(${i})" style="padding:2px 6px;color:var(--text3)">✕</button></td>
+    </tr>`).join('');
+}
+
+function clearStack() { stackRows=[]; renderStack(); }
+
+// ═══════════════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════════════
+function collectMd() {
+  const ver  = document.getElementById('ver').value.trim()||'0.1.0';
+  const dt   = document.getElementById('dt').value.trim()||new Date().toISOString().slice(0,10);
+  const name = document.getElementById('verName').value.trim();
+  const header = name ? `## [${ver}] - ${dt} · ${name}` : `## [${ver}] - ${dt}`;
+
+  // gather all checked items grouped by tag > area
+  const groups = {}; // tag -> area -> [items]
+  let total = 0;
+  Object.entries(checked).forEach(([k, cs]) => {
+    if (cs.size === 0) return;
+    const [tag, area] = k.split('||');
+    if (!groups[tag]) groups[tag] = {};
+    if (!groups[tag][area]) groups[tag][area] = [];
+    cs.forEach(item => { groups[tag][area].push(item); total++; });
+  });
+
+  let lines = [header];
+
+  tags.forEach(tag => {
+    if (!groups[tag]) return;
+    lines.push(`\n### ${tag}`);
+    areas.forEach(area => {
+      if (!groups[tag][area] || groups[tag][area].length===0) return;
+      lines.push(`- **${area}**`);
+      groups[tag][area].forEach(item => lines.push(`  - ${item}`));
+    });
+  });
+
+  if (stackRows.length > 0) {
+    lines.push('\n### Stack Técnico');
+    lines.push('| Tecnologia | Versão |');
+    lines.push('| ---------- | ------ |');
+    stackRows.forEach(r => lines.push(`| ${r.tech} | ${r.ver} |`));
+  }
+
+  const today = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  lines.push(`\n---\n**Última atualização:** ${today}`);
+
+  return { md: lines.join('\n'), ver, dt, name, total };
+}
+
+function generate() {
+  const { md, ver, total } = collectMd();
+  document.getElementById('mdOut').value = md;
+  document.getElementById('outMeta').textContent = `v${ver} · ${total} entrada${total!==1?'s':''}`;
+  document.getElementById('outputSection').style.display = 'block';
+  document.getElementById('outputSection').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function saveVersion() {
+  const { md, ver, dt, name, total } = collectMd();
+  if (total===0) { alert('Selecione pelo menos um item antes de salvar.'); return; }
+  const idx = versions.findIndex(v=>v.ver===ver);
+  const entry = { ver, dt, name, md, savedAt: new Date().toISOString() };
+  if (idx>=0) { if (!confirm(`Versão ${ver} já existe. Substituir?`)) return; versions[idx]=entry; }
+  else versions.unshift(entry);
+  persist();
+  renderSidebarVersions();
+  alert(`Versão ${ver} salva!`);
+}
+
+// ═══════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════
+function renderSidebarVersions() {
+  const list = document.getElementById('sbVersionList');
+  if (versions.length===0) {
+    list.innerHTML='<div style="padding:4px 16px;font-size:.73rem;color:var(--text3)">Nenhuma ainda</div>';
+    return;
+  }
+  list.innerHTML = versions.map((v,i)=>`
+    <div class="sb-ver-entry" onclick="loadVersion(${i})">
+      <span>${v.ver}${v.name?' · '+v.name:''}</span>
+      <button class="sb-ver-del" onclick="event.stopPropagation();deleteVersion(${i})">✕</button>
+    </div>`).join('');
+}
+
+function loadVersion(i) {
+  const v = versions[i];
+  document.getElementById('mdOut').value = v.md;
+  document.getElementById('outMeta').textContent = `v${v.ver} — carregado do histórico`;
+  document.getElementById('outputSection').style.display = 'block';
+  showView('editor');
+}
+
+function deleteVersion(i) {
+  if (!confirm(`Deletar versão ${versions[i].ver}?`)) return;
+  versions.splice(i,1);
+  persist();
+  renderSidebarVersions();
+  if (currentView==='history') renderHistory();
+}
+
+function renderHistory() {
+  const list  = document.getElementById('historyList');
+  const empty = document.getElementById('historyEmpty');
+  if (versions.length===0) { list.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  list.innerHTML = versions.map((v,i)=>`
+    <div class="history-card">
+      <div class="history-card-header" onclick="toggleHCard('hb${i}')">
+        <div>
+          <div class="hv-title">v${v.ver}${v.name?' — '+v.name:''}</div>
+          <div class="hv-meta">${v.dt} · salvo em ${new Date(v.savedAt).toLocaleString('pt-BR')}</div>
+        </div>
+        <span style="font-size:.8rem;color:var(--text3)">▾</span>
+      </div>
+      <div class="history-card-body" id="hb${i}">
+        <pre>${escHtml(v.md)}</pre>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="copyVer(${i})">Copiar</button>
+          <button class="btn btn-sm" onclick="dlSingle(${i})">Baixar .md</button>
+          <button class="btn btn-sm" style="color:var(--accent)" onclick="deleteVersion(${i})">Deletar</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleHCard(id){const el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';}
+function copyVer(i){navigator.clipboard.writeText(versions[i].md).catch(()=>{const ta=document.createElement('textarea');ta.value=versions[i].md;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta)});}
+function dlSingle(i){const v=versions[i];dl(`CHANGELOG-${v.ver}.md`,v.md);}
+
+// ═══════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════
+function exportAll() {
+  if (versions.length===0){alert('Nenhuma versão salva.');return;}
+  const header = '# Histórico de Mudanças\n\nTodas as mudanças notáveis serão documentadas neste arquivo.\nO formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),\ne este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).\n\n---\n\n';
+  const content = header + versions.map(v=>v.md).join('\n\n---\n\n');
+  dl('CHANGELOG.md', content);
+}
+
+function downloadCurrent() {
+  const ver = document.getElementById('ver').value.trim()||'entry';
+  dl(`CHANGELOG-${ver}.md`, document.getElementById('mdOut').value);
+}
+
+function copyOutput(){navigator.clipboard.writeText(document.getElementById('mdOut').value).catch(()=>{const ta=document.getElementById('mdOut');ta.select();document.execCommand('copy')});}
+
+function dl(filename,text){
+  const a=document.createElement('a');
+  a.href='data:text/markdown;charset=utf-8,'+encodeURIComponent(text);
+  a.download=filename;a.click();
+}
+
+// ═══════════════════════════════════════════════
+// MISC
+// ═══════════════════════════════════════════════
+function clearForm() {
+  checked={};customItems={};stackRows=[];
+  document.getElementById('ver').value='';
+  document.getElementById('verName').value='';
+  document.getElementById('dt').value=new Date().toISOString().slice(0,10);
+  selTag=null;selArea=null;
+  renderTagPills();renderAreaPills();renderPanel();renderStack();
+  document.getElementById('outputSection').style.display='none';
+}
+
+function persist(){localStorage.setItem('cl_versions2',JSON.stringify(versions));}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escAttr(s){return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+</script>
+</body>
+</html>

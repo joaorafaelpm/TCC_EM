@@ -68,14 +68,6 @@ public @interface CheckSecurity {
         @interface CanSearch {
         }
 
-        // Listagem de pedidos com filtro: verifica clientId e restaurantId já no início
-        // pois eles chegam como parâmetro da requisição (não precisa buscar antes).
-        @PreAuthorize("@pendezzaPizzaSecurity.canListOrders(" +
-                "#orderFilter.customerId, #orderFilter.restaurantId)")
-        @Retention(RetentionPolicy.RUNTIME)
-        @Target(ElementType.METHOD)
-        @interface CanList {
-        }
 
         // Gerenciar status do pedido: Admin/Analista (GERENCIAR_PEDIDOS)
         // ou dono do restaurante do pedido (ownership check via orderId).
@@ -90,6 +82,18 @@ public @interface CheckSecurity {
         @Retention(RetentionPolicy.RUNTIME)
         @Target(ElementType.METHOD)
         @interface CanCreate {
+        }
+
+        @PreAuthorize("@pendezzaPizzaSecurity.canListOwnRestaurantOrders(#restaurantId)")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface CanListOwnRestaurantOrders {
+        }
+
+        @PreAuthorize("@pendezzaPizzaSecurity.canListOwnUserOrders(#userId)")
+        @Retention(RetentionPolicy.RUNTIME)
+        @Target(ElementType.METHOD)
+        public @interface CanListOwnOrders {
         }
     }
 

@@ -18,7 +18,7 @@ import java.util.UUID;
  */
 @Repository
 public interface OrderRepository extends CustomJPARepository<Order, UUID> ,
-        JpaSpecificationExecutor<Order> {
+        JpaSpecificationExecutor<Order> , OrderRepositoryQueries {
 
 //    Essa query recebe todas os outros parâmetros de objetos junto do pedido, isso simplifica o número de selects para receber essa entidade
 //    Também concerta um problema de receber algum dado como "null", já que recebe todos os parâmetros de uma vez
@@ -30,6 +30,15 @@ public interface OrderRepository extends CustomJPARepository<Order, UUID> ,
         WHERE p.id = :id
     """)
     Optional<Order> findByIdMapperResolved(UUID id);
+
+    @Query("""
+        SELECT p FROM Order p
+        JOIN FETCH p.restaurant r
+        JOIN FETCH p.deliveryAddress.city c
+        JOIN FETCH c.state
+        WHERE r.id = :restaurantId
+    """)
+    Page<Order> findAllMapperResolved(UUID restaurantId , Pageable pageable);
 
 //    Substituo a principal para incluir resultado páginado ao mesmo tempo que carrego a entidade de User
     @Override

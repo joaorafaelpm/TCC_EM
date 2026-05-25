@@ -112,19 +112,25 @@ public class PendezzaPizzaSecurity {
         return hasAuthorityRead() && isAuthenticated();
     }
 
-    public boolean canSearchOrders(UUID clientId, UUID restaurantId) {
+    public boolean canSearchOrders(UUID customerId, UUID restaurantId) {
         return hasAuthority("CONSULTAR_PEDIDOS")
-                || isAuthenticatedUserEquals(clientId)
+                || isAuthenticatedUserEquals(customerId)
                 || managesRestaurant(restaurantId);
     }
 
-    public boolean canListOrders(UUID clientId, UUID restaurantId) {
-        return hasAuthorityRead() && canSearchOrders(clientId, restaurantId);
+    public boolean canListOwnRestaurantOrders(UUID restaurantId) {
+        return hasAuthorityRead() && hasAuthority("CONSULTAR_PEDIDOS")
+                || managesRestaurant(restaurantId);
+    }
+    public boolean canListOwnUserOrders(UUID userId) {
+        return hasAuthorityRead() && hasAuthority("CONSULTAR_PEDIDOS")
+                || isAuthenticatedUserEquals(userId);
     }
 
-    public boolean canManageOrders(UUID orderCode) {
+
+    public boolean canManageOrders(UUID orderId) {
         return hasAuthorityWrite()
-                && ((hasAuthority("GERENCIAR_PEDIDOS") && managesRestaurantOfOrder(orderCode)) || hasAuthority("EDITAR_PEDIDOS"));
+                && ((hasAuthority("GERENCIAR_PEDIDOS") && managesRestaurantOfOrder(orderId)) || hasAuthority("EDITAR_PEDIDOS"));
     }
 
     public boolean canCreateOrders() {
