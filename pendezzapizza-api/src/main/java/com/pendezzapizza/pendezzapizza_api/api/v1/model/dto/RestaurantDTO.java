@@ -5,6 +5,7 @@ import com.pendezzapizza.pendezzapizza_api.core.validation.restaurant_owner.Vali
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,9 +35,11 @@ public class RestaurantDTO {
     private String description;
 
     @Schema(example = "19")
+    @Positive
     private Integer averageDeliveryTimeMinutes;
 
     @Schema(example = "49.99")
+    @Positive
     private BigDecimal minimumOrderValue;
 
     @Schema(example = "10.10", requiredMode = Schema.RequiredMode.REQUIRED)

@@ -5,11 +5,7 @@
     <title>Acesso Restrito - Pendezza Pizza</title>
     <link rel="icon" type="image/png" th:href="@{/favicon.png}">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -19,26 +15,20 @@
             position: relative;
         }
 
-        /* NOVA CLASSE PARA O LOGO */
         .top-logo {
-            color: #000 ;
+            color: #000;
             position: absolute;
             background-color: none;
-            top: 20px; /* Distância do topo */
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 20; /* Fica acima de tudo */
-            max-width: 250px; /* Ajuste o tamanho conforme necessário */
+            z-index: 20;
+            max-width: 250px;
             height: auto;
         }
 
-        .container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
+        .container { display: flex; width: 100%; height: 100%; }
 
-        /* Pizza centralizada */
         .floating-pizza {
             position: absolute;
             top: 50%;
@@ -77,9 +67,19 @@
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.25rem; /* reduzido — o espaço extra vem do .field-wrapper */
             margin-bottom: 1.5rem;
         }
+
+        /* Cada campo + sua mensagem de erro ficam juntos */
+        .field-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .field-wrapper:last-child { margin-bottom: 0; }
 
         .input-group input {
             padding: 0.85rem 1rem;
@@ -94,6 +94,20 @@
         .input-group input:focus {
             border-color: #12472A;
             box-shadow: 0 0 0 3px rgba(18, 71, 42, 0.1);
+        }
+
+        /* Estado inválido — borda vermelha */
+        .input-group input.is-invalid {
+            border-color: #d32f2f;
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+
+        /* Mensagem de erro por campo */
+        .field-error {
+            color: #d32f2f;
+            font-size: 0.78rem;
+            padding-left: 0.25rem;
+            display: none; /* esconde por padrão; JS exibe quando inválido */
         }
 
         .password-container {
@@ -122,6 +136,7 @@
         .toggle-password:hover { color: #12472A; }
         .toggle-password svg { width: 20px; height: 20px; }
 
+        /* Banner de erro geral (credenciais inválidas / erro do backend) */
         .error-msg {
             color: #d32f2f;
             background-color: #fdeeea;
@@ -143,46 +158,54 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.3s, opacity 0.3s;
             margin-bottom: 1.5rem;
         }
 
-       .register-link {
+        button[type="submit"]:hover:not(:disabled) { background: #0d361f; }
+
+        /* Desabilitado durante o envio */
+        button[type="submit"]:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .register-link {
             text-align: center;
             font-size: 0.9rem;
             color: #555;
             margin-bottom: 1.2rem;
-            margin-top: -0.5rem; /* Aproxima um pouco do campo de senha */
+            margin-top: -0.5rem;
             display: block;
         }
 
-        .register-link a {
-            color: #12472A;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-
-        button[type="submit"]:hover { background: #0d361f; }
+        .register-link a { color: #12472A; font-weight: 600; text-decoration: none; }
+        .register-link a:hover { text-decoration: underline; }
 
         .login-condition {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.5rem;
             font-size: 0.85rem;
             color: #555;
         }
 
-        .login-condition input[type="checkbox"] { accent-color: #12472A; }
-        .login-condition a {
-            color: #12472A;
-            font-weight: 600;
-            text-decoration: none;
+        .login-condition input[type="checkbox"] {
+            accent-color: #12472A;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
+
+        .login-condition a { color: #12472A; font-weight: 600; text-decoration: none; }
         .login-condition a:hover { text-decoration: underline; }
+
+        /* Erro inline do checkbox */
+        .checkbox-error {
+            color: #d32f2f;
+            font-size: 0.78rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
 
         .image-side {
             flex: 1;
@@ -210,11 +233,7 @@
             font-weight: 800;
         }
 
-        .image-side p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            line-height: 1.6;
-        }
+        .image-side p { font-size: 1.1rem; opacity: 0.9; line-height: 1.6; }
 
         .italy-tagline {
             margin-top: 2.5rem;
@@ -238,7 +257,13 @@
 
 <div class="container">
     <div class="login-side">
-        <form class="login-container" action="/login" method="POST">
+        <!--
+            novalidate — desabilita a validação nativa do browser.
+            A validação customizada em JS abaixo assume o controle
+            e oferece mensagens em português com visual consistente.
+        -->
+        <form class="login-container" id="loginForm" action="/login" method="POST" novalidate>
+
             <div class="login-header">
                 <h2>
                     <span class="color-pendezza">Pendezza</span>
@@ -246,38 +271,73 @@
                 </h2>
             </div>
 
-            <div class="error-msg" id="erroMsg">
+            <!-- Banner de erro de credenciais (resposta do Spring Security) -->
+            <div class="error-msg" id="erroMsg" role="alert">
                 Credenciais inválidas. Verifique seu e-mail e senha.
             </div>
 
             <div class="input-group">
-                <input type="email" name="username" placeholder="E-mail de acesso" required autocomplete="email" />
 
-                <div class="password-container">
-                    <input type="password" name="password" id="passwordField" placeholder="Sua senha" required autocomplete="current-password" />
-                    <button type="button" id="togglePassword" class="toggle-password" aria-label="Mostrar senha">
-                        <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
-                        <svg id="eyeClosed" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                            <line x1="1" y1="1" x2="23" y2="23"></line>
-                        </svg>
-                    </button>
+                <!-- E-mail -->
+                <div class="field-wrapper">
+                    <input
+                            type="email"
+                            name="username"
+                            id="emailField"
+                            placeholder="E-mail de acesso"
+                            autocomplete="email"
+                            aria-describedby="emailError"
+                    />
+                    <span class="field-error" id="emailError" role="alert"></span>
                 </div>
+
+                <!-- Senha -->
+                <div class="field-wrapper">
+                    <div class="password-container">
+                        <input
+                                type="password"
+                                name="password"
+                                id="passwordField"
+                                placeholder="Sua senha"
+                                autocomplete="current-password"
+                                aria-describedby="passwordError"
+                        />
+                        <button type="button" id="togglePassword" class="toggle-password" aria-label="Mostrar senha">
+                            <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg id="eyeClosed" style="display: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <span class="field-error" id="passwordError" role="alert"></span>
+                </div>
+
             </div>
 
             <div class="register-link">
                 Ainda não tem conta? <a href="http://localhost:5173/cadastro">Cadastre-se Aqui!</a>
             </div>
 
-            <button type="submit" id="LoginButton">Entrar no Sistema</button>
+            <button type="submit" id="loginButton">Entrar no Sistema</button>
 
-            <div class="login-condition">
-                <input type="checkbox" required id="termos" />
-                <label for="termos">Concordo com os <a href="http://localhost:5173/terms_of_user" target="_blank" rel="noopener noreferrer">Termos de Serviço</a></label>
+            <!-- Termos de serviço -->
+            <div>
+                <div class="login-condition">
+                    <input type="checkbox" id="termos" aria-describedby="termosError" />
+                    <label for="termos">
+                        Concordo com os
+                        <a href="http://localhost:5173/terms_of_user" target="_blank" rel="noopener noreferrer">Termos de Serviço</a>
+                    </label>
+                </div>
+                <span class="checkbox-error" id="termosError" role="alert">
+                    Você precisa aceitar os Termos de Serviço para continuar.
+                </span>
             </div>
+
         </form>
     </div>
 
@@ -291,28 +351,143 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        if (window.location.search.includes("error")) {
-            document.getElementById("erroMsg").style.display = "block";
+    /* ─── Funções de validação (espelho do validators.js do React) ─── */
+
+    /**
+     * @NotBlank — não nulo, não vazio, não só espaços
+     */
+    function notBlank(value, label) {
+        return !value || !value.trim() ? (label + ' é obrigatório') : null;
+    }
+
+    /**
+     * @Email — formato básico de e-mail
+     */
+    function isEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+            ? null
+            : 'Insira um e-mail válido';
+    }
+
+    /* ─── Exibição / limpeza de erros ─── */
+
+    function showError(inputEl, errorEl, message) {
+        inputEl.classList.add('is-invalid');
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+    }
+
+    function clearError(inputEl, errorEl) {
+        inputEl.classList.remove('is-invalid');
+        errorEl.textContent = '';
+        errorEl.style.display = 'none';
+    }
+
+    /* ─── Validação completa do formulário ─── */
+
+    function validateForm() {
+        const emailVal    = document.getElementById('emailField').value;
+        const passwordVal = document.getElementById('passwordField').value;
+        const termosChecked = document.getElementById('termos').checked;
+
+        const emailInput    = document.getElementById('emailField');
+        const passwordInput = document.getElementById('passwordField');
+        const emailError    = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const termosError   = document.getElementById('termosError');
+
+        let valid = true;
+
+        /* Valida e-mail: @NotBlank + @Email */
+        const emailBlankError = notBlank(emailVal, 'E-mail');
+        if (emailBlankError) {
+            showError(emailInput, emailError, emailBlankError);
+            valid = false;
+        } else {
+            const emailFormatError = isEmail(emailVal);
+            if (emailFormatError) {
+                showError(emailInput, emailError, emailFormatError);
+                valid = false;
+            } else {
+                clearError(emailInput, emailError);
+            }
         }
 
-        const togglePassword = document.getElementById("togglePassword");
-        const passwordField = document.getElementById("passwordField");
-        const eyeOpen = document.getElementById("eyeOpen");
-        const eyeClosed = document.getElementById("eyeClosed");
+        /* Valida senha: @NotBlank */
+        const passwordBlankError = notBlank(passwordVal, 'Senha');
+        if (passwordBlankError) {
+            showError(passwordInput, passwordError, passwordBlankError);
+            valid = false;
+        } else {
+            clearError(passwordInput, passwordError);
+        }
 
-        togglePassword.addEventListener("click", () => {
-            const isPassword = passwordField.getAttribute("type") === "password";
-            passwordField.setAttribute("type", isPassword ? "text" : "password");
+        /* Valida checkbox de termos */
+        if (!termosChecked) {
+            termosError.style.display = 'block';
+            valid = false;
+        } else {
+            termosError.style.display = 'none';
+        }
 
-            if (isPassword) {
-                eyeOpen.style.display = "none";
-                eyeClosed.style.display = "block";
-            } else {
-                eyeOpen.style.display = "block";
-                eyeClosed.style.display = "none";
+        return valid;
+    }
+
+    /* ─── Inicialização ─── */
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        /* Exibe erro de credenciais retornado pelo Spring Security */
+        if (window.location.search.includes('error')) {
+            document.getElementById('erroMsg').style.display = 'block';
+        }
+
+        /* Toggle de visibilidade da senha */
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField  = document.getElementById('passwordField');
+        const eyeOpen        = document.getElementById('eyeOpen');
+        const eyeClosed      = document.getElementById('eyeClosed');
+
+        togglePassword.addEventListener('click', () => {
+            const isPassword = passwordField.getAttribute('type') === 'password';
+            passwordField.setAttribute('type', isPassword ? 'text' : 'password');
+            eyeOpen.style.display   = isPassword ? 'none'  : 'block';
+            eyeClosed.style.display = isPassword ? 'block' : 'none';
+        });
+
+        /* Validação no submit */
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            const isValid = validateForm();
+            if (!isValid) {
+                e.preventDefault(); // impede o envio com dados inválidos
+                return;
+            }
+
+            /* Desabilita o botão para evitar double-submit */
+            const btn = document.getElementById('loginButton');
+            btn.disabled = true;
+            btn.textContent = 'Entrando...';
+        });
+
+        /* Limpa o erro de campo enquanto o usuário digita (feedback em tempo real) */
+        document.getElementById('emailField').addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) {
+                const err = notBlank(this.value, 'E-mail') || isEmail(this.value);
+                if (!err) clearError(this, document.getElementById('emailError'));
             }
         });
+
+        document.getElementById('passwordField').addEventListener('input', function () {
+            if (this.classList.contains('is-invalid')) {
+                const err = notBlank(this.value, 'Senha');
+                if (!err) clearError(this, document.getElementById('passwordError'));
+            }
+        });
+
+        document.getElementById('termos').addEventListener('change', function () {
+            if (this.checked) document.getElementById('termosError').style.display = 'none';
+        });
+
     });
 </script>
 </body>

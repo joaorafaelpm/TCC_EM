@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Este projeto utiliza uma arquitetura padrão no backend usando DDD. A ideia central é manter o código bem organizado, fácil de testar e simples de manter.
+Este projeto utiliza uma arquitetura padrão MVC no backend. A ideia central é manter o código bem organizado, fácil de testar e simples de manter.
 
 ## Princípios Fundamentais
 

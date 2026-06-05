@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog Generator</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<div id="dragOverlay"></div>
+
+<div class="app">
+<!-- ── Sidebar ── -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <span class="sb-brand-icon">📋</span>
+    <span class="sb-brand-name">Changelog Gen</span>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-title">Navegação</div>
+    <button class="sb-item active" id="nav-editor" onclick="showView('editor')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Nova entrada
+    </button>
+    <button class="sb-item" id="nav-history" onclick="showView('history')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Histórico
+    </button>
+  </div>
+  <div class="sb-section"><div class="sb-section-title">Versões salvas</div></div>
+  <div class="sb-version-list" id="sbVersionList">
+    <div style="padding:4px 8px;font-size:.73rem;color:var(--text3)">Conecte uma pasta para ver</div>
+  </div>
+  <div class="sb-footer">
+    <!-- Dir status -->
+    <div class="dir-badge" id="dirBadge">
+      <span class="dir-badge-dot"></span>
+      <span id="dirLabel">Nenhuma pasta conectada</span>
+    </div>
+    <button class="btn" style="width:100%;justify-content:center" id="btnPickDir" onclick="selectFolder()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      Selecionar pasta
+    </button>
+    <button class="btn" style="width:100%;justify-content:center" onclick="exportAll()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Exportar CHANGELOG.md
+    </button>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<main class="main">
+
+<!-- EDITOR VIEW -->
+<div id="view-editor">
+  <div class="warn-box" id="warnBox">
+    ⚠️ Seu navegador não suporta a <strong>File System Access API</strong>.
+    Use <strong>Chrome</strong> ou <strong>Edge</strong> para salvar arquivos diretamente no disco.
+    O histórico não estará disponível neste navegador.
+  </div>
+
+  <div class="topbar">
+    <h1>Nova entrada</h1>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="selectAllVisible()">☑ Sel. tudo</button>
+      <button class="btn btn-sm" onclick="deselectAll()">☐ Limpar sel.</button>
+      <button class="btn btn-sm" onclick="clearForm()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="meta-grid">
+    <div class="meta-group"><label class="field-label">Versão</label><input type="text" id="ver" value="0.1.0" placeholder="0.1.0"></div>
+    <div class="meta-group"><label class="field-label">Data</label><input type="text" id="dt"></div>
+    <div class="meta-group"><label class="field-label">Nome (opcional)</label><input type="text" id="verName" placeholder="ex: MVP Backend"></div>
+  </div>
+
+  <div class="pickers">
+    <div class="picker-group">
+      <div class="field-label">Tipo de mudança</div>
+      <div class="pill-row" id="tagPills"></div>
+      <div class="add-pill-row">
+        <input type="text" id="newTagInput" placeholder="Novo tipo…" style="max-width:160px" onkeydown="if(event.key==='Enter')addCustomTag()">
+        <button class="btn btn-sm" onclick="addCustomTag()">+ Tipo</button>
+      </div>
+    </div>
+    <div class="picker-group">
+      <div class="field-label">Área</div>
+      <div class="pill-row" id="areaPills"></div>
+      <div class="add-pill-row">
+        <input type="text" id="newAreaInput" placeholder="Nova área…" style="max-width:160px" onkeydown="if(event.key==='Enter')addCustomArea()">
+        <button class="btn btn-sm" onclick="addCustomArea()">+ Área</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="items-panel" id="itemsPanel">
+    <div class="items-toolbar">
+      <div class="items-toolbar-left">
+        <span class="items-toolbar-title" id="panelTitle">Selecione um tipo e uma área</span>
+        <span id="selCount" style="font-size:.75rem;color:var(--text3)"></span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="selectAllInPanel()">☑ Todos</button>
+        <button class="btn btn-sm" onclick="deselectInPanel()">☐ Nenhum</button>
+      </div>
+    </div>
+    <div class="items-list" id="itemsList">
+      <div class="empty-state">Selecione um tipo de mudança e uma área para ver os itens sugeridos.</div>
+    </div>
+    <div class="custom-add-row">
+      <input type="text" id="customItemInput" placeholder="Adicionar item personalizado para esta combinação…" onkeydown="if(event.key==='Enter')addCustomItem()">
+      <button class="btn btn-sm" onclick="addCustomItem()">+ Add</button>
+    </div>
+  </div>
+
+  <div class="stack-panel">
+    <div class="stack-header">
+      <span class="stack-title">Stack tecnológica (opcional)</span>
+      <button class="btn btn-sm" onclick="clearStack()">Limpar</button>
+    </div>
+    <table class="stack-table">
+      <thead><tr><th>Tecnologia</th><th>Versão</th><th style="width:36px"></th></tr></thead>
+      <tbody id="stackBody"></tbody>
+    </table>
+    <div class="stack-add-row">
+      <input type="text" id="stkTech" placeholder="Tecnologia" style="flex:1" onkeydown="if(event.key==='Tab'||event.key==='Enter'){event.preventDefault();document.getElementById('stkVer').focus()}">
+      <input type="text" id="stkVer" placeholder="Versão" style="max-width:120px" onkeydown="if(event.key==='Enter')addStackRow()">
+      <button class="btn btn-sm" onclick="addStackRow()">+ Linha</button>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-accent" onclick="generate()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Gerar markdown
+    </button>
+    <button class="btn" onclick="saveVersion()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Salvar versão
+    </button>
+  </div>
+
+  <div id="outputSection" style="display:none" class="output-section">
+    <div class="field-label" style="margin-bottom:6px">Markdown gerado</div>
+    <div class="output-box">
+      <div class="output-toolbar">
+        <span id="outMeta"></span>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-sm" onclick="copyOutput()">Copiar</button>
+          <button class="btn btn-sm" onclick="downloadCurrent()">Baixar .md</button>
+        </div>
+      </div>
+      <textarea class="out" id="mdOut" readonly></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY VIEW -->
+<div id="view-history" style="display:none">
+  <div class="topbar">
+    <h1>Histórico de versões</h1>
+    <button class="btn btn-sm" onclick="reloadHistory()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-5"/></svg>
+      Recarregar pasta
+    </button>
+  </div>
+  <div id="historyList"></div>
+  <p id="historyEmpty" style="color:var(--text3);font-size:.85rem;display:none">Nenhuma versão salva ainda.</p>
+</div>
+
+</main>
+</div>
+
+<script src="./script.js">
+</script>
+</body>
+</html>

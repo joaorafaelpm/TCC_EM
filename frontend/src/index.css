@@ -41,6 +41,45 @@ a{
 
 }
 
+/* ── Erro de campo — usado em todos os formulários da aplicação ── */
+.global-field-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: var(--tertiary-color);
+  border-left: 3px solid var(--primary-color);
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  font-weight: 600;
+  padding: 15px 20px;
+  border-radius: 0 6px 6px 0;
+  margin-top: 4px;
+  width: fit-content;
+}
+
+.global-field-error::before {
+  content: '!';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* Estado inválido do input — borda vermelha + shadow */
+.is-invalid {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px rgba(116, 43, 43, 0.12) !important;
+  outline: none;
+}
+
+
 @keyframes fadeIn {
   0%{
     opacity: 0;

@@ -1,23 +1,38 @@
-import React, { useState, useCallback } from 'react';
-import './RestaurantForm.css'; // Usando o mesmo CSS para manter o estilo
+import React, { useState, useCallback, useRef } from 'react';
+import './RestaurantForm.css';
 import DeliveryAddressForm from '../../components/DeliveryAddressForm/DeliveryAddressForm';
 import { useAuth } from '../../components/context/AuthProvider';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useFormValidation } from '../../hooks/UserFormValidation';
+import { notBlank, validationName, validCpf, positiveOrZero, positive, optional } from "../../utils/validator";
+import api from '../../services/api';
+import Input from '../../components/Input/Input';
+
+// Schema espelho do RestaurantDTO
+// Campos opcionais (description, averageDeliveryTimeMinutes, minimumOrderValue)
+// não entram no schema — sem anotação no DTO = sem validação obrigatória
+const schema = {
+  name:        [notBlank('Nome'), validationName()],
+  ownerCpf:    [notBlank('CPF'), validCpf],
+  shippingFee: [notBlank('Taxa de entrega'), positiveOrZero('Taxa de entrega')],
+  averageDeliveryTimeMinutes: [optional(positive('Tempo médio de entrega'))],
+  minimumOrderValue:          [optional(positive('Valor mínimo do pedido'))],
+};
 
 const RestaurantForm = () => {
   const { refreshUser } = useAuth();
+  const navigate = useNavigate();
+  const addressRef = useRef(null); // ref para acessar validate() do filho
+
   const [restaurantInfo, setRestaurantInfo] = useState({
-    name: '',
-    shippingFee: '',
-    ownerCpf: '',
-    description: '',
-    averageDeliveryTimeMinutes: '',
-    minimumOrderValue: ''
+    name: '', shippingFee: '', ownerCpf: '',
+    description: '', averageDeliveryTimeMinutes: '', minimumOrderValue: ''
   });
-
   const [address, setAddress] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Recebe o objeto de endereço do componente filho
+  const { errors, validateAll, setBackendError, clearErrors } = useFormValidation(schema);
+
   const handleAddressUpdate = useCallback((newAddress) => {
     setAddress(newAddress);
   }, []);
@@ -28,97 +43,130 @@ const RestaurantForm = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    clearErrors();
 
-  const payload = {
-    name: restaurantInfo.name,
-    shippingFee: parseFloat(restaurantInfo.shippingFee),
-    ownerCpf: restaurantInfo.ownerCpf,
-    description: restaurantInfo.description || null,
-    averageDeliveryTimeMinutes: restaurantInfo.averageDeliveryTimeMinutes ? parseInt(restaurantInfo.averageDeliveryTimeMinutes) : null,
-    minimumOrderValue: restaurantInfo.minimumOrderValue ? parseFloat(restaurantInfo.minimumOrderValue) : null,
-    address: {
-      zipCode: address.zipCode,
-      street: address.street,
-      number: address.number,
-      complement: address.complement || null,
-      neighborhood: address.neighborhood,
-      city: {
-        id: address.cityId
+    // Valida os campos do restaurante e os campos do endereço (filho)
+    const restaurantValid = validateAll(restaurantInfo);
+    const addressValid    = addressRef.current?.validate();
+
+    // Se qualquer um falhou, para aqui — não bate no backend
+    if (!restaurantValid || !addressValid) return;
+
+    const payload = {
+      name:        restaurantInfo.name,
+      ownerCpf:    restaurantInfo.ownerCpf,
+      shippingFee: parseFloat(restaurantInfo.shippingFee),
+      description: restaurantInfo.description || null,
+      averageDeliveryTimeMinutes: restaurantInfo.averageDeliveryTimeMinutes
+        ? parseInt(restaurantInfo.averageDeliveryTimeMinutes) : null,
+      minimumOrderValue: restaurantInfo.minimumOrderValue
+        ? parseFloat(restaurantInfo.minimumOrderValue) : null,
+      address: {
+        zipCode:      address.zipCode,
+        street:       address.street,
+        number:       address.number,
+        complement:   address.complement || null,
+        neighborhood: address.neighborhood,
+        city: { id:  address.cityId }
       }
+    };
+
+    setIsLoading(true);
+    try {
+      const { data } = await api.post('/v1/restaurants', payload);
+      await refreshUser();
+      navigate(`/restaurant/${data.id}`); // react-router em vez de globalThis.location
+    } catch (err) {
+      setBackendError(err); // exibe a mensagem que o seu backend retornou
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  try {
-    const response = await fetch('/v1/restaurants', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (response.ok) {
-      await refreshUser()
-      globalThis.location.href = `/restaurant/${(await response.json()).id}`
-    }
-
-  } catch (err) {
-    console.error("Erro na requisição:", err);
-  }
   };
 
   return (
-    <form className='place-order' onSubmit={handleSubmit}>
-      <div className="place-order-left">
+    <form className='restaurant-info' onSubmit={handleSubmit}>
+      <div className="restaurant-info-left">
         <p className='title'>Informações do Restaurante</p>
-        
-        <input 
-          type="text" name="name" placeholder="Nome da Pizzaria" 
-          value={restaurantInfo.name} onChange={handleChange} required 
+
+        {/* Erro geral de backend */}
+        {errors.general && (
+          <div className="error-banner" role="alert">{errors.general}</div>
+        )}
+
+        <Input
+          name="name"
+          type="text"
+          placeholder="Nome da Pizzaria"
+          value={restaurantInfo.name}
+          onChange={handleChange}
+          error={errors.name}
         />
-        
+
         <div className='multi-fields'>
-          <input 
-            type="text" name="ownerCpf" placeholder="CPF do Proprietário" 
-            value={restaurantInfo.ownerCpf} onChange={handleChange} required 
-          />
-          <input 
-            type="number" step="0.1" name="shippingFee" placeholder="Taxa de Entrega" 
-            value={restaurantInfo.shippingFee} onChange={handleChange} required 
-          />
+            <Input
+              name="ownerCpf"
+              type="text"
+              placeholder="CPF do Proprietário"
+              value={restaurantInfo.ownerCpf}
+              onChange={handleChange}
+              error={errors.ownerCpf}
+            />
+            <Input
+              name="shippingFee"
+              type="number"
+              step="0.1"
+              placeholder="Taxa de Entrega"
+              value={restaurantInfo.shippingFee}
+              onChange={handleChange}
+              error={errors.shippingFee}
+            />
         </div>
 
-        <textarea 
-          name="description" 
-          placeholder="Descrição (Opcional)" 
-          value={restaurantInfo.description} 
-          onChange={handleChange}
-          className="custom-textarea" // Opcional: para ajustar estilo
-        />
+        {/* Opcional — sem validação obrigatória, igual ao DTO */}
+            <Input
+              name="description"
+              type="text"
+              placeholder="Descrição (Opcional)"
+              value={restaurantInfo.description}
+              onChange={handleChange}
+            />
 
-        {/* Componente inteligente de endereço */}
         <div style={{ marginTop: '40px' }}>
-          <DeliveryAddressForm onAddressUpdate={handleAddressUpdate} />
+          {/* ref passa para o filho poder expor validate() */}
+          <DeliveryAddressForm ref={addressRef} onAddressUpdate={handleAddressUpdate} />
         </div>
       </div>
 
-      <div className="place-order-right">
+      <div className="restaurant-info-right">
         <p className='title'>Detalhes Operacionais</p>
-        
+
         <div className='multi-fields'>
-          <input 
-            type="number" name="averageDeliveryTimeMinutes" placeholder="Tempo de Entrega (min) - Opcional" 
-            value={restaurantInfo.averageDeliveryTimeMinutes} onChange={handleChange} 
-          />
-          <input 
-            type="number" step="0.1" name="minimumOrderValue" placeholder="Pedido Mínimo - Opcional" 
-            value={restaurantInfo.minimumOrderValue} onChange={handleChange} 
-          />
+            <Input
+              name="averageDeliveryTimeMinutes"
+              type="number"
+              placeholder="Tempo de Entrega (min) - Opcional"
+              value={restaurantInfo.averageDeliveryTimeMinutes}
+              onChange={handleChange}
+              error={errors.averageDeliveryTimeMinutes}
+            />
+            <Input
+              name="minimumOrderValue"
+              type="number"
+              step="0.1"
+              placeholder="Pedido Mínimo - Opcional"
+              value={restaurantInfo.minimumOrderValue}
+              onChange={handleChange}
+              error={errors.minimumOrderValue}
+            />
         </div>
 
-        <div className="cart-total" style={{marginTop: '20px'}}>
-            <h2>Resumo do Cadastro</h2>
-            <p>Ao finalizar, seu restaurante passará por uma análise para ser listado na plataforma.</p>
-            <button type="submit" className='btn-cart-checkout'>Cadastrar Restaurante</button>
+        <div className="resume-section">
+          <h2>Resumo do Cadastro</h2>
+          <p>Ao finalizar, seu restaurante passará por uma análise para ser listado na plataforma.</p>
+          <button type="submit" className='btn-cart-checkout' disabled={isLoading}>
+            {isLoading ? 'Cadastrando...' : 'Cadastrar Restaurante'}
+          </button>
         </div>
       </div>
     </form>

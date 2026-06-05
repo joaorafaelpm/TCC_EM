@@ -33,20 +33,6 @@
     font-weight: 600;
 }
 
-/* Adicionado o "select" aqui para aplicar o mesmo estilo do input */
-.place-order-left input,
-.place-order-left select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
-    border-radius: 6px;
-    font-size: max(1vw, 12px);
-    margin-bottom: 15px;
-    outline-color: var(--button-color);
-    font-family: 'Poppins', sans-serif;
-    background-color: white;
-    /* Garante fundo branco para o select */
-}
 
 /* Evita que a seta nativa do dropdown fique estranha em alguns browsers */
 .place-order-left select {

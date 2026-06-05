@@ -1,6 +1,6 @@
 /* Estrutura e Layout da Página de Pedido */
 
-.place-order {
+.restaurant-info {
   display: flex;
   align-items: start;
   justify-content: space-between;
@@ -23,65 +23,76 @@
   margin-bottom: -5px;
 }
 
-.place-order-left {
-  width: 40%;
-  max-width: max(50%, 500px);
-}
-
-.place-order-right {
-  width: 40%;
-  max-width: max(40%, 400px);
-}
-
-/* Mantendo os estilos para a coluna da direita caso haja um formulário diferente lá */
-.place-order-right .title {
+.restaurant-info-left .title {
   font-size: max(2vw, 20px);
   color: color-mix(in srgb, var(--bg-color) 30%, black);
   margin-bottom: 35px;
   font-weight: 600;
 }
 
-.place-order-right input,
-.place-order-right select {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
-  border-radius: 6px;
-  font-size: max(1vw, 12px);
-  margin-bottom: 15px;
-  outline-color: var(--button-color);
-  font-family: 'Poppins', sans-serif;
-  background-color: white;
+
+.restaurant-info-left {
+  width: 40%;
+  max-width: max(50%, 500px);
 }
 
-.place-order-right select {
+.restaurant-info-right {
+  width: 40%;
+  max-width: max(40%, 400px);
+}
+
+/* Mantendo os estilos para a coluna da direita caso haja um formulário diferente lá */
+.restaurant-info-right .title {
+  font-size: max(2vw, 20px);
+  color: color-mix(in srgb, var(--bg-color) 30%, black);
+  margin-bottom: 35px;
+  font-weight: 600;
+}
+
+
+.restaurant-info-right select {
   cursor: pointer;
   appearance: auto;
 }
 
-.place-order-right .multi-fields {
+.restaurant-info-right .multi-fields {
   display: flex;
   gap: 15px;
+}
+.resume-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+.resume-section h2 {
+  color: color-mix(in srgb, var(--bg-color) 30%, black);
+  font-size: max(1.5vw, 15px);
+}
+.resume-section p {
+  color: color-mix(in srgb, var(--bg-color) 60%, black);
+  font-size: max(1.2vw, 12px);
+  width: 80%;
 }
 
 /* Responsividade do Layout */
 @media (max-width: 1200px) {
-  .place-order {
+  .restaurant-info {
     flex-direction: column;
     margin-left: 40px;
     margin-right: 40px;
     gap: 30px;
   }
 
-  .place-order-left,
-  .place-order-right {
+  .restaurant-info-left,
+  .restaurant-info-right {
     width: 100%;
     margin-right: 40px;
     max-width: none;
   }
 }
 
-.place-order-left textarea {
+.restaurant-info-left textarea {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
@@ -95,7 +106,7 @@
 }
 
 @media (max-width: 768px) {
-  .place-order {
+  .restaurant-info {
     margin: 40px 20px 80px 20px;
   }
 }

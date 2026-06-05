@@ -1,0 +1,17 @@
+.field-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.field-input{
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
+    border-radius: 6px;
+    font-size: max(1.25vw, 12px);
+    outline-color: var(--button-color);
+    font-family: 'Poppins', sans-serif;
+    background-color: white;
+    /* Garante fundo branco para o select */
+}

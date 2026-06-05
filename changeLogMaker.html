@@ -1,877 +1,1260 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Changelog Generator</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Guia de Segurança Frontend — PendezzaPizza</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#ffffff;--bg2:#f5f5f3;--bg3:#ececea;
-  --text:#1a1a1a;--text2:#555550;--text3:#888882;
-  --border:rgba(0,0,0,0.11);--border2:rgba(0,0,0,0.2);
-  --radius:8px;--radius-lg:12px;
-  --accent:#a8222e;--accent-bg:#fdf0f0;
-  --accent-hover:#8a1a24;
-  --select-bg:rgba(168,34,46,0.07);
-}
-@media(prefers-color-scheme:dark){
-  :root{
-    --bg:#1c1c1c;--bg2:#252525;--bg3:#2e2e2e;
-    --text:#f0f0ee;--text2:#aaaaaa;--text3:#666660;
-    --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.18);
-    --accent:#e05560;--accent-bg:#2a1517;--accent-hover:#f06570;
-    --select-bg:rgba(224,85,96,0.1);
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0f11;
+    --bg2: #161820;
+    --bg3: #1d1f26;
+    --border: #2a2d38;
+    --text: #e8e9ee;
+    --muted: #7a7d8e;
+    --accent: #ff6b35;
+    --accent2: #ffb347;
+    --blue: #5b8dee;
+    --green: #4ade80;
+    --red: #f87171;
+    --purple: #a78bfa;
+    --teal: #2dd4bf;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Syne', sans-serif;
   }
-}
-html{font-size:15px}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg2);color:var(--text);min-height:100vh;line-height:1.6;user-select:none}
-/* ── Layout ── */
-.app{display:flex;min-height:100vh}
-.sidebar{width:260px;flex-shrink:0;background:var(--bg);border-right:0.5px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto}
-.main{flex:1;padding:2rem 2.5rem;max-width:860px}
-/* ── Sidebar ── */
-.sb-brand{padding:18px 16px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px}
-.sb-brand-icon{font-size:1.25rem}
-.sb-brand-name{font-size:.95rem;font-weight:600;color:var(--accent)}
-.sb-section{padding:10px 10px 2px}
-.sb-section-title{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--text3);padding:0 6px;margin-bottom:3px}
-.sb-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;font-size:.84rem;color:var(--text2);border:none;background:none;width:100%;text-align:left;transition:background .12s,color .12s;font-family:inherit}
-.sb-item:hover{background:var(--bg2);color:var(--text)}
-.sb-item.active{background:var(--accent-bg);color:var(--accent);font-weight:600}
-.sb-version-list{padding:2px 10px 10px}
-.sb-ver-entry{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:var(--radius);cursor:pointer;font-size:.78rem;color:var(--text2);transition:background .12s}
-.sb-ver-entry:hover{background:var(--bg2)}
-.sb-ver-del{opacity:0;border:none;background:none;cursor:pointer;color:var(--accent);font-size:.72rem;padding:2px 5px;border-radius:4px;font-family:inherit}
-.sb-ver-entry:hover .sb-ver-del{opacity:1}
-.sb-footer{margin-top:auto;padding:10px;border-top:0.5px solid var(--border);display:flex;flex-direction:column;gap:6px}
-/* ── Topbar ── */
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;gap:12px;flex-wrap:wrap}
-.topbar h1{font-size:1.15rem;font-weight:600}
-/* ── Meta row ── */
-.meta-grid{display:grid;grid-template-columns:110px 145px 1fr;gap:10px;margin-bottom:1.2rem}
-.meta-group{display:flex;flex-direction:column;gap:4px}
-.field-label{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text3)}
-input[type=text],textarea,select{width:100%;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:.86rem;padding:7px 10px;outline:none;transition:border-color .15s}
-input[type=text]:focus,textarea:focus,select:focus{border-color:var(--accent)}
-/* ── Tag + Area picker ── */
-.pickers{display:flex;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap}
-.picker-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:160px}
-.pill-row{display:flex;flex-wrap:wrap;gap:6px}
-.pill{padding:5px 13px;border-radius:20px;font-size:.78rem;font-weight:600;cursor:pointer;border:0.5px solid transparent;transition:all .12s;white-space:nowrap}
-.pill.unsel{background:var(--bg3);color:var(--text2);border-color:var(--border)}
-.pill.unsel:hover{border-color:var(--border2);color:var(--text)}
-.pill.sel{color:#fff}
-/* tag colors */
-.pill[data-tag="Desenvolvimento Inicial"].sel{background:#5a3e9e;border-color:#5a3e9e}
-.pill[data-tag="Adicionado"].sel{background:#2e7d32;border-color:#2e7d32}
-.pill[data-tag="Alterado"].sel{background:#1565c0;border-color:#1565c0}
-.pill[data-tag="Removido"].sel{background:#b71c1c;border-color:#b71c1c}
-.pill[data-tag="Resolvido"].sel{background:#e65100;border-color:#e65100}
-.pill[data-tag="custom"].sel,.pill[data-tag="custom-pill"].sel{background:#555;border-color:#555}
-/* area colors */
-.pill[data-area="Backend"].sel{background:#1565c0}
-.pill[data-area="Frontend"].sel{background:#6a1b9a}
-.pill[data-area="App Mobile"].sel{background:#00695c}
-.pill[data-area="QA"].sel{background:#e65100}
-.pill[data-area="Infraestrutura"].sel{background:#37474f}
-.pill[data-area="Análise de Dados"].sel{background:#4a148c}
-.add-pill-row{display:flex;gap:6px;margin-top:6px}
-.add-pill-row input{font-size:.8rem;max-width:180px}
-/* ── Items panel ── */
-.items-panel{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:1.2rem}
-.items-toolbar{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-bottom:0.5px solid var(--border);background:var(--bg2);gap:8px;flex-wrap:wrap}
-.items-toolbar-left{display:flex;align-items:center;gap:8px}
-.items-toolbar-title{font-size:.82rem;font-weight:600;color:var(--text)}
-.items-list{padding:8px 0}
-.item-row{display:flex;align-items:flex-start;gap:10px;padding:5px 16px;transition:background .08s;cursor:default}
-.item-row.drag-over{background:var(--select-bg)}
-.item-row input[type=checkbox]{margin-top:3px;cursor:pointer;flex-shrink:0;accent-color:var(--accent);width:15px;height:15px}
-.item-row label{font-size:.83rem;color:var(--text);line-height:1.5;cursor:pointer;flex:1}
-.item-row .del-item{opacity:0;border:none;background:none;cursor:pointer;color:var(--text3);font-size:.8rem;padding:0 4px;border-radius:4px;font-family:inherit;transition:opacity .1s,color .1s}
-.item-row:hover .del-item{opacity:1}
-.item-row:hover .del-item:hover{color:var(--accent)}
-.custom-add-row{display:flex;gap:8px;padding:8px 16px 10px;border-top:0.5px solid var(--border)}
-.custom-add-row input{font-size:.83rem}
-.empty-state{padding:24px 16px;text-align:center;color:var(--text3);font-size:.82rem}
-/* ── Stack table ── */
-.stack-panel{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);margin-bottom:1.2rem;overflow:hidden}
-.stack-header{padding:9px 14px;border-bottom:0.5px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:space-between}
-.stack-title{font-size:.82rem;font-weight:600;color:var(--text)}
-.stack-table{width:100%;border-collapse:collapse}
-.stack-table th{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);padding:8px 16px;text-align:left;border-bottom:0.5px solid var(--border)}
-.stack-table td{padding:6px 12px;border-bottom:0.5px solid var(--border)}
-.stack-table tr:last-child td{border-bottom:none}
-.stack-table input{border:none;background:none;font-size:.84rem;color:var(--text);padding:2px 4px;border-radius:4px;width:100%}
-.stack-table input:focus{background:var(--bg2);outline:none}
-.stack-add-row{display:flex;gap:8px;padding:8px 12px;border-top:0.5px solid var(--border)}
-/* ── Buttons ── */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:.82rem;font-family:inherit;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);cursor:pointer;transition:background .12s,border-color .12s;white-space:nowrap}
-.btn:hover{background:var(--bg2)}
-.btn:active{transform:scale(.98)}
-.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}
-.btn-accent:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
-.btn-sm{padding:4px 10px;font-size:.76rem}
-.actions{display:flex;gap:10px;margin-top:1.2rem;flex-wrap:wrap}
-/* ── Output ── */
-.output-section{margin-top:1.4rem}
-.output-box{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
-.output-toolbar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:0.5px solid var(--border);background:var(--bg2)}
-.output-toolbar span{font-size:.78rem;color:var(--text3)}
-textarea.out{border:none;border-radius:0;background:var(--bg);font-family:'Consolas','SF Mono',monospace;font-size:.77rem;min-height:200px;resize:vertical;padding:14px;line-height:1.65;color:var(--text);width:100%}
-textarea.out:focus{outline:none}
-/* ── History ── */
-.history-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);margin-bottom:10px;overflow:hidden}
-.history-card-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer}
-.history-card-header:hover{background:var(--bg2)}
-.hv-title{font-size:.88rem;font-weight:500}
-.hv-meta{font-size:.73rem;color:var(--text3)}
-.history-card-body{border-top:0.5px solid var(--border);padding:14px 16px;display:none}
-.history-card-body pre{font-family:'Consolas','SF Mono',monospace;font-size:.76rem;white-space:pre-wrap;color:var(--text2);line-height:1.65}
-/* ── Drag select overlay ── */
-#dragOverlay{position:fixed;pointer-events:none;border:1.5px dashed var(--accent);background:var(--select-bg);border-radius:4px;z-index:9999;display:none}
-/* ── Misc ── */
-.divider{height:0.5px;background:var(--border);margin:1rem 0}
-@media(max-width:720px){
-  .app{flex-direction:column}
-  .sidebar{width:100%;height:auto;position:static}
-  .main{padding:1.2rem}
-  .meta-grid{grid-template-columns:1fr 1fr}
-  .pickers{flex-direction:column}
-}
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* SIDEBAR */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 28px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+
+  .sidebar-logo .label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-logo .title {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--accent);
+  }
+
+  .sidebar-logo .sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  .nav-section-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 24px 8px;
+    margin-top: 12px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 24px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+
+  .nav-item.active {
+    background: var(--bg3);
+    border-left-color: var(--accent);
+    color: var(--text);
+  }
+
+  .nav-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-family: var(--mono);
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .nav-dot.done { background: #1a3a26; color: var(--green); }
+  .nav-dot.active { background: #3a1a0a; color: var(--accent); }
+  .nav-dot.todo { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+
+  .progress-bar {
+    margin: 0 24px 20px;
+    height: 3px;
+    background: var(--bg3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+    padding: 0 24px;
+    margin-bottom: 16px;
+  }
+
+  /* MAIN */
+  .main {
+    flex: 1;
+    padding: 48px;
+    max-width: 820px;
+  }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  /* STEP HEADER */
+  .step-header {
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .step-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .step-title {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+
+  .step-desc {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 600px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-file { background: #1a2a3a; color: var(--blue); }
+  .badge-new { background: #1a3a26; color: var(--green); }
+  .badge-edit { background: #3a2a0a; color: var(--accent2); }
+  .badge-warn { background: #3a1a1a; color: var(--red); }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: #090a0c;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-filename {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--blue);
+  }
+
+  .code-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .code-body {
+    padding: 18px 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.75;
+    overflow-x: auto;
+    white-space: pre;
+    color: #c9d1d9;
+  }
+
+  /* SYNTAX HIGHLIGHT */
+  .kw { color: #ff7b72; }
+  .str { color: #a5d6ff; }
+  .fn { color: #d2a8ff; }
+  .cm { color: #555e6e; font-style: italic; }
+  .num { color: #79c0ff; }
+  .prop { color: #ffa657; }
+  .tag { color: #7ee787; }
+
+  /* FOLDER TREE */
+  .tree {
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 2;
+    padding: 16px 20px;
+    background: #090a0c;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .tree-folder { color: var(--blue); font-weight: 500; }
+  .tree-file { color: var(--muted); }
+  .tree-file.highlight { color: var(--accent); font-weight: 500; }
+  .tree-new::after {
+    content: " ← novo";
+    color: var(--green);
+    font-size: 10px;
+  }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    font-size: 14px;
+    border-left: 3px solid;
+  }
+
+  .callout-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+
+  .callout-tip { background: #0d1f2d; border-color: var(--blue); color: #93c5fd; }
+  .callout-warn { background: #1f1507; border-color: var(--accent2); color: #fbbf24; }
+  .callout-danger { background: #1f0707; border-color: var(--red); color: #fca5a5; }
+  .callout-success { background: #071f0e; border-color: var(--green); color: #86efac; }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 16px 0;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--bg3);
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  td code {
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--bg3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--blue);
+  }
+
+  .td-green { color: var(--green); font-weight: 600; }
+  .td-red { color: var(--red); font-weight: 600; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; }
+
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-size: 10px;
+  }
+
+  .checklist li.checked .check-box {
+    background: var(--green);
+    border-color: var(--green);
+    color: #000;
+  }
+
+  .checklist li.checked span { color: var(--muted); text-decoration: line-through; }
+
+  /* NAV BUTTONS */
+  .step-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn {
+    padding: 10px 22px;
+    border-radius: 7px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: #e55a25; }
+
+  .btn-ghost {
+    background: var(--bg3);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { color: var(--text); }
+
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .step-counter {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* OVERVIEW GRID */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  .overview-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .overview-card:hover {
+    border-color: var(--accent);
+    background: var(--bg3);
+  }
+
+  .overview-card-num {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 6px;
+    opacity: 0.5;
+  }
+
+  .overview-card-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .overview-card-desc { font-size: 12px; color: var(--muted); }
+
+  .inline-code {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--blue);
+  }
+
+  h3 { font-size: 16px; font-weight: 700; margin: 24px 0 10px; }
+  p { margin-bottom: 12px; color: var(--muted); font-size: 14px; }
+  strong { color: var(--text); }
+
+  @media (max-width: 900px) {
+    .main { padding: 24px; }
+    .overview-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
 </style>
 </head>
 <body>
+<div class="layout">
 
-<div id="dragOverlay"></div>
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="label">Guia de segurança</div>
+    <div class="title">PendezzaPizza</div>
+    <div class="sub">frontend · React + Vite</div>
+  </div>
 
-<div class="app">
-<!-- ── Sidebar ── -->
-<aside class="sidebar">
-  <div class="sb-brand">
-    <span class="sb-brand-icon">📋</span>
-    <span class="sb-brand-name">Changelog Gen</span>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
   </div>
-  <div class="sb-section">
-    <div class="sb-section-title">Navegação</div>
-    <button class="sb-item active" id="nav-editor" onclick="showView('editor')">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      Nova entrada
-    </button>
-    <button class="sb-item" id="nav-history" onclick="showView('history')">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Histórico
-    </button>
-  </div>
-  <div class="sb-section"><div class="sb-section-title">Versões salvas</div></div>
-  <div class="sb-version-list" id="sbVersionList"></div>
-  <div class="sb-footer">
-    <button class="btn" style="width:100%;justify-content:center" onclick="exportAll()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Exportar CHANGELOG.md
-    </button>
-  </div>
-</aside>
+  <div class="progress-label" id="progressLabel">0 / 6 concluídos</div>
 
-<!-- ── Main ── -->
+  <div class="nav-section-label">Introdução</div>
+  <div class="nav-item active" onclick="goTo(0)">
+    <div class="nav-dot active" id="dot0">0</div>
+    Visão geral
+  </div>
+
+  <div class="nav-section-label">Estrutura</div>
+  <div class="nav-item" onclick="goTo(1)">
+    <div class="nav-dot todo" id="dot1">1</div>
+    Organização de pastas
+  </div>
+
+  <div class="nav-section-label">Implementação</div>
+  <div class="nav-item" onclick="goTo(2)">
+    <div class="nav-dot todo" id="dot2">2</div>
+    Serviço HTTP (Axios)
+  </div>
+  <div class="nav-item" onclick="goTo(3)">
+    <div class="nav-dot todo" id="dot3">3</div>
+    Formulários e erros
+  </div>
+  <div class="nav-item" onclick="goTo(4)">
+    <div class="nav-dot todo" id="dot4">4</div>
+    Tokens e armazenamento
+  </div>
+  <div class="nav-item" onclick="goTo(5)">
+    <div class="nav-dot todo" id="dot5">5</div>
+    Proteção de rotas
+  </div>
+  <div class="nav-item" onclick="goTo(6)">
+    <div class="nav-dot todo" id="dot6">6</div>
+    Console e build
+  </div>
+</nav>
+
+<!-- MAIN -->
 <main class="main">
 
-<!-- EDITOR VIEW -->
-<div id="view-editor">
-  <div class="topbar">
-    <h1>Nova entrada</h1>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-sm" onclick="selectAllVisible()">☑ Sel. tudo</button>
-      <button class="btn btn-sm" onclick="deselectAll()">☐ Limpar sel.</button>
-      <button class="btn btn-sm" onclick="clearForm()">↺ Reset</button>
+  <!-- STEP 0: VISÃO GERAL -->
+  <section class="step active" id="step0">
+    <div class="step-header">
+      <div class="step-eyebrow">Introdução</div>
+      <div class="step-title">Guia de Segurança<br>de Frontend</div>
+      <p class="step-desc">Um tutorial passo a passo para proteger o frontend do PendezzaPizza — com estrutura de pastas, código real e ordem de implementação.</p>
     </div>
-  </div>
 
-  <!-- Meta -->
-  <div class="meta-grid">
-    <div class="meta-group"><label class="field-label">Versão</label><input type="text" id="ver" value="0.1.0" placeholder="0.1.0"></div>
-    <div class="meta-group"><label class="field-label">Data</label><input type="text" id="dt"></div>
-    <div class="meta-group"><label class="field-label">Nome (opcional)</label><input type="text" id="verName" placeholder="ex: MVP Backend"></div>
-  </div>
-
-  <!-- Tag picker -->
-  <div class="pickers">
-    <div class="picker-group">
-      <div class="field-label">Tipo de mudança</div>
-      <div class="pill-row" id="tagPills"></div>
-      <div class="add-pill-row">
-        <input type="text" id="newTagInput" placeholder="Novo tipo…" style="max-width:160px" onkeydown="if(event.key==='Enter')addCustomTag()">
-        <button class="btn btn-sm" onclick="addCustomTag()">+ Tipo</button>
-      </div>
-    </div>
-    <div class="picker-group">
-      <div class="field-label">Área</div>
-      <div class="pill-row" id="areaPills"></div>
-      <div class="add-pill-row">
-        <input type="text" id="newAreaInput" placeholder="Nova área…" style="max-width:160px" onkeydown="if(event.key==='Enter')addCustomArea()">
-        <button class="btn btn-sm" onclick="addCustomArea()">+ Área</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Items panel -->
-  <div class="items-panel" id="itemsPanel">
-    <div class="items-toolbar">
-      <div class="items-toolbar-left">
-        <span class="items-toolbar-title" id="panelTitle">Selecione um tipo e uma área</span>
-        <span id="selCount" style="font-size:.75rem;color:var(--text3)"></span>
-      </div>
-      <div style="display:flex;gap:6px">
-        <button class="btn btn-sm" onclick="selectAllInPanel()">☑ Todos</button>
-        <button class="btn btn-sm" onclick="deselectInPanel()">☐ Nenhum</button>
-      </div>
-    </div>
-    <div class="items-list" id="itemsList">
-      <div class="empty-state">Selecione um tipo de mudança e uma área para ver os itens sugeridos.</div>
-    </div>
-    <div class="custom-add-row">
-      <input type="text" id="customItemInput" placeholder="Adicionar item personalizado para esta combinação…" onkeydown="if(event.key==='Enter')addCustomItem()">
-      <button class="btn btn-sm" onclick="addCustomItem()">+ Add</button>
-    </div>
-  </div>
-
-  <!-- Stack -->
-  <div class="stack-panel">
-    <div class="stack-header">
-      <span class="stack-title">Stack tecnológica (opcional)</span>
-      <button class="btn btn-sm" onclick="clearStack()">Limpar</button>
-    </div>
-    <table class="stack-table">
-      <thead><tr><th>Tecnologia</th><th>Versão</th><th style="width:36px"></th></tr></thead>
-      <tbody id="stackBody"></tbody>
-    </table>
-    <div class="stack-add-row">
-      <input type="text" id="stkTech" placeholder="Tecnologia" style="flex:1" onkeydown="if(event.key==='Tab'||event.key==='Enter'){event.preventDefault();document.getElementById('stkVer').focus()}">
-      <input type="text" id="stkVer" placeholder="Versão" style="max-width:120px" onkeydown="if(event.key==='Enter')addStackRow()">
-      <button class="btn btn-sm" onclick="addStackRow()">+ Linha</button>
-    </div>
-  </div>
-
-  <!-- Actions -->
-  <div class="actions">
-    <button class="btn btn-accent" onclick="generate()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-      Gerar markdown
-    </button>
-    <button class="btn" onclick="saveVersion()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-      Salvar versão
-    </button>
-  </div>
-
-  <div id="outputSection" style="display:none" class="output-section">
-    <div class="field-label" style="margin-bottom:6px">Markdown gerado</div>
-    <div class="output-box">
-      <div class="output-toolbar">
-        <span id="outMeta"></span>
-        <div style="display:flex;gap:6px">
-          <button class="btn btn-sm" onclick="copyOutput()">Copiar</button>
-          <button class="btn btn-sm" onclick="downloadCurrent()">Baixar .md</button>
+    <div class="card">
+      <div class="card-title">O que você vai implementar</div>
+      <div class="overview-grid">
+        <div class="overview-card" onclick="goTo(1)">
+          <div class="overview-card-num">01</div>
+          <div class="overview-card-title">Organização de pastas</div>
+          <div class="overview-card-desc">Onde colocar cada arquivo de segurança dentro do projeto</div>
+        </div>
+        <div class="overview-card" onclick="goTo(2)">
+          <div class="overview-card-num">02</div>
+          <div class="overview-card-title">Serviço HTTP (Axios)</div>
+          <div class="overview-card-desc">Interceptors globais para token, 401 e 403</div>
+        </div>
+        <div class="overview-card" onclick="goTo(3)">
+          <div class="overview-card-num">03</div>
+          <div class="overview-card-title">Formulários e erros</div>
+          <div class="overview-card-desc">Validação antes do submit e exibição de mensagens do backend</div>
+        </div>
+        <div class="overview-card" onclick="goTo(4)">
+          <div class="overview-card-num">04</div>
+          <div class="overview-card-title">Tokens e armazenamento</div>
+          <div class="overview-card-desc">Onde guardar JWT, o que nunca guardar, expiração manual</div>
+        </div>
+        <div class="overview-card" onclick="goTo(5)">
+          <div class="overview-card-num">05</div>
+          <div class="overview-card-title">Proteção de rotas</div>
+          <div class="overview-card-desc">Guard de rota que complementa seu useHasAuthority</div>
+        </div>
+        <div class="overview-card" onclick="goTo(6)">
+          <div class="overview-card-num">06</div>
+          <div class="overview-card-title">Console e build</div>
+          <div class="overview-card-desc">Remover logs em produção, variáveis de ambiente, headers</div>
         </div>
       </div>
-      <textarea class="out" id="mdOut" readonly></textarea>
     </div>
-  </div>
-</div>
 
-<!-- HISTORY VIEW -->
-<div id="view-history" style="display:none">
-  <div class="topbar"><h1>Histórico de versões</h1></div>
-  <div id="historyList"></div>
-  <p id="historyEmpty" style="color:var(--text3);font-size:.85rem;display:none">Nenhuma versão salva ainda.</p>
-</div>
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div><strong>Ordem sugerida:</strong> siga os passos em sequência. Cada passo depende do anterior — especialmente o <strong>Axios (passo 2)</strong>, que é a base para tudo que vem depois.</div>
+    </div>
+
+    <div class="callout callout-success">
+      <div class="callout-icon">✓</div>
+      <div><strong>Seu backend já está pronto.</strong> JWT, roles, validações e mensagens de erro já existem. O frontend só precisa <em>usar</em> tudo isso corretamente.</div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" disabled>← Anterior</button>
+      <span class="step-counter">Introdução</span>
+      <button class="btn btn-primary" onclick="goTo(1)">Começar →</button>
+    </div>
+  </section>
+
+  <!-- STEP 1: PASTAS -->
+  <section class="step" id="step1">
+    <div class="step-header">
+      <div class="step-eyebrow">Passo 1 de 6</div>
+      <div class="step-title">Organização<br>de Pastas</div>
+      <p class="step-desc">Antes de escrever código, é importante saber <em>onde</em> cada arquivo vai. Segurança não fica em <code class="inline-code">components/</code> — ela fica em pastas separadas por responsabilidade.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Estrutura que você vai criar <span class="badge badge-new">arquivos novos</span></div>
+      <div class="tree">
+<span class="tree-folder">src/</span>
+├── <span class="tree-folder">services/</span>            <span class="cm">← camada de comunicação HTTP</span>
+│   └── <span class="tree-file highlight tree-new">api.js</span>             <span class="cm">axios + interceptors</span>
+│
+├── <span class="tree-folder">utils/</span>               <span class="cm">← funções puras reutilizáveis</span>
+│   ├── <span class="tree-file highlight tree-new">token.js</span>           <span class="cm">get/set/clear JWT</span>
+│   ├── <span class="tree-file highlight tree-new">validators.js</span>      <span class="cm">validações de formulário</span>
+│   └── <span class="tree-file highlight tree-new">logger.js</span>          <span class="cm">console seguro</span>
+│
+├── <span class="tree-folder">hooks/</span>               <span class="cm">← hooks customizados (você já tem)</span>
+│   ├── <span class="tree-file">useAuth.js</span>
+│   ├── <span class="tree-file">useHasAuthority.js</span> <span class="cm">← já existe</span>
+│   └── <span class="tree-file highlight tree-new">useFormValidation.js</span>
+│
+├── <span class="tree-folder">components/</span>
+│   └── <span class="tree-folder">shared/</span>          <span class="cm">← componentes reutilizáveis</span>
+│       └── <span class="tree-file highlight tree-new">ProtectedRoute.jsx</span>
+│
+└── <span class="tree-folder">pages/</span>               <span class="cm">← suas páginas (já existem)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Por que essa divisão?</div>
+      <table>
+        <tr>
+          <th>Pasta</th>
+          <th>Responsabilidade</th>
+          <th>Regra</th>
+        </tr>
+        <tr>
+          <td><code>services/</code></td>
+          <td>Toda comunicação com APIs externas</td>
+          <td>Nenhum componente faz <code>fetch</code> ou <code>axios</code> direto</td>
+        </tr>
+        <tr>
+          <td><code>utils/</code></td>
+          <td>Funções sem estado, sem JSX</td>
+          <td>Não importam hooks, não renderizam nada</td>
+        </tr>
+        <tr>
+          <td><code>hooks/</code></td>
+          <td>Lógica com estado reutilizável</td>
+          <td>Sempre começam com <code>use</code></td>
+        </tr>
+        <tr>
+          <td><code>components/shared/</code></td>
+          <td>Componentes usados em múltiplas páginas</td>
+          <td>Não contêm lógica de negócio</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠</div>
+      <div><strong>Não coloque segurança dentro de componentes de página.</strong> Se você valida direto no <code class="inline-code">LoginPage.jsx</code>, vai acabar copiando e colando a mesma lógica em <code class="inline-code">RegisterPage.jsx</code>, <code class="inline-code">CheckoutPage.jsx</code> etc. Centralize em <code class="inline-code">utils/</code> e <code class="inline-code">hooks/</code>.</div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="goTo(0)">← Anterior</button>
+      <span class="step-counter">1 / 6</span>
+      <button class="btn btn-primary" onclick="goTo(2)">Próximo →</button>
+    </div>
+  </section>
+
+  <!-- STEP 2: AXIOS -->
+  <section class="step" id="step2">
+    <div class="step-header">
+      <div class="step-eyebrow">Passo 2 de 6</div>
+      <div class="step-title">Serviço HTTP<br>com Axios</div>
+      <p class="step-desc">Esse é o arquivo mais importante — é a base de toda a segurança HTTP. Ele cuida de anexar o token, tratar expiração e redirecionar em caso de erro de autorização.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="badge badge-new">novo</span> src/services/api.js</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">src/services/api.js</span>
+          <span class="code-tag">criar do zero</span>
+        </div>
+        <div class="code-body"><span class="kw">import</span> axios <span class="kw">from</span> <span class="str">'axios'</span>;
+<span class="kw">import</span> { getToken, clearToken } <span class="kw">from</span> <span class="str">'../utils/token'</span>;
+
+<span class="cm">// Cria uma instância configurada do Axios</span>
+<span class="kw">const</span> api = axios.<span class="fn">create</span>({
+  baseURL: <span class="fn">import</span>.meta.env.<span class="prop">VITE_API_URL</span>,
+  timeout: <span class="num">10000</span>, <span class="cm">// 10s — evita requests pendurados</span>
+  headers: {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+  },
+});
+
+<span class="cm">// ── REQUEST: anexa o JWT em toda requisição ──────────</span>
+api.interceptors.request.<span class="fn">use</span>(
+  (config) => {
+    <span class="kw">const</span> token = <span class="fn">getToken</span>();
+    <span class="kw">if</span> (token) {
+      config.headers[<span class="str">'Authorization'</span>] = <span class="str">`Bearer <span class="prop">${token}</span>`</span>;
+    }
+    <span class="kw">return</span> config;
+  },
+  (error) => Promise.<span class="fn">reject</span>(error)
+);
+
+<span class="cm">// ── RESPONSE: trata erros globalmente ────────────────</span>
+api.interceptors.response.<span class="fn">use</span>(
+  (response) => response, <span class="cm">// sucesso: passa direto</span>
+
+  (error) => {
+    <span class="kw">const</span> status = error.response?.status;
+
+    <span class="kw">if</span> (status === <span class="num">401</span>) {
+      <span class="cm">// Token expirado ou inválido</span>
+      <span class="fn">clearToken</span>();
+      window.location.href = <span class="str">'/login?expired=true'</span>;
+    }
+
+    <span class="kw">if</span> (status === <span class="num">403</span>) {
+      <span class="cm">// Autenticado, mas sem permissão</span>
+      window.location.href = <span class="str">'/403'</span>;
+    }
+
+    <span class="cm">// Repassa o erro para o catch local do componente</span>
+    <span class="kw">return</span> Promise.<span class="fn">reject</span>(error);
+  }
+);
+
+<span class="kw">export default</span> api;</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Como usar nos componentes <span class="badge badge-edit">substituir fetch/axios direto</span></div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">Antes (direto no componente)</span>
+          <span class="code-tag">❌ evitar</span>
+        </div>
+        <div class="code-body"><span class="cm">// LoginPage.jsx — NÃO faça isso</span>
+<span class="kw">const</span> res = <span class="kw">await</span> axios.<span class="fn">post</span>(<span class="str">'http://localhost:8080/auth/login'</span>, data);</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">Depois (usando o serviço)</span>
+          <span class="code-tag">✓ correto</span>
+        </div>
+        <div class="code-body"><span class="cm">// LoginPage.jsx — faça assim</span>
+<span class="kw">import</span> api <span class="kw">from</span> <span class="str">'../services/api'</span>;
+
+<span class="kw">const</span> res = <span class="kw">await</span> api.<span class="fn">post</span>(<span class="str">'/auth/login'</span>, data);
+<span class="cm">// URL relativa — a baseURL já está no api.js</span></div>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div>Com o <strong>interceptor de response</strong>, você não precisa mais checar status 401 em cada componente. O redirecionamento acontece automaticamente. Nos componentes, você só trata os erros de negócio (ex: "senha incorreta", "e-mail já cadastrado").</div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="goTo(1)">← Anterior</button>
+      <span class="step-counter">2 / 6</span>
+      <button class="btn btn-primary" onclick="goTo(3)">Próximo →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3: FORMULÁRIOS -->
+  <section class="step" id="step3">
+    <div class="step-header">
+      <div class="step-eyebrow">Passo 3 de 6</div>
+      <div class="step-title">Formulários<br>e Erros</div>
+      <p class="step-desc">Dois arquivos: um utilitário com as regras de validação, e um hook que qualquer formulário pode reutilizar.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="badge badge-new">novo</span> src/utils/validators.js</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">src/utils/validators.js</span>
+          <span class="code-tag">criar do zero</span>
+        </div>
+        <div class="code-body"><span class="cm">// Regras de validação puras — sem estado, sem React</span>
+
+<span class="kw">export const</span> required = (value, label = <span class="str">'Campo'</span>) =>
+  !value?.toString().<span class="fn">trim</span>() ? <span class="str">`<span class="prop">${label}</span> é obrigatório`</span> : <span class="kw">null</span>;
+
+<span class="kw">export const</span> email = (value) =>
+  !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.<span class="fn">test</span>(value)
+    ? <span class="str">'E-mail inválido'</span>
+    : <span class="kw">null</span>;
+
+<span class="kw">export const</span> minLength = (min) => (value) =>
+  value?.length < min ? <span class="str">`Mínimo <span class="prop">${min}</span> caracteres`</span> : <span class="kw">null</span>;
+
+<span class="kw">export const</span> maxLength = (max) => (value) =>
+  value?.length > max ? <span class="str">`Máximo <span class="prop">${max}</span> caracteres`</span> : <span class="kw">null</span>;
+
+<span class="kw">export const</span> noScript = (value) =>
+  /<span class="tag">&lt;script</span>/i.<span class="fn">test</span>(value) ? <span class="str">'Conteúdo inválido'</span> : <span class="kw">null</span>;
+
+<span class="cm">// Combina várias regras em um campo</span>
+<span class="kw">export const</span> validate = (value, rules) => {
+  <span class="kw">for</span> (<span class="kw">const</span> rule <span class="kw">of</span> rules) {
+    <span class="kw">const</span> error = <span class="fn">rule</span>(value);
+    <span class="kw">if</span> (error) <span class="kw">return</span> error;
+  }
+  <span class="kw">return null</span>;
+};</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="badge badge-new">novo</span> src/hooks/useFormValidation.js</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">src/hooks/useFormValidation.js</span>
+          <span class="code-tag">criar do zero</span>
+        </div>
+        <div class="code-body"><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">export function</span> <span class="fn">useFormValidation</span>(schema) {
+  <span class="kw">const</span> [errors, setErrors] = <span class="fn">useState</span>({});
+
+  <span class="cm">// Valida todos os campos contra o schema</span>
+  <span class="kw">const</span> validateAll = (data) => {
+    <span class="kw">const</span> newErrors = {};
+    <span class="kw">for</span> (<span class="kw">const</span> [field, rules] <span class="kw">of</span> Object.<span class="fn">entries</span>(schema)) {
+      <span class="kw">const</span> error = rules.<span class="fn">reduce</span>((acc, rule) =>
+        acc || <span class="fn">rule</span>(data[field]), <span class="kw">null</span>);
+      <span class="kw">if</span> (error) newErrors[field] = error;
+    }
+    <span class="fn">setErrors</span>(newErrors);
+    <span class="kw">return</span> Object.<span class="fn">keys</span>(newErrors).length === <span class="num">0</span>;
+  };
+
+  <span class="cm">// Adiciona um erro vindo do backend</span>
+  <span class="kw">const</span> setBackendError = (err) => {
+    <span class="kw">const</span> msg = err.response?.data?.message
+      || err.response?.data?.error
+      || <span class="str">'Erro inesperado. Tente novamente.'</span>;
+    <span class="fn">setErrors</span>((prev) => ({ ...prev, general: msg }));
+  };
+
+  <span class="kw">const</span> clearErrors = () => <span class="fn">setErrors</span>({});
+
+  <span class="kw">return</span> { errors, validateAll, setBackendError, clearErrors };
+}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Usando no componente de login <span class="badge badge-edit">exemplo real</span></div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">src/pages/LoginPage.jsx</span>
+          <span class="code-tag">exemplo de uso</span>
+        </div>
+        <div class="code-body"><span class="kw">import</span> api <span class="kw">from</span> <span class="str">'../services/api'</span>;
+<span class="kw">import</span> { useFormValidation } <span class="kw">from</span> <span class="str">'../hooks/useFormValidation'</span>;
+<span class="kw">import</span> { required, email, minLength } <span class="kw">from</span> <span class="str">'../utils/validators'</span>;
+
+<span class="kw">const</span> schema = {
+  email:    [required, email],
+  password: [required, <span class="fn">minLength</span>(<span class="num">6</span>)],
+};
+
+<span class="kw">export function</span> <span class="fn">LoginPage</span>() {
+  <span class="kw">const</span> [form, setForm] = <span class="fn">useState</span>({ email: <span class="str">''</span>, password: <span class="str">''</span> });
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">false</span>);
+  <span class="kw">const</span> { errors, validateAll, setBackendError, clearErrors } = <span class="fn">useFormValidation</span>(schema);
+
+  <span class="kw">const</span> handleSubmit = <span class="kw">async</span> (e) => {
+    e.<span class="fn">preventDefault</span>();
+    <span class="fn">clearErrors</span>();
+
+    <span class="kw">if</span> (!<span class="fn">validateAll</span>(form)) <span class="kw">return</span>; <span class="cm">// ← para aqui se inválido</span>
+
+    <span class="fn">setLoading</span>(<span class="kw">true</span>);
+    <span class="kw">try</span> {
+      <span class="kw">const</span> { data } = <span class="kw">await</span> api.<span class="fn">post</span>(<span class="str">'/auth/login'</span>, form);
+      <span class="fn">setToken</span>(data.token);
+      <span class="cm">// redireciona...</span>
+    } <span class="kw">catch</span> (err) {
+      <span class="fn">setBackendError</span>(err); <span class="cm">// exibe a mensagem do seu backend</span>
+    } <span class="kw">finally</span> {
+      <span class="fn">setLoading</span>(<span class="kw">false</span>);
+    }
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="tag">form</span> onSubmit={handleSubmit}&gt;
+      {errors.general &amp;&amp; &lt;<span class="tag">div</span> role=<span class="str">"alert"</span> className=<span class="str">"error"</span>&gt;{errors.general}&lt;/<span class="tag">div</span>&gt;}
+      &lt;<span class="tag">input</span> value={form.email} onChange={...} /&gt;
+      {errors.email &amp;&amp; &lt;<span class="tag">span</span>&gt;{errors.email}&lt;/<span class="tag">span</span>&gt;}
+      &lt;<span class="tag">button</span> disabled={loading}&gt;{loading ? <span class="str">'Aguarde...'</span> : <span class="str">'Entrar'</span>}&lt;/<span class="tag">button</span>&gt;
+    &lt;/<span class="tag">form</span>&gt;
+  );
+}</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="goTo(2)">← Anterior</button>
+      <span class="step-counter">3 / 6</span>
+      <button class="btn btn-primary" onclick="goTo(4)">Próximo →</button>
+    </div>
+  </section>
+
+  <!-- STEP 4: TOKENS -->
+  <section class="step" id="step4">
+    <div class="step-header">
+      <div class="step-eyebrow">Passo 4 de 6</div>
+      <div class="step-title">Tokens e<br>Armazenamento</div>
+      <p class="step-desc">O token JWT é o item mais sensível do frontend. Um arquivo centralizado decide onde ele fica e facilita mudar de estratégia depois.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Comparativo de onde guardar o JWT</div>
+      <table>
+        <tr>
+          <th>Local</th>
+          <th>Vulnerabilidade</th>
+          <th>Veredicto</th>
+        </tr>
+        <tr>
+          <td><code>localStorage</code></td>
+          <td>Atacável por qualquer XSS, <strong>não expira</strong></td>
+          <td class="td-red">Evitar para tokens</td>
+        </tr>
+        <tr>
+          <td><code>sessionStorage</code></td>
+          <td>Atacável por XSS, mas limpa ao fechar aba</td>
+          <td class="td-green">Aceitável agora</td>
+        </tr>
+        <tr>
+          <td>Variável em memória</td>
+          <td>Imune a XSS, perde no reload</td>
+          <td class="td-green">Ideal para access token</td>
+        </tr>
+        <tr>
+          <td>Cookie <code>httpOnly</code></td>
+          <td>Imune a XSS — backend controla</td>
+          <td class="td-green">Melhor opção (requer mudança no backend)</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="badge badge-new">novo</span> src/utils/token.js</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">src/utils/token.js</span>
+          <span class="code-tag">criar do zero</span>
+        </div>
+        <div class="code-body"><span class="cm">// Abstrai onde o token fica — fácil de trocar a estratégia depois</span>
+
+<span class="kw">let</span> _token = <span class="kw">null</span>; <span class="cm">// em memória (preferido)</span>
+
+<span class="kw">export const</span> setToken = (token) => {
+  _token = token;
+  <span class="cm">// sessionStorage como fallback para reload de página</span>
+  sessionStorage.<span class="fn">setItem</span>(<span class="str">'pendezza_token'</span>, token);
+};
+
+<span class="kw">export const</span> getToken = () =>
+  _token || sessionStorage.<span class="fn">getItem</span>(<span class="str">'pendezza_token'</span>);
+
+<span class="kw">export const</span> clearToken = () => {
+  _token = <span class="kw">null</span>;
+  sessionStorage.<span class="fn">removeItem</span>(<span class="str">'pendezza_token'</span>);
+};
+
+<span class="cm">// Verifica se o token ainda é válido pela data de expiração</span>
+<span class="kw">export const</span> isTokenExpired = () => {
+  <span class="kw">const</span> token = <span class="fn">getToken</span>();
+  <span class="kw">if</span> (!token) <span class="kw">return true</span>;
+  <span class="kw">try</span> {
+    <span class="kw">const</span> payload = JSON.<span class="fn">parse</span>(<span class="fn">atob</span>(token.<span class="fn">split</span>(<span class="str">'.'</span>)[<span class="num">1</span>]));
+    <span class="kw">return</span> payload.exp * <span class="num">1000</span> &lt; Date.<span class="fn">now</span>();
+  } <span class="kw">catch</span> {
+    <span class="kw">return true</span>;
+  }
+};</div>
+      </div>
+    </div>
+
+    <div class="callout callout-danger">
+      <div class="callout-icon">✗</div>
+      <div><strong>Nunca guarde no localStorage:</strong> senhas (mesmo hasheadas), dados de cartão de crédito, CPF, endereços completos, ou qualquer dado pessoal sensível. O localStorage sobrevive a logout, reinicialização e é acessível por qualquer script na página.</div>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠</div>
+      <div><strong>Não decodifique o JWT no frontend para tomar decisões de segurança.</strong> Use apenas para checar expiração ou exibir o nome do usuário. A validação real acontece no backend a cada request.</div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="goTo(3)">← Anterior</button>
+      <span class="step-counter">4 / 6</span>
+      <button class="btn btn-primary" onclick="goTo(5)">Próximo →</button>
+    </div>
+  </section>
+
+  <!-- STEP 5: ROTAS -->
+  <section class="step" id="step5">
+    <div class="step-header">
+      <div class="step-eyebrow">Passo 5 de 6</div>
+      <div class="step-title">Proteção<br>de Rotas</div>
+      <p class="step-desc">Um guard de rota que funciona em dois níveis: bloqueia usuários não autenticados e bloqueia usuários sem a authority necessária.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="badge badge-new">novo</span> src/components/shared/ProtectedRoute.jsx</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">src/components/shared/ProtectedRoute.jsx</span>
+          <span class="code-tag">criar do zero</span>
+        </div>
+        <div class="code-body"><span class="kw">import</span> { Navigate, useLocation } <span class="kw">from</span> <span class="str">'react-router-dom'</span>;
+<span class="kw">import</span> { useAuth } <span class="kw">from</span> <span class="str">'../../hooks/useAuth'</span>;
+
+<span class="kw">export function</span> <span class="fn">ProtectedRoute</span>({ children, requiredAuthority }) {
+  <span class="kw">const</span> { user, isLoading } = <span class="fn">useAuth</span>();
+  <span class="kw">const</span> location = <span class="fn">useLocation</span>();
+
+  <span class="cm">// Aguarda verificação inicial do token</span>
+  <span class="kw">if</span> (isLoading) <span class="kw">return</span> &lt;<span class="tag">div</span>&gt;Carregando...&lt;/<span class="tag">div</span>&gt;;
+
+  <span class="cm">// Não autenticado → vai para login, guarda a URL para redirecionar depois</span>
+  <span class="kw">if</span> (!user) {
+    <span class="kw">return</span> &lt;<span class="tag">Navigate</span> to=<span class="str">"/login"</span> state={{ from: location }} replace /&gt;;
+  }
+
+  <span class="cm">// Autenticado mas sem a authority necessária → 403</span>
+  <span class="kw">if</span> (requiredAuthority &amp;&amp; !user.authorities?.includes(requiredAuthority)) {
+    <span class="kw">return</span> &lt;<span class="tag">Navigate</span> to=<span class="str">"/403"</span> replace /&gt;;
+  }
+
+  <span class="kw">return</span> children;
+}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Configurando as rotas <span class="badge badge-edit">editar seu router</span></div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">src/App.jsx (ou seu router)</span>
+          <span class="code-tag">exemplo de uso</span>
+        </div>
+        <div class="code-body"><span class="kw">import</span> { ProtectedRoute } <span class="kw">from</span> <span class="str">'./components/shared/ProtectedRoute'</span>;
+
+<span class="cm">// Rotas públicas — qualquer um acessa</span>
+&lt;<span class="tag">Route</span> path=<span class="str">"/login"</span>    element={&lt;<span class="tag">LoginPage</span> /&gt;} /&gt;
+&lt;<span class="tag">Route</span> path=<span class="str">"/cardapio"</span> element={&lt;<span class="tag">MenuPage</span> /&gt;} /&gt;
+
+<span class="cm">// Rotas protegidas — precisa estar logado</span>
+&lt;<span class="tag">Route</span> path=<span class="str">"/pedidos"</span> element={
+  &lt;<span class="tag">ProtectedRoute</span>&gt;
+    &lt;<span class="tag">MeusPedidosPage</span> /&gt;
+  &lt;/<span class="tag">ProtectedRoute</span>&gt;
+} /&gt;
+
+<span class="cm">// Rotas de gerência — precisa da authority específica</span>
+&lt;<span class="tag">Route</span> path=<span class="str">"/admin/restaurante"</span> element={
+  &lt;<span class="tag">ProtectedRoute</span> requiredAuthority=<span class="str">"GERENCIA_RESTAURANTE"</span>&gt;
+    &lt;<span class="tag">RestauranteAdminPage</span> /&gt;
+  &lt;/<span class="tag">ProtectedRoute</span>&gt;
+} /&gt;
+
+&lt;<span class="tag">Route</span> path=<span class="str">"/admin/pedidos"</span> element={
+  &lt;<span class="tag">ProtectedRoute</span> requiredAuthority=<span class="str">"GERENCIA_PEDIDOS"</span>&gt;
+    &lt;<span class="tag">PedidosAdminPage</span> /&gt;
+  &lt;/<span class="tag">ProtectedRoute</span>&gt;
+} /&gt;</div>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div>O <code class="inline-code">state={{ from: location }}</code> salva a URL que o usuário tentou acessar. Na página de login, você pode redirecionar de volta depois do login com <code class="inline-code">navigate(location.state?.from || '/')</code>.</div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="goTo(4)">← Anterior</button>
+      <span class="step-counter">5 / 6</span>
+      <button class="btn btn-primary" onclick="goTo(6)">Próximo →</button>
+    </div>
+  </section>
+
+  <!-- STEP 6: CONSOLE E BUILD -->
+  <section class="step" id="step6">
+    <div class="step-header">
+      <div class="step-eyebrow">Passo 6 de 6</div>
+      <div class="step-title">Console,<br>Build e .env</div>
+      <p class="step-desc">A camada final: impede que informações apareçam no console em produção, organiza variáveis de ambiente e configura o build do Vite.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="badge badge-new">novo</span> src/utils/logger.js</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">src/utils/logger.js</span>
+          <span class="code-tag">criar do zero</span>
+        </div>
+        <div class="code-body"><span class="kw">const</span> isDev = <span class="fn">import</span>.meta.env.<span class="prop">DEV</span>;
+
+<span class="cm">// Use logger.log() no lugar de console.log()</span>
+<span class="cm">// Em produção, tudo é silenciado automaticamente</span>
+<span class="kw">export const</span> logger = {
+  <span class="fn">log</span>:   (...args) => isDev &amp;&amp; console.<span class="fn">log</span>(...args),
+  <span class="fn">warn</span>:  (...args) => isDev &amp;&amp; console.<span class="fn">warn</span>(...args),
+  <span class="fn">error</span>: (...args) => isDev &amp;&amp; console.<span class="fn">error</span>(...args),
+  <span class="fn">info</span>:  (...args) => isDev &amp;&amp; console.<span class="fn">info</span>(...args),
+  <span class="fn">debug</span>: (...args) => isDev &amp;&amp; console.<span class="fn">debug</span>(...args),
+};</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="badge badge-edit">editar</span> vite.config.js — remover console em produção</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">vite.config.js</span>
+          <span class="code-tag">adicionar seção build</span>
+        </div>
+        <div class="code-body"><span class="kw">import</span> { defineConfig } <span class="kw">from</span> <span class="str">'vite'</span>;
+<span class="kw">import</span> react <span class="kw">from</span> <span class="str">'@vitejs/plugin-react'</span>;
+
+<span class="kw">export default</span> <span class="fn">defineConfig</span>({
+  plugins: [<span class="fn">react</span>()],
+  build: {
+    minify: <span class="str">'terser'</span>,
+    terserOptions: {
+      compress: {
+        drop_console: <span class="kw">true</span>,  <span class="cm">// remove console.*</span>
+        drop_debugger: <span class="kw">true</span>, <span class="cm">// remove debugger</span>
+      },
+    },
+    sourcemap: <span class="kw">false</span>, <span class="cm">// não expõe código-fonte em prod</span>
+  },
+});</div>
+      </div>
+      <div class="callout callout-warn" style="margin:12px 0 0">
+        <div class="callout-icon">⚠</div>
+        <div>Instale o terser primeiro: <code class="inline-code">npm install -D terser</code></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="badge badge-new">novo</span> Variáveis de ambiente</div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">.env (NÃO sobe para o Git)</span>
+          <span class="code-tag">criar na raiz</span>
+        </div>
+        <div class="code-body">VITE_API_URL=http://localhost:8080</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">.env.production</span>
+          <span class="code-tag">criar na raiz</span>
+        </div>
+        <div class="code-body">VITE_API_URL=https://api.pendezzapizza.com.br</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">.gitignore</span>
+          <span class="code-tag">adicionar linha</span>
+        </div>
+        <div class="code-body">.env
+.env.local
+.env.production</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-filename">.env.example (SOBE para o Git)</span>
+          <span class="code-tag">para outros devs saberem as chaves</span>
+        </div>
+        <div class="code-body">VITE_API_URL=</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Checklist final — marque o que já implementou</div>
+      <ul class="checklist" id="checklist">
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Criado <code>src/services/api.js</code> com interceptors</span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Criado <code>src/utils/token.js</code> para gerenciar JWT</span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Criado <code>src/utils/validators.js</code></span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Criado <code>src/hooks/useFormValidation.js</code></span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Criado <code>src/components/shared/ProtectedRoute.jsx</code></span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Atualizado <code>vite.config.js</code> com terser</span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Configurados arquivos <code>.env</code> e <code>.gitignore</code></span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Criado <code>src/utils/logger.js</code> e substituído console.log</span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Substituído axios direto por <code>import api from services/api</code></span></li>
+        <li onclick="toggleCheck(this)"><div class="check-box">✓</div><span>Router atualizado com <code>ProtectedRoute</code></span></li>
+      </ul>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn btn-ghost" onclick="goTo(5)">← Anterior</button>
+      <span class="step-counter">6 / 6</span>
+      <button class="btn btn-primary" onclick="goTo(0)">↑ Início</button>
+    </div>
+  </section>
 
 </main>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════
-const DEFAULT_TAGS = ['Desenvolvimento Inicial','Adicionado','Alterado','Removido','Resolvido'];
-const DEFAULT_AREAS = ['Backend','Frontend','App Mobile','QA','Infraestrutura','Análise de Dados'];
+  let currentStep = 0;
+  const totalSteps = 6;
+  const visitedSteps = new Set([0]);
 
-// Sugestões de itens por [tag][area]
-const SUGGESTIONS = {
-  'Desenvolvimento Inicial': {
-    'Backend': [
-      'Estrutura base do projeto com Spring Boot',
-      'Configuração do Spring Data JPA + Hibernate',
-      'Configuração do banco de dados (MySQL/PostgreSQL)',
-      'Estrutura de pacotes (controller / service / domain / repository)',
-      'Tratamento global de exceções com @ControllerAdvice',
-      'Documentação OpenAPI/Swagger via SpringDoc',
-      'Validação de entrada com Bean Validation',
-      'Configuração do Spring Security base',
-      'Autenticação OAuth2 / JWT',
-      'Configuração do HikariCP',
-      'Spring Boot Actuator para monitoramento',
-    ],
-    'Frontend': [
-      'Estrutura base do projeto com React + Vite',
-      'Configuração de rotas com React Router',
-      'Configuração do Tailwind CSS',
-      'AuthProvider com contexto global de autenticação',
-      'Estrutura de componentes (pages / components / hooks / services)',
-      'Interceptor HTTP com credentials',
-      'Página de login',
-      'Página principal / dashboard',
-    ],
-    'App Mobile': [
-      'Estrutura base com React Native + Expo',
-      'Configuração de navegação (React Navigation)',
-      'Tela inicial / splash screen',
-      'Integração com API REST',
-      'Configuração de ambiente (dev/prod)',
-    ],
-    'QA': [
-      'Estrutura de testes com JUnit 5 + Mockito',
-      'Configuração do banco H2 para testes de integração',
-      'Configuração do MockMvc para testes de controller',
-      'Testes de repositório com @DataJpaTest',
-    ],
-    'Infraestrutura': [
-      'Dockerfile para o backend',
-      'Dockerfile para o frontend',
-      'Docker Compose com orquestração dos serviços',
-      'Health checks para todos os serviços',
-      'Rede Docker compartilhada entre os containers',
-      'Volumes para persistência de dados',
-      'Container separado para banco de testes',
-      'Pipeline CI/CD inicial',
-    ],
-    'Análise de Dados': [
-      'Estrutura base de relatórios',
-      'Configuração de fonte de dados para análise',
-      'Dashboard inicial',
-    ],
-  },
-  'Adicionado': {
-    'Backend': [
-      'Endpoint GET /v1/orders — listagem paginada',
-      'Endpoint GET /v1/orders/{id} — detalhe com ETag',
-      'Endpoint POST /v1/orders — criação de pedido',
-      'Endpoint POST /v1/orders/batch — criação em lote (207)',
-      'Endpoint GET /v1/orders/user — pedidos do cliente autenticado',
-      'Endpoint GET /v1/orders/restaurant — pedidos por restaurante',
-      'Endpoint GET /v1/users/{id}',
-      'Endpoint PUT /v1/users/{id}',
-      'Endpoint GET /v1/users/{id}/restaurants',
-      'Cache distribuído com Redis',
-      'Cache local com Caffeine',
-      'CacheInvalidationAspect',
-      'ETag por recurso e por listagem (ShallowETagHeaderFilter)',
-      'Paginação real no banco (setFirstResult/setMaxResults + COUNT separada)',
-      'OrderSpecs com filtro dinâmico via Criteria API',
-      'Emissão de pedidos em lote com captura individual de falhas',
-    ],
-    'Frontend': [
-      'Página /my-account com sidebar de navegação',
-      'Seção Minhas informações — edição inline',
-      'Seção Meus restaurantes — listagem paginada',
-      'Seção Meus pedidos — listagem com expansão e detalhe lazy',
-      'Seção Relatório de vendas',
-      'Hook useHasAuthority para verificação de permissões',
-      'Fluxo de cadastro de restaurante com atribuição automática de role',
-    ],
-    'App Mobile': [
-      'Tela de listagem de pedidos',
-      'Tela de detalhe do pedido',
-      'Notificações push',
-      'Suporte a AbortController para cancelar requisições ao desmontar',
-      'Atualização otimista do estado local',
-    ],
-    'QA': [
-      'Testes de controller com MockMvc',
-      'Testes de serviço com Mockito',
-      'Testes de repositório com banco H2',
-      'Testes de mapper Entity↔DTO',
-      'Testes de modelo e DTOs',
-      'Testes de integração end-to-end',
-    ],
-    'Infraestrutura': [
-      'Configuração de cache Redis distribuído',
-      'JAR em camadas para build Docker otimizado',
-      'Configuração de variáveis de ambiente por perfil',
-      'Stage de build multi-stage no Dockerfile',
-    ],
-    'Análise de Dados': [
-      'Endpoint de relatório de vendas',
-      'Agregações por restaurante / período',
-      'Exportação de dados em CSV',
-    ],
-  },
-  'Alterado': {
-    'Backend': [
-      'Paginação de queries customizadas migrada para o banco',
-      'Endpoints de listagem de pedidos separados por contexto',
-      'Refatoração do serviço de pedidos',
-      'Atualização de dependências do pom.xml',
-    ],
-    'Frontend': [
-      'Fluxo de edição consolidado em componente compartilhado',
-      'Refatoração do hook de estado para consumir camada de serviço',
-      'Atualização de dependências do package.json',
-    ],
-    'App Mobile': [
-      'Lógica de estado consolidada em App.tsx',
-      'Hook useTasks refatorado para usar useCallback',
-      'Modelo Task simplificado (remoção de campos opcionais)',
-    ],
-    'QA': ['Cobertura de testes ampliada','Refatoração de fixtures e helpers de teste'],
-    'Infraestrutura': ['Atualização de versão de imagem base Docker','Ajuste de variáveis de ambiente'],
-    'Análise de Dados': ['Ajuste de query de relatório','Mudança no formato de exportação'],
-  },
-  'Removido': {
-    'Backend': ['Endpoint depreciado removido','Dependência não utilizada removida do pom.xml'],
-    'Frontend': ['Componente não utilizado removido','Dependência não utilizada removida do package.json'],
-    'App Mobile': ['Tela removida por consolidação','Dependência legada removida'],
-    'QA': ['Teste duplicado removido'],
-    'Infraestrutura': ['Container legado removido do Compose'],
-    'Análise de Dados': ['Relatório descontinuado removido'],
-  },
-  'Resolvido': {
-    'Backend': [
-      'Erro de entidade JPA detached corrigido',
-      'Mapeamento bidirecional @ManyToMany corrigido com mappedBy',
-      'Invalidação de cache em múltiplas instâncias',
-      'Vazamento de conexão HikariCP corrigido',
-      'NullPointerException em validação de filtro',
-    ],
-    'Frontend': [
-      'Bug de comparação response.status como string ao invés de número',
-      'Re-render desnecessário no componente de listagem',
-      'Problema de autenticação com token userId vs id',
-    ],
-    'App Mobile': ['Crash ao navegar de volta na tela de detalhes','Requisição não cancelada ao desmontar componente'],
-    'QA': ['Teste flaky corrigido por dependência de ordem de execução'],
-    'Infraestrutura': ['Health check falhando por timeout muito curto','Volume Docker não persistindo entre restarts'],
-    'Análise de Dados': ['Query de relatório retornando dados duplicados'],
-  },
-};
-
-// ═══════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════
-let tags   = [...DEFAULT_TAGS];
-let areas  = [...DEFAULT_AREAS];
-let selTag  = null;
-let selArea = null;
-// checked[tag][area] = Set of item strings
-let checked = {};
-// customItems[tag][area] = []
-let customItems = {};
-// stack rows
-let stackRows = [];
-// versions
-let versions = JSON.parse(localStorage.getItem('cl_versions2') || '[]');
-let currentView = 'editor';
-
-// drag-select state
-let isDragging = false;
-let dragMode   = null; // 'check' | 'uncheck'
-let dragStart  = {x:0,y:0};
-
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
-document.getElementById('dt').value = new Date().toISOString().slice(0,10);
-renderTagPills();
-renderAreaPills();
-renderSidebarVersions();
-setupDragSelect();
-
-// ═══════════════════════════════════════════════
-// VIEWS
-// ═══════════════════════════════════════════════
-function showView(v) {
-  currentView = v;
-  document.getElementById('view-editor').style.display = v==='editor'?'block':'none';
-  document.getElementById('view-history').style.display = v==='history'?'block':'none';
-  document.getElementById('nav-editor').className='sb-item'+(v==='editor'?' active':'');
-  document.getElementById('nav-history').className='sb-item'+(v==='history'?' active':'');
-  if (v==='history') renderHistory();
-}
-
-// ═══════════════════════════════════════════════
-// PILLS
-// ═══════════════════════════════════════════════
-function renderTagPills() {
-  const row = document.getElementById('tagPills');
-  row.innerHTML = '';
-  tags.forEach(t => {
-    const p = document.createElement('button');
-    p.className = 'pill '+(selTag===t?'sel':'unsel');
-    p.dataset.tag = DEFAULT_TAGS.includes(t) ? t : 'custom-pill';
-    p.textContent = t;
-    p.onclick = () => { selTag = selTag===t?null:t; renderTagPills(); renderAreaPills(); renderPanel(); };
-    row.appendChild(p);
-  });
-}
-
-function renderAreaPills() {
-  const row = document.getElementById('areaPills');
-  row.innerHTML = '';
-  areas.forEach(a => {
-    const p = document.createElement('button');
-    p.className = 'pill '+(selArea===a?'sel':'unsel');
-    p.dataset.area = DEFAULT_AREAS.includes(a) ? a : 'custom-pill';
-    p.textContent = a;
-    p.onclick = () => { selArea = selArea===a?null:a; renderAreaPills(); renderPanel(); };
-    row.appendChild(p);
-  });
-}
-
-function addCustomTag() {
-  const inp = document.getElementById('newTagInput');
-  const v = inp.value.trim();
-  if (!v || tags.includes(v)) return;
-  tags.push(v);
-  inp.value = '';
-  renderTagPills();
-}
-
-function addCustomArea() {
-  const inp = document.getElementById('newAreaInput');
-  const v = inp.value.trim();
-  if (!v || areas.includes(v)) return;
-  areas.push(v);
-  inp.value = '';
-  renderAreaPills();
-}
-
-// ═══════════════════════════════════════════════
-// PANEL
-// ═══════════════════════════════════════════════
-function getKey() { return selTag && selArea ? `${selTag}||${selArea}` : null; }
-
-function getCheckedSet() {
-  const k = getKey(); if (!k) return new Set();
-  if (!checked[k]) checked[k] = new Set();
-  return checked[k];
-}
-
-function getSuggestions() {
-  if (!selTag || !selArea) return [];
-  return (SUGGESTIONS[selTag] && SUGGESTIONS[selTag][selArea]) || [];
-}
-
-function getCustom() {
-  const k = getKey(); if (!k) return [];
-  return customItems[k] || [];
-}
-
-function renderPanel() {
-  const k = getKey();
-  const title = k ? `${selTag} · ${selArea}` : 'Selecione um tipo e uma área';
-  document.getElementById('panelTitle').textContent = title;
-  const list = document.getElementById('itemsList');
-  const sugg = getSuggestions();
-  const cust = getCustom();
-  const all  = [...sugg, ...cust];
-  if (!k || all.length === 0) {
-    list.innerHTML = `<div class="empty-state">${k ? 'Nenhum item sugerido. Adicione abaixo.' : 'Selecione um tipo de mudança e uma área.'}</div>`;
-    updateSelCount();
-    return;
-  }
-  const cs = getCheckedSet();
-  list.innerHTML = all.map((item, i) => `
-    <div class="item-row" data-item="${escAttr(item)}" onmousedown="rowMouseDown(event,'${escAttr(item)}')" onmouseenter="rowMouseEnter(event,'${escAttr(item)}')">
-      <input type="checkbox" id="ir_${i}" ${cs.has(item)?'checked':''} onchange="toggleItem('${escAttr(item)}')">
-      <label for="ir_${i}">${escHtml(item)}</label>
-      ${cust.includes(item) ? `<button class="del-item" onclick="delCustomItem('${escAttr(item)}')">✕</button>` : ''}
-    </div>`).join('');
-  updateSelCount();
-}
-
-function toggleItem(item, force) {
-  const cs = getCheckedSet();
-  if (force === true) cs.add(item);
-  else if (force === false) cs.delete(item);
-  else cs.has(item) ? cs.delete(item) : cs.add(item);
-  // sync checkbox
-  const all = [...getSuggestions(), ...getCustom()];
-  const i = all.indexOf(item);
-  if (i>=0) { const cb = document.getElementById('ir_'+i); if(cb) cb.checked = cs.has(item); }
-  updateSelCount();
-}
-
-function updateSelCount() {
-  const k = getKey();
-  const n = k ? getCheckedSet().size : 0;
-  document.getElementById('selCount').textContent = n>0 ? `${n} selecionado${n>1?'s':''}` : '';
-}
-
-function addCustomItem() {
-  const inp = document.getElementById('customItemInput');
-  const v = inp.value.trim();
-  const k = getKey();
-  if (!v || !k) return;
-  if (!customItems[k]) customItems[k] = [];
-  if (!customItems[k].includes(v) && !getSuggestions().includes(v)) {
-    customItems[k].push(v);
-    getCheckedSet().add(v); // auto-check novos
-  }
-  inp.value = '';
-  renderPanel();
-}
-
-function delCustomItem(item) {
-  const k = getKey(); if (!k) return;
-  customItems[k] = (customItems[k]||[]).filter(x => x!==item);
-  getCheckedSet().delete(item);
-  renderPanel();
-}
-
-function selectAllInPanel() {
-  const all = [...getSuggestions(), ...getCustom()];
-  const cs = getCheckedSet();
-  all.forEach(i => cs.add(i));
-  renderPanel();
-}
-
-function deselectInPanel() {
-  const k = getKey(); if (k) checked[k] = new Set();
-  renderPanel();
-}
-
-function selectAllVisible() {
-  Object.keys(checked).forEach(k => {
-    const [t,a] = k.split('||');
-    const all = [...(SUGGESTIONS[t]?.[a]||[]), ...(customItems[k]||[])];
-    all.forEach(i => checked[k].add(i));
-  });
-  // also init current
-  if (getKey()) { selectAllInPanel(); return; }
-  renderPanel();
-}
-
-function deselectAll() {
-  checked = {};
-  renderPanel();
-}
-
-// ═══════════════════════════════════════════════
-// DRAG SELECT
-// ═══════════════════════════════════════════════
-function rowMouseDown(e, item) {
-  if (e.button !== 0) return;
-  const cs = getCheckedSet();
-  dragMode = cs.has(item) ? 'uncheck' : 'check';
-  toggleItem(item, dragMode==='check');
-  isDragging = true;
-  e.preventDefault();
-}
-
-function rowMouseEnter(e, item) {
-  if (!isDragging) return;
-  toggleItem(item, dragMode==='check');
-}
-
-function setupDragSelect() {
-  document.addEventListener('mouseup', () => { isDragging = false; dragMode = null; });
-  document.addEventListener('mouseleave', () => { isDragging = false; dragMode = null; });
-}
-
-// ═══════════════════════════════════════════════
-// STACK
-// ═══════════════════════════════════════════════
-function addStackRow() {
-  const t = document.getElementById('stkTech').value.trim();
-  const v = document.getElementById('stkVer').value.trim();
-  if (!t) return;
-  stackRows.push({tech:t, ver:v});
-  document.getElementById('stkTech').value='';
-  document.getElementById('stkVer').value='';
-  renderStack();
-  document.getElementById('stkTech').focus();
-}
-
-function delStackRow(i) { stackRows.splice(i,1); renderStack(); }
-
-function renderStack() {
-  const tbody = document.getElementById('stackBody');
-  tbody.innerHTML = stackRows.map((r,i)=>`
-    <tr>
-      <td><input type="text" value="${escAttr(r.tech)}" oninput="stackRows[${i}].tech=this.value"></td>
-      <td><input type="text" value="${escAttr(r.ver)}"  oninput="stackRows[${i}].ver=this.value" style="max-width:120px"></td>
-      <td><button class="btn btn-sm" onclick="delStackRow(${i})" style="padding:2px 6px;color:var(--text3)">✕</button></td>
-    </tr>`).join('');
-}
-
-function clearStack() { stackRows=[]; renderStack(); }
-
-// ═══════════════════════════════════════════════
-// GENERATE
-// ═══════════════════════════════════════════════
-function collectMd() {
-  const ver  = document.getElementById('ver').value.trim()||'0.1.0';
-  const dt   = document.getElementById('dt').value.trim()||new Date().toISOString().slice(0,10);
-  const name = document.getElementById('verName').value.trim();
-  const header = name ? `## [${ver}] - ${dt} · ${name}` : `## [${ver}] - ${dt}`;
-
-  // gather all checked items grouped by tag > area
-  const groups = {}; // tag -> area -> [items]
-  let total = 0;
-  Object.entries(checked).forEach(([k, cs]) => {
-    if (cs.size === 0) return;
-    const [tag, area] = k.split('||');
-    if (!groups[tag]) groups[tag] = {};
-    if (!groups[tag][area]) groups[tag][area] = [];
-    cs.forEach(item => { groups[tag][area].push(item); total++; });
-  });
-
-  let lines = [header];
-
-  tags.forEach(tag => {
-    if (!groups[tag]) return;
-    lines.push(`\n### ${tag}`);
-    areas.forEach(area => {
-      if (!groups[tag][area] || groups[tag][area].length===0) return;
-      lines.push(`- **${area}**`);
-      groups[tag][area].forEach(item => lines.push(`  - ${item}`));
+  function goTo(n) {
+    document.getElementById('step' + currentStep).classList.remove('active');
+    document.querySelectorAll('.nav-item').forEach((el, i) => {
+      el.classList.toggle('active', i === n);
     });
-  });
-
-  if (stackRows.length > 0) {
-    lines.push('\n### Stack Técnico');
-    lines.push('| Tecnologia | Versão |');
-    lines.push('| ---------- | ------ |');
-    stackRows.forEach(r => lines.push(`| ${r.tech} | ${r.ver} |`));
+    currentStep = n;
+    visitedSteps.add(n);
+    document.getElementById('step' + n).classList.add('active');
+    updateDots();
+    window.scrollTo(0, 0);
   }
 
-  const today = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
-  lines.push(`\n---\n**Última atualização:** ${today}`);
-
-  return { md: lines.join('\n'), ver, dt, name, total };
-}
-
-function generate() {
-  const { md, ver, total } = collectMd();
-  document.getElementById('mdOut').value = md;
-  document.getElementById('outMeta').textContent = `v${ver} · ${total} entrada${total!==1?'s':''}`;
-  document.getElementById('outputSection').style.display = 'block';
-  document.getElementById('outputSection').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function saveVersion() {
-  const { md, ver, dt, name, total } = collectMd();
-  if (total===0) { alert('Selecione pelo menos um item antes de salvar.'); return; }
-  const idx = versions.findIndex(v=>v.ver===ver);
-  const entry = { ver, dt, name, md, savedAt: new Date().toISOString() };
-  if (idx>=0) { if (!confirm(`Versão ${ver} já existe. Substituir?`)) return; versions[idx]=entry; }
-  else versions.unshift(entry);
-  persist();
-  renderSidebarVersions();
-  alert(`Versão ${ver} salva!`);
-}
-
-// ═══════════════════════════════════════════════
-// HISTORY
-// ═══════════════════════════════════════════════
-function renderSidebarVersions() {
-  const list = document.getElementById('sbVersionList');
-  if (versions.length===0) {
-    list.innerHTML='<div style="padding:4px 16px;font-size:.73rem;color:var(--text3)">Nenhuma ainda</div>';
-    return;
+  function updateDots() {
+    for (let i = 0; i <= totalSteps; i++) {
+      const dot = document.getElementById('dot' + i);
+      if (!dot) continue;
+      dot.className = 'nav-dot ' + (i === currentStep ? 'active' : visitedSteps.has(i) ? 'done' : 'todo');
+      dot.textContent = visitedSteps.has(i) && i !== currentStep ? '✓' : i;
+    }
+    const pct = Math.round((visitedSteps.size / (totalSteps + 1)) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent =
+      visitedSteps.size + ' / ' + (totalSteps + 1) + ' visitados';
   }
-  list.innerHTML = versions.map((v,i)=>`
-    <div class="sb-ver-entry" onclick="loadVersion(${i})">
-      <span>${v.ver}${v.name?' · '+v.name:''}</span>
-      <button class="sb-ver-del" onclick="event.stopPropagation();deleteVersion(${i})">✕</button>
-    </div>`).join('');
-}
 
-function loadVersion(i) {
-  const v = versions[i];
-  document.getElementById('mdOut').value = v.md;
-  document.getElementById('outMeta').textContent = `v${v.ver} — carregado do histórico`;
-  document.getElementById('outputSection').style.display = 'block';
-  showView('editor');
-}
-
-function deleteVersion(i) {
-  if (!confirm(`Deletar versão ${versions[i].ver}?`)) return;
-  versions.splice(i,1);
-  persist();
-  renderSidebarVersions();
-  if (currentView==='history') renderHistory();
-}
-
-function renderHistory() {
-  const list  = document.getElementById('historyList');
-  const empty = document.getElementById('historyEmpty');
-  if (versions.length===0) { list.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display='none';
-  list.innerHTML = versions.map((v,i)=>`
-    <div class="history-card">
-      <div class="history-card-header" onclick="toggleHCard('hb${i}')">
-        <div>
-          <div class="hv-title">v${v.ver}${v.name?' — '+v.name:''}</div>
-          <div class="hv-meta">${v.dt} · salvo em ${new Date(v.savedAt).toLocaleString('pt-BR')}</div>
-        </div>
-        <span style="font-size:.8rem;color:var(--text3)">▾</span>
-      </div>
-      <div class="history-card-body" id="hb${i}">
-        <pre>${escHtml(v.md)}</pre>
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-          <button class="btn btn-sm" onclick="copyVer(${i})">Copiar</button>
-          <button class="btn btn-sm" onclick="dlSingle(${i})">Baixar .md</button>
-          <button class="btn btn-sm" style="color:var(--accent)" onclick="deleteVersion(${i})">Deletar</button>
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-function toggleHCard(id){const el=document.getElementById(id);el.style.display=el.style.display==='block'?'none':'block';}
-function copyVer(i){navigator.clipboard.writeText(versions[i].md).catch(()=>{const ta=document.createElement('textarea');ta.value=versions[i].md;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta)});}
-function dlSingle(i){const v=versions[i];dl(`CHANGELOG-${v.ver}.md`,v.md);}
-
-// ═══════════════════════════════════════════════
-// EXPORT
-// ═══════════════════════════════════════════════
-function exportAll() {
-  if (versions.length===0){alert('Nenhuma versão salva.');return;}
-  const header = '# Histórico de Mudanças\n\nTodas as mudanças notáveis serão documentadas neste arquivo.\nO formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),\ne este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR/).\n\n---\n\n';
-  const content = header + versions.map(v=>v.md).join('\n\n---\n\n');
-  dl('CHANGELOG.md', content);
-}
-
-function downloadCurrent() {
-  const ver = document.getElementById('ver').value.trim()||'entry';
-  dl(`CHANGELOG-${ver}.md`, document.getElementById('mdOut').value);
-}
-
-function copyOutput(){navigator.clipboard.writeText(document.getElementById('mdOut').value).catch(()=>{const ta=document.getElementById('mdOut');ta.select();document.execCommand('copy')});}
-
-function dl(filename,text){
-  const a=document.createElement('a');
-  a.href='data:text/markdown;charset=utf-8,'+encodeURIComponent(text);
-  a.download=filename;a.click();
-}
-
-// ═══════════════════════════════════════════════
-// MISC
-// ═══════════════════════════════════════════════
-function clearForm() {
-  checked={};customItems={};stackRows=[];
-  document.getElementById('ver').value='';
-  document.getElementById('verName').value='';
-  document.getElementById('dt').value=new Date().toISOString().slice(0,10);
-  selTag=null;selArea=null;
-  renderTagPills();renderAreaPills();renderPanel();renderStack();
-  document.getElementById('outputSection').style.display='none';
-}
-
-function persist(){localStorage.setItem('cl_versions2',JSON.stringify(versions));}
-
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function escAttr(s){return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
 </script>
 </body>
 </html>
