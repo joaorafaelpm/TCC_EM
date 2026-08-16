@@ -13,11 +13,12 @@ const addressSchema = {
 };
 
 // forwardRef — permite o pai chamar addressRef.current.validate()
-const DeliveryAddressForm = forwardRef(({ onAddressUpdate }, ref) => {
+const DeliveryAddressForm = forwardRef(({ onAddressUpdate , initialAddress}, ref) => {
   const [address, setAddress] = useState({
-    zipCode: '', street: '', number: '',
-    complement: '', neighborhood: '', cityId: '', cityName: ''
+    zipCode: initialAddress?.zipCode || '', street: initialAddress?.street || '', number: initialAddress?.number || '',
+    complement: initialAddress?.complement || '', neighborhood: initialAddress?.neighborhood || '', cityId: initialAddress?.cityId || '', cityName: initialAddress?.cityName || ''
   });
+  const [cepError, setCepError] = useState('');
   const [cities, setCities] = useState([]);
 
   const { errors, validateAll, clearErrors } = useFormValidation(addressSchema);
@@ -72,7 +73,10 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate }, ref) => {
           cityId: cityData.id
         }));
       } else {
-        alert('CEP não encontrado.');
+        // CEP não encontrado — limpa o cep e avisa o usuário
+        setAddress(prev => ({ ...prev, zipCode: '' }));
+        setCepError('CEP não encontrado. Por favor, verifique e tente novamente.');
+        clearErrors('zipCode');
       }
     } catch (e) {
       console.error(e);
@@ -92,10 +96,10 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate }, ref) => {
   return (
     <div>
       <p className='title'>Endereço</p>
-
       <div className='multi-fields'>
         <Input
           name="zipCode"
+          label="CEP (sem - ou .)"
           type="text"
           placeholder="CEP"
           value={address.zipCode}
@@ -106,28 +110,33 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate }, ref) => {
         />
         <Input
         name="neighborhood"
+        label="Bairro"
         type="text"
         placeholder="Bairro"
         value={address.neighborhood}
         onChange={handleAddressChange}
         onBlur={handleCepBlur}
         autoComplete ="postal-code"
+        maxLength={255}
         error={errors.neighborhood}
       />
       </div>
         <Input
           name="street"
+          label="Rua"
           type="text"
           placeholder="Rua"
           value={address.street}
           onChange={handleAddressChange}
           autoComplete="address-line1"
+          maxLength={255}
           error={errors.street}
         />
 
       <div className='multi-fields'>
         <Input
           name="number" 
+          label="Número"
           type="text"  
           placeholder="Número"
           value={address.number} 
@@ -135,17 +144,21 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate }, ref) => {
           autoComplete="address-line2"
           className={errors.number ? 'is-invalid' : ''}
           error={errors.number}
+          maxLength={5}
         />
         <Input
           name="complement"
+          label="Complemento (Opcional - ajuda o entregador)"
           type="text"
           placeholder="Complemento"
           value={address.complement}
           onChange={handleAddressChange}
+          maxLength={255}
         />
       </div>
 
         <Input  
+          label="Cidade"
           name="cityName"
           placeholder="Cidade"
           list="city-options"  
@@ -154,6 +167,7 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate }, ref) => {
           autoComplete="address-level2"
           className={errors.cityId ? 'is-invalid' : ''}
           error={errors.cityId}
+          maxLength={255}
         />
         <datalist id="city-options">
           {cities.map(city => <option key={city.id} value={city.name} />)}

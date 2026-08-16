@@ -122,21 +122,12 @@
 .my-info__fields {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
-.my-info__field {
+.my-info__value-container{
+  margin-top: 5vh;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-
-.my-info__label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
 }
 
 .my-info__value {
@@ -145,23 +136,6 @@
   margin: 0;
   padding: 10px 0;
   border-bottom: 1px solid #f0f0f0;
-}
-
-.my-info__input {
-  font-size: 0.95rem;
-  color: #1a1a1a;
-  border: 1.5px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  outline: none;
-  transition: border-color 0.15s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.my-info__input:focus {
-  border-color: #a8222e;
 }
 
 /* Actions */

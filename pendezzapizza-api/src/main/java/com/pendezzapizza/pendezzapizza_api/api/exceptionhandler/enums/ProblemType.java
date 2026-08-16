@@ -4,7 +4,7 @@
  * @difficulty  Low
  * @depends-on  ExceptionHandler
  */
-package com.pendezzapizza.pendezzapizza_api.api.exceptionhandler.enuns;
+package com.pendezzapizza.pendezzapizza_api.api.exceptionhandler.enums;
 
 import lombok.Getter;
 

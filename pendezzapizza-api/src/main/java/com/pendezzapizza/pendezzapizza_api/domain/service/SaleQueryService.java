@@ -4,7 +4,7 @@ package com.pendezzapizza.pendezzapizza_api.domain.service;
 import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.dto.DailySale;
 import com.pendezzapizza.pendezzapizza_api.domain.model.dto.EnrichedDailySale;
-import com.pendezzapizza.pendezzapizza_api.domain.model.enuns.SaleIncludeField;
+import com.pendezzapizza.pendezzapizza_api.domain.model.enums.SaleIncludeField;
 
 import java.util.List;
 import java.util.Set;

@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { assets } from '../../../assets/assets';
-import './UserMenu.css'; 
+import { useAuth } from '../../context/AuthProvider';
+import './UserMenu.css';
 
 const UserMenu = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const menuRef = useRef(null);
+  const { logout } = useAuth();
 
-  // Fecha o menu se clicar fora dele
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -18,14 +20,23 @@ const UserMenu = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleLogout = async () => {
+    if (loggingOut) return; // evita clique duplo disparando dois POSTs
+    setLoggingOut(true);
+    setShowMenu(false);
+    await logout();
+    // sem setLoggingOut(false) aqui de propósito — o logout já redireciona
+    // a página inteira (globalThis.location.href), então o componente
+    // vai desmontar - resetar o estado depois disso não faz diferença.
+  };
+
   return (
     <div className="user-menu-container" ref={menuRef}>
-      {/* Ícone de Personagem/Perfil */}
-      <img 
+      <img
         src={assets.config_user}
-        alt="Perfil" 
-        className="icon" 
-        onClick={() => setShowMenu(!showMenu)} 
+        alt="Perfil"
+        className="icon"
+        onClick={() => setShowMenu(!showMenu)}
       />
 
       {showMenu && (
@@ -41,8 +52,8 @@ const UserMenu = () => {
             </Link>
           </li>
           <hr />
-          <li onClick={() => { /* Lógica de Logout */ setShowMenu(false); }}>
-            <p className="logout-text">Sair</p>
+          <li onClick={handleLogout}>
+            <p className="logout-text">{loggingOut ? 'Saindo...' : 'Sair'}</p>
           </li>
         </ul>
       )}

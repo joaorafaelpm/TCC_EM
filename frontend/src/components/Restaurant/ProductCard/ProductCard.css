@@ -366,3 +366,33 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.3;
 }
+
+.prod-upd-field-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background-color: var(--tertiary-color);
+  border-left: 3px solid var(--primary-color);
+  color: var(--primary-color);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 0 6px 6px 0;
+  margin-top: 4px;
+  width: fit-content;
+}
+
+.prod-upd-field-error::before {
+  content: '!';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}

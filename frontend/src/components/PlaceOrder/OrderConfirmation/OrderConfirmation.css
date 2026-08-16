@@ -1,0 +1,300 @@
+/* ─────────────────────────────────────────────────────────
+   OrderConfirmation.css
+   Paleta: usa as variáveis globais do projeto
+   ───────────────────────────────────────────────────────── */
+
+.oc-root {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    animation: oc-fade-up 0.45s ease both;
+}
+
+@keyframes oc-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Hero ── */
+.oc-hero {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.oc-hero-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+}
+
+/* Círculo de fundo */
+.oc-circle {
+    fill: var(--secondary-color);
+    animation: oc-circle-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.oc-circle--warn {
+    fill: var(--primary-color);
+}
+
+@keyframes oc-circle-pop {
+    from {
+        r: 0;
+    }
+
+    to {
+        r: 28;
+    }
+}
+
+/* Checkmark desenhado */
+.oc-check {
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: oc-draw 0.35s ease 0.3s forwards;
+}
+
+.oc-check--warn {
+    stroke: #fff;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.oc-dot--warn {
+    fill: #fff;
+}
+
+@keyframes oc-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.oc-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--secondary-color);
+    margin-bottom: 8px;
+    line-height: 1.15;
+}
+
+.oc-hero--warn .oc-title {
+    color: var(--primary-color);
+}
+
+.oc-subtitle {
+    font-size: 1rem;
+    color: #888;
+}
+
+/* ── Seções ── */
+.oc-section {
+    margin-bottom: 36px;
+}
+
+.oc-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    margin-bottom: 14px;
+}
+
+.oc-section-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.oc-section-dot--green {
+    background: var(--secondary-color);
+}
+
+.oc-section-dot--red {
+    background: var(--primary-color);
+}
+
+/* ── Cards ── */
+.oc-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.oc-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px 20px;
+    border: 1.5px solid transparent;
+    animation: oc-card-in 0.35s ease both;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes oc-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.oc-card--success {
+    border-color: rgba(16, 69, 30, 0.18);
+}
+
+.oc-card--error {
+    border-color: rgba(116, 43, 43, 0.2);
+    background: #fff9f9;
+}
+
+.oc-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.oc-restaurant {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #1a1a1a;
+}
+
+.oc-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(16, 69, 30, 0.1);
+    color: var(--secondary-color);
+    padding: 3px 10px;
+    border-radius: 20px;
+}
+
+/* Lista de itens */
+.oc-items {
+    list-style: none;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.oc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: #555;
+}
+
+.oc-item-qty {
+    font-weight: 700;
+    color: var(--secondary-color);
+    min-width: 24px;
+}
+
+.oc-item-name {
+    color: #444;
+}
+
+/* Rodapé do card */
+.oc-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.oc-id {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    color: #bbb;
+    letter-spacing: 0.05em;
+}
+
+.oc-total {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--secondary-color);
+}
+
+/* Erro */
+.oc-error-msg {
+    font-size: 0.88rem;
+    color: var(--primary-color);
+    line-height: 1.5;
+}
+
+/* ── Ações ── */
+.oc-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 40px;
+}
+
+.oc-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.oc-btn--primary {
+    background: var(--secondary-color);
+    color: #fff;
+}
+
+.oc-btn--primary:hover {
+    background: #0d361f;
+}
+
+.oc-btn--ghost {
+    background: transparent;
+    color: #999;
+    border: 1.5px solid #e5e5e5;
+}
+
+.oc-btn--ghost:hover {
+    border-color: #ccc;
+    color: #555;
+}
+
+/* ── Responsivo ── */
+@media (max-width: 480px) {
+    .oc-root {
+        padding: 32px 16px 60px;
+    }
+
+    .oc-title {
+        font-size: 1.6rem;
+    }
+}

@@ -19,6 +19,7 @@ export function AuthProvider({ children }) {
     if (!res.ok) return null
     return res.json()
   }
+  
 
   useEffect(() => {
     let cancelled = false

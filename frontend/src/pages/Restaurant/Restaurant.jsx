@@ -91,6 +91,10 @@ const Restaurant = () => {
     );
   };
 
+  const handleProductCreate = (newProduct) => {
+    setProducts(prev => [...prev, newProduct]);
+  };
+
   if (loading) return <div className="loading">Carregando detalhes...</div>;
   if (!restaurant) return <div className="error">Restaurante não encontrado.</div>;
 
@@ -157,6 +161,7 @@ const Restaurant = () => {
         <AddProductModal
           restaurantId={id}
           onClose={() => setShowAddProduct(false)}
+          onProductAdded={handleProductCreate}
         />
       )}
     </div>

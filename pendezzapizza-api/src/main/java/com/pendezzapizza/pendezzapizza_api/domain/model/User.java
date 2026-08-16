@@ -99,29 +99,6 @@ public class User implements Serializable {
     private Set<Restaurant> userRestaurants = new HashSet<>();
 
     /**
-     * Verifica se a senha informada corresponde à senha armazenada para este usuário.
-     * Usado para validação de credenciais no fluxo de autenticação.
-     *
-     * @param password senha a ser verificada
-     * @return {@code true} se a senha corresponder
-     */
-    public boolean passwordMatches(String password) {
-        return this.password.equals(password);
-    }
-
-    /**
-     * Verifica se a senha informada não corresponde à senha armazenada para este usuário.
-     * Conveniente para lançar exceções de autenticação sem inverter a lógica no chamador.
-     *
-     * @param password senha a ser verificada
-     * @return {@code true} se a senha não corresponder
-     */
-    public boolean passwordDoesNotMatch(String password) {
-        return !passwordMatches(password);
-    }
-
-
-    /**
      * Associa um grupo de permissão a este usuário.
      *
      * @param group grupo a ser adicionado

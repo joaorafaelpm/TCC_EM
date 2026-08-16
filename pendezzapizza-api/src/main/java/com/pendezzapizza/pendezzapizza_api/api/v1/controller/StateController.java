@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.StateModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.StateDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.StateDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.StateModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.StateDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.StateControllerOpenApi;

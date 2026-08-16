@@ -1,4 +1,4 @@
-package com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler;
+package com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.UserDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.UserWithPasswordDTO;

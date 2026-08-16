@@ -5,7 +5,7 @@ import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.filter.DailySalesFilter;
 import com.pendezzapizza.pendezzapizza_api.domain.model.dto.DailySale;
 import com.pendezzapizza.pendezzapizza_api.domain.model.dto.EnrichedDailySale;
-import com.pendezzapizza.pendezzapizza_api.domain.model.enuns.SaleIncludeField;
+import com.pendezzapizza.pendezzapizza_api.domain.model.enums.SaleIncludeField;
 import com.pendezzapizza.pendezzapizza_api.domain.service.SaleQueryService;
 import com.pendezzapizza.pendezzapizza_api.domain.service.SaleReportService;
 import lombok.AllArgsConstructor;

@@ -1,52 +1,80 @@
 import React, { useState } from 'react';
 import './MyInfo.css';
+import { notBlank, validationEmail, validationName, validPhone } from '../../../utils/validator';
+import { useFormValidation } from '../../../hooks/UserFormValidation';
+import Input from '../../Input/Input';
+import api from '../../../services/api';
+import { formatPhone } from '../../../utils/formatter';
+
+const schema = {
+  name:   [notBlank('Nome'), validationName()],
+  email:  [notBlank('E-mail'), validationEmail],
+  phone:  [validPhone],
+};
 
 const MyInfo = ({ user }) => {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
 
-  const [form, setForm] = useState({
+  const initialInfo = {
     name: user.name || '',
     email: user.email || '',
     phone: user.phone || '',
-  });
+  };
+
+  const [userInfo, setUserInfo] = useState(initialInfo);
+  // Snapshot do que está realmente salvo no backend — usado para
+  // detectar se houve mudança real, independente do `user` prop
+  // (que só atualiza quando o pai refizer o fetch).
+  const [savedInfo, setSavedInfo] = useState(initialInfo);
 
   const handleChange = (e) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setUserInfo(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
+
+  const { errors, validateAll, setBackendError, clearErrors } = useFormValidation(schema);
 
   const handleCancel = () => {
-    setForm({ name: user.name, email: user.email, phone: user.phone });
+    setUserInfo(savedInfo);
     setEditing(false);
-    setError(null);
+    clearErrors();
   };
 
-  const handleSave = async () => {
+  const hasChanges = () =>
+    userInfo.name  !== savedInfo.name  ||
+    userInfo.email !== savedInfo.email ||
+    userInfo.phone !== savedInfo.phone;
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    // Nada mudou — não bate no backend à toa
+    if (!hasChanges()) {
+      setEditing(false);
+      return;
+    }
+
     setSaving(true);
-    setError(null);
-    setSuccess(false);
+
+    const userValid = validateAll(userInfo);
+    if (!userValid) {
+      setSaving(false);
+      return;
+    }
+
+    const payload = {
+      name: userInfo.name,
+      email: userInfo.email,
+      phone: userInfo.phone,
+    };
 
     try {
-      const res = await fetch(`/v1/users/${user.id}`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-        }),
-      });
-
-      if (!res.ok) throw new Error('Erro ao salvar alterações.');
-
-      setSuccess(true);
+      await api.put(`/v1/users/${user.id}`, payload);
+      setSavedInfo(userInfo); // snapshot atualizado — próxima comparação usa esses valores
       setEditing(false);
-      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      setError(err.message);
+      setBackendError(err);
     } finally {
       setSaving(false);
     }
@@ -71,77 +99,67 @@ const MyInfo = ({ user }) => {
         )}
       </div>
 
-      {success && (
-        <div className="my-info__alert my-info__alert--success">
-          ✅ Dados atualizados com sucesso!
-        </div>
-      )}
-
-      {error && (
-        <div className="my-info__alert my-info__alert--error">
-          ⚠️ {error}
-        </div>
-      )}
-
       <div className="my-info__card">
         <div className="my-info__avatar-section">
           <div className="my-info__avatar">
-            {form.name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()}
+            {userInfo.name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()}
           </div>
           <div>
-            <p className="my-info__avatar-name">{form.name}</p>
-            <p className="my-info__avatar-email">{form.email}</p>
+            <p className="my-info__avatar-name">{userInfo.name}</p>
+            <p className="my-info__avatar-email">{userInfo.email}</p>
           </div>
         </div>
 
-        <div className="my-info__divider" />
-
         <div className="my-info__fields">
-          <div className="my-info__field">
-            <label className="my-info__label">Nome completo</label>
             {editing ? (
-              <input
-                className="my-info__input"
+              <Input
                 name="name"
-                value={form.name}
+                maxLength={100}
+                label="Nome Completo"
+                type="text"
+                placeholder="Nome Completo"
+                value={userInfo.name}
                 onChange={handleChange}
-                placeholder="Seu nome"
+                error={errors.name}
               />
             ) : (
-              <p className="my-info__value">{form.name || '—'}</p>
+              <div className='my-info__value-container'>
+                <p className="my-info__value">{userInfo.name || '—'}</p>
+              </div>
             )}
-          </div>
-
-          <div className="my-info__field">
-            <label className="my-info__label">E-mail</label>
             {editing ? (
-              <input
-                className="my-info__input"
+              <Input
                 name="email"
+                maxLength={100}
+                label="E-mail"
                 type="email"
-                value={form.email}
-                onChange={handleChange}
                 placeholder="seu@email.com"
-              />
-            ) : (
-              <p className="my-info__value">{form.email || '—'}</p>
-            )}
-          </div>
-
-          <div className="my-info__field">
-            <label className="my-info__label">Telefone</label>
-            {editing ? (
-              <input
-                className="my-info__input"
-                name="phone"
-                value={form.phone}
+                value={userInfo.email}
                 onChange={handleChange}
-                placeholder="(00) 00000-0000"
+                error={errors.email}
               />
             ) : (
-              <p className="my-info__value">{form.phone || '—'}</p>
+              <div className='my-info__value-container'>
+                <p className="my-info__value">{userInfo.email || '—'}</p>
+              </div>
             )}
-          </div>
+            {editing ? (
+              <Input
+                name="phone"
+                maxLength={15}
+                label={userInfo.phone ? "Telefone" : "Adicionar Telefone"}
+                type="text"
+                placeholder="(00) 00000-0000"
+                value={userInfo.phone}
+                format={formatPhone}
+                onChange={handleChange}
+                error={errors.phone}
+              />
+            ) : (
+              <div className='my-info__value-container'>
+                <p className="my-info__value">{userInfo.phone || '—'}</p>
+              </div>
+            )}
         </div>
 
         {editing && (

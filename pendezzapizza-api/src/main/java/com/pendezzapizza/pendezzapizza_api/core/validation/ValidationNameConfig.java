@@ -10,6 +10,7 @@ public class ValidationNameConfig implements ConstraintValidator<ValidationName,
     private int max;
     private boolean allowHyphen;
     private boolean allowApostrophe;
+    private boolean allowNull;
 
     private Pattern pattern;
 
@@ -19,6 +20,7 @@ public class ValidationNameConfig implements ConstraintValidator<ValidationName,
         this.max = annotation.max();
         this.allowHyphen = annotation.allowHyphen();
         this.allowApostrophe = annotation.allowApostrophe();
+        this.allowNull = annotation.allowNull();
 
         // Monta dinamicamente a regex permitida
         StringBuilder regex = new StringBuilder("^[A-Za-zÀ-ÖØ-öø-ÿ ");
@@ -35,8 +37,10 @@ public class ValidationNameConfig implements ConstraintValidator<ValidationName,
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null)
+        if (!allowNull && value == null)
             return false;
+        if (allowNull && value == null)
+            return true;
 
         String cleaned = value.trim();
 

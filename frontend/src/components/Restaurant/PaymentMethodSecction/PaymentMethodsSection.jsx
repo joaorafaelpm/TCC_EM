@@ -119,13 +119,6 @@ const PaymentMethodsSection = ({ restaurantId, hasAuthority }) => {
           <span className="payment-section__badge">{linkedIds.size} ativas</span>
         </div>
 
-        {/* Erro de ação visível ao usuário */}
-        {actionError && (
-          <p className="payment-section__error" role="alert">
-            ⚠️ {actionError}
-          </p>
-        )}
-
         <div className="payment-methods-grid">
           {linked.map(method => (
             <div key={method.id} className="payment-method-card payment-method-card--linked">

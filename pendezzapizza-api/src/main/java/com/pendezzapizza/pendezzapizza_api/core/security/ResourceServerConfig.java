@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -52,6 +53,8 @@ public class ResourceServerConfig {
                         ).denyAll()
                         .anyRequest().authenticated()
                 )
+                .requestCache(cache -> cache.requestCache(requestCache()))
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 // Habilita o login via formulário para o usuário se autenticar no Authorization Server
@@ -73,6 +76,15 @@ public class ResourceServerConfig {
         return NimbusJwtDecoder
                 .withJwkSetUri(securityController.getUrl())
                 .build();
+    }
+
+    @Bean
+    public org.springframework.security.web.savedrequest.RequestCache requestCache() {
+        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+        requestCache.setRequestMatcher(request ->
+                !request.getRequestURI().startsWith("/.well-known/")
+        );
+        return requestCache;
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {

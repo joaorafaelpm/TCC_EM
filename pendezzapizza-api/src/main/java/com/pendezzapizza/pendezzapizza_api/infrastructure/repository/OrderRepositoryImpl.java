@@ -92,11 +92,11 @@ public class OrderRepositoryImpl implements OrderRepositoryQueries {
 
         if (filter.getStartCreationDate() != null) {
             predicates.add(builder.greaterThanOrEqualTo(
-                    root.get("createdAt"), filter.getStartCreationDate()));
+                    root.get("creationDate"), filter.getStartCreationDate()));
         }
         if (filter.getEndCreationDate() != null) {
             predicates.add(builder.lessThanOrEqualTo(
-                    root.get("createdAt"), filter.getEndCreationDate()));
+                    root.get("creationDate"), filter.getEndCreationDate()));
         }
         return predicates;
     }

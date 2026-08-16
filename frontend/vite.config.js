@@ -8,6 +8,7 @@
         "/v1": env.VITE_API_URL,
         "/auth": env.VITE_API_URL,
         "/auth/refresh": env.VITE_API_URL,
+        "/auth/logout": env.VITE_API_URL,
         "/oauth2": env.VITE_API_URL,
         "/redirect": env.VITE_API_URL,
         "/restaurants": env.VITE_API_URL ,

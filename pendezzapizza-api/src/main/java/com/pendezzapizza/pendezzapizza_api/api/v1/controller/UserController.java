@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.UserModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.UserDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.UserDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.UserModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.PasswordDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.UserDTO;

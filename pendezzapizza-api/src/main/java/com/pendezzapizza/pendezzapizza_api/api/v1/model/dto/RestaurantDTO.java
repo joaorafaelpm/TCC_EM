@@ -24,7 +24,7 @@ import java.math.BigDecimal;
 public class RestaurantDTO {
 
     @Schema(example = "Pizzaria fredbear")
-    @ValidationName
+    @ValidationName(max=100)
     private String name;
 
     @Schema(example = "380.225.620-41")
@@ -32,6 +32,7 @@ public class RestaurantDTO {
     private String ownerCpf;
 
     @Schema(example = "Descrição do restaurante")
+    @ValidationName(max=255 , allowNull = true)
     private String description;
 
     @Schema(example = "19")

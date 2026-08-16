@@ -39,7 +39,6 @@ const MyOrders = ({ userId }) => {
       const res = await fetch(`/v1/orders/${orderId}`, { credentials: 'include' });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      console.log('Detalhes do pedido:', data);
       setDetailCache((prev) => ({ ...prev, [orderId]: data }));
     } catch {
       setDetailCache((prev) => ({ ...prev, [orderId]: null }));

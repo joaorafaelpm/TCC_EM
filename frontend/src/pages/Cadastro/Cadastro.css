@@ -44,8 +44,6 @@
     align-items: center;
     padding: 2rem;
     z-index: 1;
-    /* Permite scroll interno se o formulário for maior que a tela (ex: mobile landscape) */
-    overflow-y: auto;
 }
 
 /* O card branco agora envolve o CadastroForm */
@@ -153,6 +151,8 @@
     font-size: 0.78rem;
     color: #9ca3af;
 }
+
+
 
 /* ── Password wrap ───────────────────────────────────────────────────────── */
 

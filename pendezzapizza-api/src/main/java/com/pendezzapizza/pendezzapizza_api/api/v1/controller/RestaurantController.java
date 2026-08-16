@@ -2,7 +2,7 @@ package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantSummaryModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.RestaurantDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.RestaurantDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantDTO;

@@ -166,7 +166,7 @@ const SalesReport = ({ userId }) => {
         loading={loading}
       />
 
-      {error && <p className="sr-error">⚠️ {error}</p>}
+      {error && <div className="sr-error-container"><p className="sr-error">⚠️ {error}</p></div>}
       {loading && <LoadingState message="Carregando relatório…" />}
 
       {report && !loading && (
@@ -183,7 +183,10 @@ const SalesReport = ({ userId }) => {
 
           {/* sem pedidos */}
           {(report.totalSales ?? 0) === 0 && (
-            <p className="sr-muted">Nenhum pedido encontrado para o período selecionado.</p>
+            <div className="sr-muted-container">
+              <p className="sr-muted">Nenhum pedido encontrado para o período selecionado.</p>
+              <span className="sr-muted-span">Consulte algum administrador ou tente novamente mais tarde.</span>
+            </div>
           )}
 
           {/* gráfico de receita — só aparece se houver dados */}

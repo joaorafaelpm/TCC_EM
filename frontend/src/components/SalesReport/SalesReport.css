@@ -34,12 +34,36 @@
     }
 }
 
+.sr-muted-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 3rem 1rem;
+}
 .sr-muted {
-    font-size: 13px;
+    font-size: 2rem;
     color: #9ca3af;
     margin: 0;
 }
-
+.sr-muted-span {
+    font-size: 1.25rem;
+    color: #5a5e66;
+    margin: 0;
+    font-weight: 700;
+}
+.sr-error-container {
+    padding: 1rem;
+    background: #ff000015;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 1px solid #a8222e25;
+    border-radius: 8px;
+}
 .sr-error {
     font-size: 13px;
     color: #a8222e;

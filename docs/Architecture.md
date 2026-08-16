@@ -76,139 +76,159 @@ Implementa todos os detalhes técnicos. Se trata da configuração do serviço d
 ### 1. Entidade de Domínio
 
 ```java
-package com.pendezzapizza.pendezzafood_api.domain.model;
+package com.pendezzapizza.pendezzapizza_api.domain.model;
 
-import com.pendezzapizza.pendezzafood_api.domain.event.CancelOrderEvent;
-import com.pendezzapizza.pendezzafood_api.domain.event.ConfirmOrderEvent;
-import com.pendezzapizza.pendezzafood_api.domain.exception.BusinessException;
-import com.pendezzapizza.pendezzafood_api.domain.model.enuns.OrderStatus;
-import jakarta.persistence.*;
-import lombok.*;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.data.domain.AbstractAggregateRoot;
-
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import ...
 
 @Entity
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true , callSuper = false)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false) 
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order extends AbstractAggregateRoot<Order> {
+@Table(name = "`order`")
+public class Order extends AbstractAggregateRoot<Order> implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     @EqualsAndHashCode.Include
-    private Long id ;
+    @JdbcTypeCode(SqlTypes.BINARY)
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
-    private String code;
-
-    private BigDecimal subtotal ;
-    private BigDecimal feeShipping ;
-    private BigDecimal totalCost ;
+    private BigDecimal subtotal;
+    private BigDecimal shippingFee;
+    private BigDecimal totalCost;
 
     @CreationTimestamp
     private OffsetDateTime creationDate;
-    private OffsetDateTime confirmDate ;
-    private OffsetDateTime cancelDate;
+    private OffsetDateTime confirmationDate;
+    private OffsetDateTime cancellationDate;
     private OffsetDateTime deliveryDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_status" , nullable = false)
-    private OrderStatus orderStatus = OrderStatus.CREATED ;
+    @Column(name = "order_status", nullable = false)
+    private OrderStatus orderStatus = OrderStatus.CREATED;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    private FormaPagamento paymentMethods ;
+    private PaymentMethod paymentMethod;
 
     @ManyToOne
     @JoinColumn(nullable = false)
     private Restaurant restaurant;
 
     @ManyToOne
-    @JoinColumn(nullable = false , name = "client_user_id")
-    private User cliente ;
+    @JoinColumn(nullable = false, name = "customer_user_id")
+    private User customer;
 
     @Embedded
-    private Adress deliveryAdress ;
+    private Address deliveryAddress;
 
-    @OneToMany(mappedBy = "order" , cascade = CascadeType.ALL)
-    private List<OrderItem> itens = new ArrayList<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> items = new ArrayList<>();
 
-    // Funções complementares
+    @UpdateTimestamp
+    private OffsetDateTime updateDate;
+
+    public void calculateTotalOrderCost() {
+        getItems().forEach(OrderItem::calculateTotalPrice);
+
+        this.subtotal = getItems().stream()
+                .map(OrderItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        this.totalCost = this.subtotal.add(this.shippingFee);
+    }
+
+    public void confirm() {
+        setOrderStatus(OrderStatus.CONFIRMED);
+        setConfirmationDate(OffsetDateTime.now());
+
+        registerEvent(new ConfirmationOrderEvent(this));
+    }
+
+    public void deliver() {
+        setOrderStatus(OrderStatus.DELIVERED);
+        setDeliveryDate(OffsetDateTime.now());
+    }
+
+    public void cancel() {
+        setOrderStatus(OrderStatus.CANCELED);
+        setCancellationDate(OffsetDateTime.now());
+
+        registerEvent(new OrderCancellationEvent(this));
+    }
+
+    private void setOrderStatus(OrderStatus newStatus) {
+        if (getOrderStatus().cannotChangeTo(newStatus)) {
+            throw new BusinessException(String.format(
+                    "Status do pedido '%s' não pode ser alterado de '%s' para '%s'",
+                    getId(), getOrderStatus().getDescription(), newStatus.getDescription()
+            ));
+        }
+        this.orderStatus = newStatus;
+    }
 }
+```
 
-## 2. Domain Service -- OrderEmissionService
+## 2. Domain Service -- OrderIssuanceService
 
 ``` java
-package com.pendezzapizza.pendezzafood_api.v1.domain.service;
+package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzafood_api.v1.domain.exception.BusinessException;
-import com.pendezzapizza.pendezzafood_api.v1.domain.model.*;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import ...
 
 @Service
 @AllArgsConstructor
-public class OrderEmissionService {
+public class OrderIssuanceService {
 
-    private final OrderRegisterService orderService;
-    private final RestaurantRegisterService restaurantService;
-    private final UserRegisterService userService;
-    private final PaymentMethodRegisterService paymentMethodService;
-    private final ProductRegisterService productService;
-    private final CityRegisterService cityService;
+    private final OrderService orderService;
+    private final RestaurantService restaurantService;
+    private final PaymentMethodService paymentMethodService;
+    private final ProductService productService;
+    private final CityService cityService;
+    private final UserService userService;
+    private final PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
+    @OrdersSaveCacheEvict
     @Transactional
-    public Order emitOrder(Order order) {
-        assignRelationalObjects(order);
-        assignUnitPriceAndProductToItems(order);
+    public Order issueOrder(Order order) {
 
-        order.setFeeShipping(order.getRestaurant().getShippingFee());
+        assignRelationalObjectsToOrder(order);
+        assignUnitPriceAndProductToOrderItem(order);
+        order.setShippingFee(order.getRestaurant().getShippingFee());
         order.calculateTotalOrderCost();
 
         return orderService.save(order);
     }
 
-    public void assignRelationalObjects(Order order) {
-        Long restaurantId = order.getRestaurant().getId();
-        Long paymentMethodId = order.getPaymentMethods().getId();
-        Long cityId = order.getDeliveryAdress().getCity().getId();
+    public void assignRelationalObjectsToOrder(Order order) {
+        UUID restaurantId = order.getRestaurant().getId();
+        UUID paymentMethodId = order.getPaymentMethod().getId();
+        UUID cityId = order.getDeliveryAddress().getCity().getId();
+        UUID customerId = pendezzaPizzaSecurity.getUserId();
 
         City city = cityService.findById(cityId);
-        Restaurant restaurant = restaurantService.findById(restaurantId);
+        Restaurant restaurant = restaurantService.findByIdWithAllDependencies(restaurantId);
         PaymentMethod paymentMethod = paymentMethodService.findById(paymentMethodId);
+        User user = userService.findById(customerId);
 
-        Long userId = order.getCliente().getId();
-        User user = userService.findById(userId);
-
-        order.getDeliveryAdress().setCity(city);
+        order.getDeliveryAddress().setCity(city);
         order.setRestaurant(restaurant);
-        order.setCliente(user);
+        order.setCustomer(user);
 
         if (restaurant.doesNotAcceptPaymentMethod(paymentMethod)) {
-            throw new BusinessException(
-                String.format("Payment method '%s' is not accepted by this restaurant.",
-                        paymentMethod.getDescription()));
+            throw new BusinessException(String.format("Forma de pagamento '%s' não é aceita por esse restaurante.",
+                    paymentMethod.getDescription()));
         }
-
-        order.setPaymentMethods(paymentMethod);
+        order.setPaymentMethod(paymentMethod);
     }
 
-    public void assignUnitPriceAndProductToItems(Order order) {
-        order.getItens().forEach(item -> {
-            Product product = productService.findById(
-                order.getRestaurant().getId(),
-                item.getProduct().getId()
-            );
+    public void assignUnitPriceAndProductToOrderItem(Order order) {
+        order.getItems().forEach(item -> {
+            UUID restaurantId = order.getRestaurant().getId();
+            UUID productId = item.getProduct().getId();
 
+            Product product = productService.findById(restaurantId, productId);
             item.setOrder(order);
             item.setProduct(product);
             item.setUnitPrice(product.getPrice());

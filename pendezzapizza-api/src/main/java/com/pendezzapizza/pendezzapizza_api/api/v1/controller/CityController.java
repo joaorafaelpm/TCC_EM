@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.CityModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.CityDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.CityDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.CityModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.CityDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.CityControllerOpenApi;

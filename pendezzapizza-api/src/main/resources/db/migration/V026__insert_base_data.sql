@@ -127,6 +127,16 @@ VALUES (
     (SELECT id FROM `user` WHERE email = 'joao.ger@pendezzapizza.com'),
     (SELECT id FROM `group` WHERE name = 'Admin')
 );
+INSERT INTO user_group (user_id, group_id)
+VALUES (
+    (SELECT id FROM `user` WHERE email = 'email.teste.pendezzapizza.tcc+hubert@gmail.com'),
+    (SELECT id FROM `group` WHERE name = 'Dono_de_Restaurante')
+);
+INSERT INTO user_group (user_id, group_id)
+VALUES (
+    (SELECT id FROM `user` WHERE email = 'email.teste.pendezzapizza.tcc+sebastiao@gmail.com'),
+    (SELECT id FROM `group` WHERE name = 'Dono_de_Restaurante')
+);
 
 -- 9. RESTAURANTES
 

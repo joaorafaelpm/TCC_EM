@@ -10,18 +10,6 @@
   margin-bottom: 100px;
 }
 
-.cart-bottom-order {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-  gap: max(10vw, 16px);
-}
-
-.cart-bottom-order h2 {
-  color: color-mix(in srgb, var(--bg-color) 30%, black);
-  font-size: max(1.5vw, 15px);
-  margin-bottom: -5px;
-}
 
 .restaurant-info-left .title {
   font-size: max(2vw, 20px);

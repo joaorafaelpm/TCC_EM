@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `user` (
     id BINARY(16) DEFAULT (UUID_TO_BIN(UUID())) PRIMARY KEY,
     name VARCHAR(255) NOT NULL ,
     email VARCHAR(255) NOT NULL ,
-    phone VARCHAR(20) NOT NULL ,
+    phone VARCHAR(20) ,
     password VARCHAR(255) NOT NULL ,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) engine=InnoDB default charset=utf8;

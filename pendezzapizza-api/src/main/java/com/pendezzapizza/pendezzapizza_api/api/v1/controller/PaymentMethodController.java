@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.PaymentMethodModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.PaymentMethodDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.PaymentMethodDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.PaymentMethodModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.PaymentMethodDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.PaymentMethodControllerOpenApi;

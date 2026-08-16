@@ -2,7 +2,7 @@ package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.OrderModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.OrderSummaryModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.OrderDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.OrderDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.OrderBatchDTO;

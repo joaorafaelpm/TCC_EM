@@ -12,7 +12,7 @@ export default function Cadastro() {
     setSubmitError(null);
 
     try {
-      const res = await fetch('http://localhost/v1/users/register', {
+      const res = await fetch('/v1/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

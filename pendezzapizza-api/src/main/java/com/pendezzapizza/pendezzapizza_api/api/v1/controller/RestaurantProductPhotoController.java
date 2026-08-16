@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.ProductPhotoModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.ProductPhotoDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.ProductPhotoDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.PhotoModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.PhotoDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantProductPhotoControllerOpenApi;

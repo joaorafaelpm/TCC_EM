@@ -1,4 +1,4 @@
-package com.pendezzapizza.pendezzapizza_api.domain.model.enuns;
+package com.pendezzapizza.pendezzapizza_api.domain.model.enums;
 
 public enum SaleIncludeField {
     PRODUCTS,

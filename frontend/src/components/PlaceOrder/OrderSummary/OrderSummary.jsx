@@ -4,9 +4,9 @@ const OrderSummary = ({ restaurantGroups, grandTotal }) => (
     <h2>Resumo do Pedido</h2>
     {Object.entries(restaurantGroups).map(([rId, group]) => (
       <div key={rId} className="order-group-summary">
-        <p><strong>{group.restaurantName || `Restaurante #${rId}`}</strong></p>
-        <p>Subtotal: R$ {group.subtotal.toFixed(2)}</p>
-        <p className="shipping-fee">🚚 Frete: R$ {group.shippingFee.toFixed(2)}</p>
+        <p className="restaurant-name"><strong>{group.restaurantName || `Restaurante #${rId}`}</strong></p>
+        <p className="subtotal">Subtotal: R$ {group.subtotal.toFixed(2)}</p>
+        <p className="shipping-fee">Frete: R$ {group.shippingFee.toFixed(2)}</p>
       </div>
     ))}
     <div className="cart-bottom-total">

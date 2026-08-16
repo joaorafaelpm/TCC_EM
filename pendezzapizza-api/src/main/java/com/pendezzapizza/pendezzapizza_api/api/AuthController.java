@@ -3,7 +3,9 @@ package com.pendezzapizza.pendezzapizza_api.api;
 import com.pendezzapizza.pendezzapizza_api.core.security.PendezzaPizzaSecurity;
 import com.pendezzapizza.pendezzapizza_api.core.security.session.TokenSession;
 import com.pendezzapizza.pendezzapizza_api.core.security.session.TokenSessionService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
@@ -113,16 +116,33 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(
             @CookieValue(value = "SESSION_ID", required = false) String sessionId,
+            HttpServletRequest request,
             HttpServletResponse response) {
 
         if (sessionId != null) {
             tokenSessionService.deleteSession(sessionId);
         }
 
-        ResponseCookie cookie = ResponseCookie.from("SESSION_ID", "")
+        // Invalida a HttpSession (JSESSIONID) usada pelo formLogin do Authorization Server.
+        // Sem isso, o Spring Security continua considerando o usuário autenticado
+        // nela, e um novo /oauth2/authorize reemite código sem pedir login —
+        // dando a impressão de que o logout "não funcionou".
+        HttpSession httpSession = request.getSession(false);
+        if (httpSession != null) {
+            httpSession.invalidate();
+        }
+        SecurityContextHolder.clearContext();
+
+        ResponseCookie sessionCookie = ResponseCookie.from("SESSION_ID", "")
                 .httpOnly(true).path("/").maxAge(0).build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, sessionCookie.toString());
+
+        // Limpa o JSESSIONID explicitamente também, por garantia
+        ResponseCookie jsessionCookie = ResponseCookie.from("JSESSIONID", "")
+                .httpOnly(true).path("/").maxAge(0).build();
+        response.addHeader(HttpHeaders.SET_COOKIE, jsessionCookie.toString());
 
         return ResponseEntity.ok().build();
     }
+
 }

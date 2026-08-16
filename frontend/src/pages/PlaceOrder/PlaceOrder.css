@@ -8,17 +8,70 @@
     margin-bottom: 100px;
 }
 
+/* Container Principal do Resumo */
 .cart-bottom-order {
     display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    gap: max(10vw, 16px);
+    flex-direction: column;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 20px;
+    width: 100%;
 }
 
+.cart-total {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    /* Espaçamento geral entre blocos */
+}
+
+/* Título Principal */
 .cart-bottom-order h2 {
-    color: color-mix(in srgb, var(--bg-color) 30%, black);
-    font-size: max(1.5vw, 15px);
-    margin-bottom: -5px;
+    color: #4a4543;
+    /* Tom de marrom/cinza escuro */
+    font-size: max(2vw, 20px);
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Container da lista de restaurantes */
+.order-groups-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* Espaço entre um restaurante e outro */
+}
+
+/* Cada grupo de restaurante */
+.order-group-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    /* Espaçamento entre as linhas do mesmo restaurante */
+}
+
+.order-group-summary .restaurant-name {
+    color: #3b4e54;
+    /* Tom levemente azulado/esverdeado escuro da imagem */
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.order-group-summary .subtotal,
+.order-group-summary .shipping-fee {
+    color: #5a5451;
+    /* Cor mais suave para não brigar com o título */
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* Total Final */
+.cart-bottom-total h3 {
+    color: #636b66;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 10px 0 0 0;
 }
 
 .place-order-left {
@@ -43,6 +96,17 @@
 .place-order-left .multi-fields {
     display: flex;
     gap: 15px;
+}
+
+.multi-fields select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
+    border-radius: 6px;
+    font-size: max(1.25vw, 12px);
+    outline-color: var(--button-color);
+    font-family: 'Poppins', sans-serif;
+    background-color: white;
 }
 
 .place-order-right {

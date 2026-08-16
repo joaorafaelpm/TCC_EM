@@ -1,53 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './AddProductModal.css';
+import { useFormValidation } from '../../../hooks/userFormValidation';
+import { notBlank, positiveOrZero } from '../../../utils/validator';
+import api from '../../../services/api';
+import Input from '../../Input/Input';
 
-const AddProductModal = ({ restaurantId, onClose}) => {
-  const [form, setForm] = useState({
-    name: '',
-    description: '',
-    price: '',
-  });
+const schema = {
+  name:  [notBlank('Nome')],
+  price: [notBlank('Preço'), positiveOrZero('Preço')],
+};
+
+const AddProductModal = ({ restaurantId, onClose, onProductAdded }) => {
+  const [form, setForm] = useState({ name: '', description: '', price: '' });
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
+  const mouseDownOnOverlay = useRef(false);
 
-  const handleChange = (e) => {
+  const { errors, validateAll, setBackendError, clearErrors } = useFormValidation(schema);
+
+  const handleChange = (e) =>
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+  // Só fecha se o mousedown E o mouseup aconteceram no overlay em si —
+  // evita fechar o modal quando o usuário seleciona texto (mousedown dentro,
+  // arrasta, solta fora) num único gesto.
+  const handleOverlayMouseDown = (e) => {
+    mouseDownOnOverlay.current = e.target === e.currentTarget;
+  };
+
+  const handleOverlayMouseUp = (e) => {
+    if (mouseDownOnOverlay.current && e.target === e.currentTarget) {
+      onClose();
+    }
+    mouseDownOnOverlay.current = false;
   };
 
   const handleSave = async () => {
-    if (!form.name.trim() || !form.price) {
-      setError('Nome e preço são obrigatórios.');
-      return;
-    }
+    clearErrors();
+    if (!validateAll(form)) return;
+
     setSaving(true);
-    setError(null);
     try {
-      const res = await fetch(`http://localhost/v1/restaurants/${restaurantId}/products`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.name,
-          description: form.description,
-          price: parseFloat(form.price),
-        }),
-      });
-
-      if (!res.ok) throw new Error('Erro ao criar produto.');
-
-      // const newProduct = await res.json();
-      // onProductAdded(newProduct);
+      const { data } = await api.post(
+        `/v1/restaurants/${restaurantId}/products`,
+        {
+          name:        form.name,
+          description: form.description || null,
+          price:       parseFloat(form.price),
+        }
+      );
+      onProductAdded?.(data);
       onClose();
     } catch (err) {
-      setError(err.message);
+      setBackendError(err);
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="add-product-overlay" onClick={onClose}>
+    <div
+      className="add-product-overlay"
+      onMouseDown={handleOverlayMouseDown}
+      onMouseUp={handleOverlayMouseUp}
+    >
       <div className="add-product-modal" onClick={e => e.stopPropagation()}>
+
         <div className="add-product-modal__header">
           <h2>Novo produto</h2>
           <button className="add-product-modal__close" onClick={onClose}>
@@ -59,46 +76,66 @@ const AddProductModal = ({ restaurantId, onClose}) => {
         </div>
 
         <div className="add-product-modal__body">
-          {error && <p className="add-product-modal__error">⚠️ {error}</p>}
 
-          <div className="add-product-modal__field">
-            <label>Nome *</label>
-            <input name="name" value={form.name} onChange={handleChange} placeholder="Nome do produto" />
-          </div>
+          {errors.general && (
+            <p className="add-product-modal__error">⚠️ {errors.general}</p>
+          )}
 
-          <div className="add-product-modal__field">
-            <label>Descrição</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              placeholder="Descreva o produto..."
-              rows={3}
-            />
-          </div>
+          <Input
+            name="name"
+            label="Nome"
+            type="text"
+            maxLength={100}
+            placeholder="Nome do produto"
+            value={form.name}
+            onChange={handleChange}
+            error={errors.name}
+          />
 
-          <div className="add-product-modal__field">
-            <label>Preço (R$) *</label>
-            <input
-              name="price"
-              type="number"
-              step="0.01"
-              min="0"
-              value={form.price}
-              onChange={handleChange}
-              placeholder="0,00"
-            />
-          </div>
+          <Input
+            name="description"
+            label="Descrição (opcional)"
+            multiline
+            rows={3}
+            maxLength={500}
+            placeholder="Descreva o produto..."
+            value={form.description}
+            onChange={handleChange}
+          />
+
+          <Input
+            name="price"
+            label="Preço (R$)"
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="0,00"
+            value={form.price}
+            onChange={handleChange}
+            error={errors.price}
+          />
+
+          <p className="add-product-modal__hint">
+            📷 A foto do produto pode ser adicionada depois, na tela de edição.
+          </p>
+
         </div>
 
         <div className="add-product-modal__footer">
-          <button className="add-product-modal__btn add-product-modal__btn--cancel" onClick={onClose} disabled={saving}>
+          <button
+            className="add-product-modal__btn add-product-modal__btn--cancel"
+            onClick={onClose} disabled={saving}
+          >
             Cancelar
           </button>
-          <button className="add-product-modal__btn add-product-modal__btn--save" onClick={handleSave} disabled={saving}>
+          <button
+            className="add-product-modal__btn add-product-modal__btn--save"
+            onClick={handleSave} disabled={saving}
+          >
             {saving ? 'Criando...' : 'Criar produto'}
           </button>
         </div>
+
       </div>
     </div>
   );

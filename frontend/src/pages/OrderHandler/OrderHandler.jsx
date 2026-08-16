@@ -31,16 +31,16 @@ export default function OrderHandler() {
     setError(null);
     try {
       const now   = new Date();
-      const start = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-      const end   = new Date(now.getTime() + 24 * 60 * 60 * 1000).toISOString();
+      const start = new Date(now.getTime() - 24 * 60 * 60 * 1000)
+        .toISOString()
+        .replace(/\.\d{3}Z$/, 'Z'); 
+        
+      const end   = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+        .toISOString()
+        .replace(/\.\d{3}Z$/, 'Z');
 
-      const params = new URLSearchParams({
-        restaurantId,
-        startCreationDate: start,
-        endCreationDate: end,
-      });
-
-      const res = await fetch(`/v1/orders/restaurant?${params}`, { credentials: 'include' });
+        
+      const res = await fetch(`/v1/orders/restaurant?restaurantId=${restaurantId}&startCreationDate=${start}&endCreationDate=${end}`, { credentials: 'include' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setOrders(data.content ?? data ?? []);
@@ -63,8 +63,6 @@ export default function OrderHandler() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await fetchOrders();
-    } catch (e) {
-      alert(`Erro ao executar ação: ${e.message}`);
     } finally {
       setActing(null);
     }
@@ -114,13 +112,6 @@ export default function OrderHandler() {
         </button>
       </header>
 
-      {/* ── Estado de erro ── */}
-      {error && (
-        <div className="oh-error" role="alert">
-          <span>⚠️ Erro ao carregar pedidos: {error}</span>
-          <button onClick={fetchOrders}>Tentar novamente</button>
-        </div>
-      )}
 
       {/* ── Kanban ── */}
       <div className="oh-board">

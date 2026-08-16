@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearch } from '../context/SearchContext.jsx'
 import ProductCardDisplay from '../FoodDisplay/ProductCardDisplay/ProductCardDisplay.jsx'
 import './SearchResults.css'
+import { Link } from 'react-router-dom'
 
 const PAGE_SIZE_RESTAURANTS = 8
 const PAGE_SIZE_PRODUCTS = 10
@@ -113,10 +114,10 @@ const SearchResults = () => {
             <>
               <div className="search-restaurants-grid">
                 {restaurants.map(r => (
-                  <a key={r.id} href={`/restaurants/${r.id}`} className="search-restaurant-card">
+                  <Link key={r.id} to={`/restaurant/${r.id}`} className="search-restaurant-card">
                     {r.imageUrl && <img src={r.imageUrl} alt={r.name} />}
                     <span>{r.name}</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
               <Pagination current={restPage} total={restTotalPages} onChange={setRestPage} />

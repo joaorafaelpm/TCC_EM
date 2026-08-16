@@ -1,17 +1,124 @@
+:root {
+    --focus-ring: color-mix(in srgb, var(--secondary-color) 15%, transparent);
+    --border-default: color-mix(in srgb, var(--bg-color) 40%, #c8c0b0);
+    --border-hover: color-mix(in srgb, var(--secondary-color) 30%, #c8c0b0);
+}
+
 .field-wrapper {
     display: flex;
     flex-direction: column;
-    margin-bottom: 15px;
+    gap: 4px;
+    /* margin-bottom removido — o gap do container pai já cuida disso */
 }
 
-.field-input{
+.field-input {
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
-    border-radius: 6px;
-    font-size: max(1.25vw, 12px);
-    outline-color: var(--button-color);
-    font-family: 'Poppins', sans-serif;
-    background-color: white;
-    /* Garante fundo branco para o select */
+    padding: 11px 14px;
+    border: 1.5px solid var(--border-default);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Outfit', sans-serif;
+    background: white;
+    color: #1f2937;
+    box-sizing: border-box;
+    transition:
+        border-color 0.16s ease-out,
+        box-shadow 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        background 0.16s ease-out;
+}
+
+.field-input:hover {
+    border-color: var(--border-hover);
+}
+
+.field-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow:
+        0 0 0 3px var(--focus-ring),
+        0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.field-input::placeholder {
+    color: #b0a898;
+    font-size: 13.5px;
+}
+
+.field-input:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: color-mix(in srgb, var(--bg-color) 60%, white);
+}
+
+/* Estado de erro — deriva do vermelho da paleta */
+.field-input.is-invalid {
+    border-color: var(--primary-color);
+    box-shadow:
+        0 0 0 3px color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+textarea.field-input {
+    resize: vertical;
+    /* só redimensiona pra baixo, nunca para os lados */
+    min-height: 80px;
+}
+
+/* Rodapé do campo — erro e contador na mesma linha */
+.field-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    min-height: 18px;
+    /* evita pulo de layout quando erro aparece/some */
+}
+
+/* Contador de caracteres */
+.field-counter {
+    font-size: 11.5px;
+    font-family: var(--font-mono, 'Courier New', monospace);
+    color: #b0a898;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: color 0.2s ease-out;
+}
+
+/* > 75% preenchido */
+.field-counter--warn {
+    color: #c07a18;
+    font-weight: 700;
+    }
+
+/* 100% — no limite */
+.field-counter--limit {
+    color: var(--primary-color);
+    font-weight: 1000;}
+    
+
+.field-input-wrap {
+    position: relative;
+}
+
+.field-input--with-toggle {
+    padding-right: 40px;
+    /* espaço pro botão não cobrir o texto digitado */
+}
+
+.field-toggle-pw {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+}
+
+.field-toggle-pw svg {
+    width: 18px;
+    height: 18px;
 }

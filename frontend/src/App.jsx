@@ -15,6 +15,7 @@ import MyAccount from './pages/MyAccount/MyAccount.jsx'
 import Restaurant from './pages/Restaurant/Restaurant.jsx'
 import OrderHandler from './pages/OrderHandler/OrderHandler.jsx'
 import { SearchProvider } from './components/context/SearchContext.jsx'
+import NotFound from "./pages/NotFound/NotFound.jsx"
 
 function AppContent() {
   const { user, isLoading } = useAuth()
@@ -46,6 +47,7 @@ function AppContent() {
             <Route path='/restaurant/:id' element={<Restaurant />} />
             <Route path='/restaurant/:id/orders' element={<OrderHandler />} />
             <Route path='/my-account' element={<MyAccount />} />
+            <Route path='*' element={<NotFound />} />
           </Routes>
         </div>
         <Footer />

@@ -1,6 +1,29 @@
 {
   "Desenvolvimento Inicial": {
-  
+    "Backend": [
+      "Endpoints CRUD para gerenciamento de cidades",
+      "Endpoints CRUD para gerenciamento de estados",
+      "Endpoints CRUD para gerenciamento de grupos de usuário",
+      "Endpoints CRUD para gerenciamento de permissões"
+    ],
+    "Frontend": [
+      "Implementação do aplicativo móvel para iOS e Android usando React Native."
+    ],
+    "App Mobile": [
+      "Implementação do aplicativo móvel para iOS e Android usando React Native."
+    ],
+    "QA": [
+      "Estabelecimento de um processo de controle de qualidade para garantir a estabilidade do aplicativo."
+    ],
+    "Infraestrutura": [
+      "Configuração de servidores e serviços em nuvem para hospedar o backend e o banco de dados."
+    ],
+    "Análise de Dados": [
+      "Configuração de ferramentas de análise para monitorar o uso do aplicativo e coletar feedback dos usuários."
+    ],
+    "Documentação": [
+      "Criação de documentação inicial para desenvolvedores e usuários finais."
+    ]
   },
   "Adicionado": {},
   "Alterado": {},

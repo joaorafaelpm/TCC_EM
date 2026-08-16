@@ -117,7 +117,6 @@ const PhotoUploadTrigger = ({
         tabIndex={-1}
       />
 
-      {fileError && <p className="put-error" role="alert">{fileError}</p>}
 
       {/* Portal: renderiza os modais direto no body, escapando de overflow:hidden */}
       {cropShape && pendingFile && !croppedBlob && ReactDOM.createPortal(

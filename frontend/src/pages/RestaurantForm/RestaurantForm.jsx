@@ -7,6 +7,7 @@ import { useFormValidation } from '../../hooks/UserFormValidation';
 import { notBlank, validationName, validCpf, positiveOrZero, positive, optional } from "../../utils/validator";
 import api from '../../services/api';
 import Input from '../../components/Input/Input';
+import { formatCpf } from '../../utils/formatter';
 
 // Schema espelho do RestaurantDTO
 // Campos opcionais (description, averageDeliveryTimeMinutes, minimumOrderValue)
@@ -88,14 +89,10 @@ const RestaurantForm = () => {
     <form className='restaurant-info' onSubmit={handleSubmit}>
       <div className="restaurant-info-left">
         <p className='title'>Informações do Restaurante</p>
-
-        {/* Erro geral de backend */}
-        {errors.general && (
-          <div className="error-banner" role="alert">{errors.general}</div>
-        )}
-
         <Input
           name="name"
+          maxLength={100}
+          label="Nome do Restaurante"
           type="text"
           placeholder="Nome da Pizzaria"
           value={restaurantInfo.name}
@@ -106,34 +103,41 @@ const RestaurantForm = () => {
         <div className='multi-fields'>
             <Input
               name="ownerCpf"
-              type="text"
+              label="CPF do Proprietário"
+              type="text" 
               placeholder="CPF do Proprietário"
               value={restaurantInfo.ownerCpf}
+              maxLength={14}
+              format={formatCpf}
               onChange={handleChange}
               error={errors.ownerCpf}
             />
             <Input
               name="shippingFee"
               type="number"
-              step="0.1"
+              label="Taxa de Entrega"
+              step="0.01"
+              min="0"
+              max="9999.99"
               placeholder="Taxa de Entrega"
               value={restaurantInfo.shippingFee}
               onChange={handleChange}
               error={errors.shippingFee}
             />
         </div>
-
-        {/* Opcional — sem validação obrigatória, igual ao DTO */}
             <Input
               name="description"
               type="text"
+              label="Descrição (Opcional)"
               placeholder="Descrição (Opcional)"
               value={restaurantInfo.description}
               onChange={handleChange}
+              maxLength={255}
+              multiline
+              rows={5}
             />
-
         <div style={{ marginTop: '40px' }}>
-          {/* ref passa para o filho poder expor validate() */}
+
           <DeliveryAddressForm ref={addressRef} onAddressUpdate={handleAddressUpdate} />
         </div>
       </div>
@@ -145,7 +149,9 @@ const RestaurantForm = () => {
             <Input
               name="averageDeliveryTimeMinutes"
               type="number"
-              placeholder="Tempo de Entrega (min) - Opcional"
+              label="Tempo de Entrega (min) - Opcional"
+              min="0"
+              placeholder="Tempo de Entrega"
               value={restaurantInfo.averageDeliveryTimeMinutes}
               onChange={handleChange}
               error={errors.averageDeliveryTimeMinutes}
@@ -153,8 +159,10 @@ const RestaurantForm = () => {
             <Input
               name="minimumOrderValue"
               type="number"
-              step="0.1"
-              placeholder="Pedido Mínimo - Opcional"
+              step="0.01"
+              min="0"
+              placeholder="Pedido Mínimo"
+              label="Pedido Mínimo - Opcional"
               value={restaurantInfo.minimumOrderValue}
               onChange={handleChange}
               error={errors.minimumOrderValue}
