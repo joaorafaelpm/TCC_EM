@@ -27,6 +27,12 @@
         background 0.16s ease-out;
 }
 
+input[type="number"].field-input::-webkit-outer-spin-button,
+input[type="number"].field-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .field-input:hover {
     border-color: var(--border-hover);
 }

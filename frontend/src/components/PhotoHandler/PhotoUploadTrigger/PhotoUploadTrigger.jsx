@@ -15,6 +15,18 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
  * Os modais são renderizados via Portal em document.body para escapar de
  * qualquer ancestral com overflow:hidden ou z-index limitado.
  */
+const AlertIcon = () => (
+  <svg
+    width="14" height="14" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="2.5"
+    strokeLinecap="round" strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+);
 const PhotoUploadTrigger = ({
   uploadUrl,
   deleteUrl,
@@ -100,7 +112,7 @@ const PhotoUploadTrigger = ({
         </button>
       )}
 
-      <input
+       <input
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png"
@@ -117,6 +129,12 @@ const PhotoUploadTrigger = ({
         tabIndex={-1}
       />
 
+      {fileError && (
+        <div className="put-error">
+          <AlertIcon />
+          <span>{fileError}</span>
+        </div>
+      )}
 
       {/* Portal: renderiza os modais direto no body, escapando de overflow:hidden */}
       {cropShape && pendingFile && !croppedBlob && ReactDOM.createPortal(

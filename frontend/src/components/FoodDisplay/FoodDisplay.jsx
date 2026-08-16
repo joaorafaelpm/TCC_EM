@@ -32,16 +32,12 @@ const FoodDisplay = ({ category }) => {
       })
       .catch(err => console.error("Erro ao buscar produtos:", err))
       .finally(() => setLoading(false));
-  }, [category, currentPage]);
+  }, [currentPage]);
 
   if (loading) return <div className="loading">Preparando o cardápio...</div>;
 
   return (
     <div className="food-display" id="food-display">
-
-      {category !== 'all' && (
-        <h2 className="food-display-title">{category}</h2>
-      )}
 
       <div className="food-display-list">
         {products.length > 0 ? (
@@ -49,7 +45,9 @@ const FoodDisplay = ({ category }) => {
             <ProductCardDisplay key={product.id} product={product} />
           ))
         ) : (
-          <p className="placeholder-text">Nenhum produto encontrado para esta categoria.</p>
+          <div className="food-display-error-container">
+            <p className="food-display-error">Nenhum produto encontrado para esta categoria.</p>
+          </div>
         )}
       </div>
 

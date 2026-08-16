@@ -21,6 +21,7 @@ public interface UserDisassembler {
     @Mapping(target = "updateDate", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "groups", ignore = true)
+    @Mapping(target = "phone", ignore = true)
     @Mapping(target = "userRestaurants", ignore = true)
     User userDTOToUser (UserDTO userDTO) ;
 
@@ -29,6 +30,7 @@ public interface UserDisassembler {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updateDate", ignore = true)
+    @Mapping(target = "phone", ignore = true)
     @Mapping(target = "groups", ignore = true)
     @Mapping(target = "userRestaurants", ignore = true)
     User userWithPasswordDTOToUser (UserWithPasswordDTO userWithPasswordDTO);
@@ -37,6 +39,7 @@ public interface UserDisassembler {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "phone", ignore = true)
     @Mapping(target = "updateDate", ignore = true)
     @Mapping(target = "groups", ignore = true)
     @Mapping(target = "userRestaurants", ignore = true)

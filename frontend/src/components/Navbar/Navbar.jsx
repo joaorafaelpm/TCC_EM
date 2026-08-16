@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './Navbar.css';
 import { assets } from '../../assets/assets';
 import { Link } from "react-router-dom";
 import UserMenu from './UserMenu/UserMenu';
 import { useSearch } from '../context/SearchContext.jsx';
 import SearchOverlay from './SearchOverlay/SearchOverlay.jsx';
+import { StoreContext } from '../context/StoreContext';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { openSearch } = useSearch();
+  const { cartItems } = useContext(StoreContext);
+
+  const hasItemsInCart = Object.values(cartItems).some(qty => qty > 0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,7 +40,7 @@ const Navbar = () => {
             <Link to="/cart">
               <img src={assets.carrinho2} alt="" className='icon' />
             </Link>
-            <div className="dot"></div>
+            {hasItemsInCart && <div className="dot"></div>}
           </div>
 
           <UserMenu />

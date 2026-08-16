@@ -10,21 +10,23 @@ import { useCartGroups } from '../../hooks/useCartGroups';
 import api from '../../services/api';
 
 const PlaceOrder = () => {
-  const { cartItems, food_list, clearCart } = useContext(StoreContext);
+  const { cartItems, food_list, clearCart, removeProducts } = useContext(StoreContext);
 
   const [address, setAddress]           = useState({});
   const [orderResult, setOrderResult]   = useState(null);
   const [isLoading, setIsLoading]       = useState(false);
 
-  // ── Validação ────────────────────────────────────────────
   const addressRef                      = useRef(null);
   const [paymentErrors, setPaymentErrors] = useState({});
   const [cartError, setCartError]       = useState(null);
   const [generalError, setGeneralError] = useState(null);
 
-  // ── Dados do carrinho (lógica extraída para o hook) ──────
   const { restaurantGroups, isLoadingGroups, setPaymentMethod, grandTotal } =
     useCartGroups(cartItems, food_list);
+
+  const hasUnavailablePayment = Object.values(restaurantGroups).some(
+    (group) => group.paymentMethods.length === 0
+  );
 
   const handleAddressUpdate = useCallback((newAddress) => {
     setAddress(newAddress);
@@ -35,39 +37,47 @@ const PlaceOrder = () => {
     if (value) setPaymentErrors(prev => ({ ...prev, [restaurantId]: null }));
   };
 
-  // ── Validação ────────────────────────────────────────────
-
-  // @Size(min=1) na lista de items
+  const handleRemoveRestaurantItems = (restaurantId) => {
+    const group = restaurantGroups[restaurantId];
+    if (!group) return;
+    removeProducts(group.products.map(p => p.id));
+  };
+  
   const validateCart = () => {
     const empty = Object.keys(restaurantGroups).length === 0;
     setCartError(empty ? 'Adicione pelo menos um item ao carrinho para continuar.' : null);
     return !empty;
   };
 
-  // @Valid @NotNull em paymentMethodId — um por restaurante
   const validatePaymentMethods = () => {
     const errors = {};
-    Object.entries(restaurantGroups).forEach(([id, group]) => {
-      if (!group.selectedPaymentMethod)
-        errors[id] = 'Selecione uma forma de pagamento para continuar.';
-    });
-    setPaymentErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+    let allValid = true;
 
-  // ── Submit ───────────────────────────────────────────────
+    Object.entries(restaurantGroups).forEach(([id, group]) => {
+      if (group.paymentMethods.length === 0) {
+        allValid = false;
+        return;
+      }
+      if (!group.selectedPaymentMethod) {
+        errors[id] = 'Selecione uma forma de pagamento para continuar.';
+        allValid = false;
+      }
+    });
+
+    setPaymentErrors(errors);
+    return allValid;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setGeneralError(null);
 
-    // Todas as validações disparam juntas — sem short-circuit
     const cartValid    = validateCart();
     const addressValid = addressRef.current?.validate();
     const paymentValid = validatePaymentMethods();
 
     if (!cartValid || !addressValid || !paymentValid) return;
-
+    
     const orders = Object.entries(restaurantGroups).map(([restaurantId, group]) => ({
       restaurantId:    { id: restaurantId },
       paymentMethodId: { id: group.selectedPaymentMethod },
@@ -99,45 +109,69 @@ const PlaceOrder = () => {
     }
   };
 
-  // ── Tela de confirmação (substitui o form após pedido feito) ─
   if (orderResult) {
     return <OrderConfirmation result={orderResult} />;
   }
 
-  // ── Formulário ───────────────────────────────────────────
   return (
-    <form className='place-order' onSubmit={handleSubmit}>
-      <div className="place-order-left">
+    <form className='place-order' onSubmit={handleSubmit} noValidate>
 
-        {cartError && (
-          <span className="global-field-error">{cartError}</span>
-        )}
+      <div className="po-top">
+        {/* ── Canto superior esquerdo: Endereço ─────────────── */}
+        <div className="po-card po-address">
+          {cartError && (
+            <span className="global-field-error">{cartError}</span>
+          )}
+          <DeliveryAddressForm ref={addressRef} onAddressUpdate={handleAddressUpdate} />
+        </div>
 
-        {/* @Valid @NotNull deliveryAddress */}
-        <DeliveryAddressForm ref={addressRef} onAddressUpdate={handleAddressUpdate} />
+        {/* ── Canto superior direito: Pagamento ─────────────── */}
+        <div className="po-card po-payments">
+          <p className="title">Pagamento</p>
 
-        {/* @Valid @NotNull paymentMethodId — um por restaurante */}
-        {isLoadingGroups
-          ? <p className="loading-text">Carregando restaurantes...</p>
-          : Object.entries(restaurantGroups).map(([restaurantId, group]) => (
-              <div key={restaurantId}>
+          {isLoadingGroups && (
+            <p className="loading-text">Carregando restaurantes...</p>
+          )}
+          {!isLoadingGroups && Object.keys(restaurantGroups).length === 0 && (
+            <p className="loading-text">Seu carrinho está vazio.</p>
+          )}
+          {!isLoadingGroups && Object.keys(restaurantGroups).length > 0 && (
+            <div className="po-payments__list">
+              {Object.entries(restaurantGroups).map(([restaurantId, group]) => (
                 <RestaurantPaymentGroup
+                  key={restaurantId}
                   restaurantId={restaurantId}
                   group={group}
                   onPaymentChange={handlePaymentChange}
+                  onRemoveItems={handleRemoveRestaurantItems}
+                  error={paymentErrors[restaurantId]}
                 />
-                {paymentErrors[restaurantId] && (
-                  <span className="global-field-error">{paymentErrors[restaurantId]}</span>
-                )}
-              </div>
-            ))
-        }
-
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      <div className="place-order-right">
+      {/* ── Embaixo, ocupando a largura toda: Resumo ────────── */}
+      <div className="po-card po-card--summary">
         <OrderSummary restaurantGroups={restaurantGroups} grandTotal={grandTotal} />
-        <button type="submit" className="btn-cart-checkout" disabled={isLoading}>
+
+        {hasUnavailablePayment && (
+          <p className="po-block-note">
+            Remova os itens do restaurante sem forma de pagamento cadastrada
+            para poder finalizar o pedido.
+          </p>
+        )}
+
+        {generalError && (
+          <span className="global-field-error">{generalError}</span>
+        )}
+
+        <button
+          type="submit"
+          className="btn-cart-checkout"
+          disabled={isLoading || hasUnavailablePayment}
+        >
           {isLoading ? 'Finalizando...' : 'Finalizar Pedido'}
         </button>
       </div>

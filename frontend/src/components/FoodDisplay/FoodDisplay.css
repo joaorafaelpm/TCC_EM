@@ -14,6 +14,20 @@
   margin-top: 40px;
 }
 
+.food-display-error-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.food-display-error {
+  border: 2px dashed #ccc;
+  padding: 40px;
+  text-align: center;
+  color: #888;
+  border-radius: 8px;
+}
+
 .show-more-btn {
   padding: 12px 28px;
   background: transparent;

@@ -192,6 +192,9 @@ public class RestaurantService {
     public Boolean existsResponsible (UUID restaurantId) {
         return restaurantRepository.existsResponsible(restaurantId, pendezzaPizzaSecurity.getUserId()) ;
     }
+    public Boolean checkIfUserIsResponsible (UUID restaurantId , UUID userId) {
+        return restaurantRepository.existsResponsible(restaurantId, pendezzaPizzaSecurity.getUserId()) && pendezzaPizzaSecurity.getUserId().equals(userId);
+    }
 
 
 }

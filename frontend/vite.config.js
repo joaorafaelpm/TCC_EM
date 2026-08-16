@@ -11,7 +11,7 @@
         "/auth/logout": env.VITE_API_URL,
         "/oauth2": env.VITE_API_URL,
         "/redirect": env.VITE_API_URL,
-        "/restaurants": env.VITE_API_URL ,
+        "/restaurants": env.VITE_API_URL,
         "/restaurants/*/payment-methods": env.VITE_API_URL,
         "/payment-methods": env.VITE_API_URL,
         "/statistics": env.VITE_API_URL,

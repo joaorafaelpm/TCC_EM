@@ -99,8 +99,8 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate , initialAddress}, ref
       <div className='multi-fields'>
         <Input
           name="zipCode"
-          label="CEP (sem - ou .)"
-          type="text"
+          label="CEP (sem &quot;-&quot; ou &quot;.&quot;)"
+          type="number"
           placeholder="CEP"
           value={address.zipCode}
           onChange={handleAddressChange}
@@ -117,7 +117,7 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate , initialAddress}, ref
         onChange={handleAddressChange}
         onBlur={handleCepBlur}
         autoComplete ="postal-code"
-        maxLength={255}
+        maxLength={100}
         error={errors.neighborhood}
       />
       </div>
@@ -129,7 +129,7 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate , initialAddress}, ref
           value={address.street}
           onChange={handleAddressChange}
           autoComplete="address-line1"
-          maxLength={255}
+          maxLength={100}
           error={errors.street}
         />
 
@@ -137,7 +137,7 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate , initialAddress}, ref
         <Input
           name="number" 
           label="Número"
-          type="text"  
+          type="number"  
           placeholder="Número"
           value={address.number} 
           onChange={handleAddressChange}
@@ -148,12 +148,12 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate , initialAddress}, ref
         />
         <Input
           name="complement"
-          label="Complemento (Opcional - ajuda o entregador)"
+          label="Complemento (Opcional)"
           type="text"
           placeholder="Complemento"
           value={address.complement}
           onChange={handleAddressChange}
-          maxLength={255}
+          maxLength={100}
         />
       </div>
 
@@ -167,7 +167,7 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate , initialAddress}, ref
           autoComplete="address-level2"
           className={errors.cityId ? 'is-invalid' : ''}
           error={errors.cityId}
-          maxLength={255}
+          maxLength={100}
         />
         <datalist id="city-options">
           {cities.map(city => <option key={city.id} value={city.name} />)}

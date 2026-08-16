@@ -57,12 +57,12 @@ const RestaurantForm = () => {
     const payload = {
       name:        restaurantInfo.name,
       ownerCpf:    restaurantInfo.ownerCpf,
-      shippingFee: parseFloat(restaurantInfo.shippingFee),
+      shippingFee: Number.parseInt(restaurantInfo.shippingFee),
       description: restaurantInfo.description || null,
       averageDeliveryTimeMinutes: restaurantInfo.averageDeliveryTimeMinutes
-        ? parseInt(restaurantInfo.averageDeliveryTimeMinutes) : null,
+        ? Number.parseInt(restaurantInfo.averageDeliveryTimeMinutes) : null,
       minimumOrderValue: restaurantInfo.minimumOrderValue
-        ? parseFloat(restaurantInfo.minimumOrderValue) : null,
+        ? Number.parseInt(restaurantInfo.minimumOrderValue) : null,
       address: {
         zipCode:      address.zipCode,
         street:       address.street,
@@ -114,16 +114,15 @@ const RestaurantForm = () => {
             />
             <Input
               name="shippingFee"
-              type="number"
               label="Taxa de Entrega"
-              step="0.01"
-              min="0"
-              max="9999.99"
+              type="number"
               placeholder="Taxa de Entrega"
               value={restaurantInfo.shippingFee}
               onChange={handleChange}
+              maxLength={4}
               error={errors.shippingFee}
             />
+            
         </div>
             <Input
               name="description"

@@ -1,58 +1,178 @@
 .place-order {
     display: flex;
-    align-items: start;
-    justify-content: space-between;
-    margin-top: 60px;
-    gap: 50px;
-    margin-left: 160px;
-    margin-bottom: 100px;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1100px;
+    margin: 60px auto 100px;
+    padding: 0 40px;
+    box-sizing: border-box;
 }
 
-/* Container Principal do Resumo */
+/* ── Grid do topo: endereço à esquerda, pagamento à direita ── */
+.po-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* ── Cards ─────────────────────────────────────────────── */
+.po-card {
+    background: white;
+    border: 1px solid var(--border-default, #e5ded0);
+    border-radius: 14px;
+    padding: 28px 32px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+}
+
+.po-address,
+.po-payments {
+    height: 100%;
+}
+
+.po-payments__list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.po-payments__list > .restaurant-order-group + .restaurant-order-group {
+    padding-top: 20px;
+    border-top: 1px solid color-mix(in srgb, var(--bg-color) 60%, white);
+}
+
+.po-card--summary {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ── Títulos ───────────────────────────────────────────── */
+.place-order .title {
+    font-size: max(1.5vw, 20px);
+    color: color-mix(in srgb, var(--bg-color) 30%, black);
+    margin: 0 0 24px 0;
+    font-weight: 600;
+}
+
+.restaurant-order-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.restaurant-order-group__name {
+    font-size: 16px;
+    font-weight: 600;
+    color: color-mix(in srgb, var(--bg-color) 45%, black);
+    margin: 0;
+}
+
+/* ── Campos ────────────────────────────────────────────── */
+.place-order .multi-fields {
+    display: flex;
+    gap: 15px;
+}
+
+.place-order .multi-fields > * {
+    flex: 1;
+    min-width: 0;
+}
+
+.field-label {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #8a8378;
+}
+
+.place-order select.field-input {
+    cursor: pointer;
+    appearance: auto;
+}
+
+/* ── Aviso: restaurante sem forma de pagamento ────────────── */
+.payment-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: color-mix(in srgb, var(--primary-color, #c0392b) 8%, white);
+    border: 1px solid color-mix(in srgb, var(--primary-color, #c0392b) 25%, transparent);
+    border-radius: 8px;
+    color: color-mix(in srgb, var(--primary-color, #c0392b) 85%, black);
+    font-size: 13.5px;
+    line-height: 1.4;
+}
+
+.payment-warning svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.po-block-note {
+    font-size: 12.5px;
+    color: color-mix(in srgb, var(--primary-color, #c0392b) 85%, black);
+    text-align: center;
+    margin: 0;
+}
+
+.loading-text {
+    color: #8a8378;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* ── Resumo do pedido ──────────────────────────────────── */
 .cart-bottom-order {
     display: flex;
     flex-direction: column;
     font-family: 'Poppins', sans-serif;
-    margin-top: 20px;
     width: 100%;
 }
 
 .cart-total {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    /* Espaçamento geral entre blocos */
+    gap: 20px;
 }
 
-/* Título Principal */
 .cart-bottom-order h2 {
     color: #4a4543;
-    /* Tom de marrom/cinza escuro */
-    font-size: max(2vw, 20px);
+    font-size: 22px;
     font-weight: 700;
-    margin: 0;
+    margin: 0 0 4px 0;
+    text-align: center;
 }
 
-/* Container da lista de restaurantes */
 .order-groups-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    /* Espaço entre um restaurante e outro */
+    gap: 16px;
 }
 
-/* Cada grupo de restaurante */
 .order-group-summary {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    /* Espaçamento entre as linhas do mesmo restaurante */
+    padding-bottom: 16px;
+    border-bottom: 1px solid color-mix(in srgb, var(--bg-color) 60%, white);
+}
+
+.order-group-summary:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .order-group-summary .restaurant-name {
     color: #3b4e54;
-    /* Tom levemente azulado/esverdeado escuro da imagem */
-    font-size: 1.5rem;
+    font-size: 15px;
     font-weight: 600;
     margin: 0;
 }
@@ -60,85 +180,89 @@
 .order-group-summary .subtotal,
 .order-group-summary .shipping-fee {
     color: #5a5451;
-    /* Cor mais suave para não brigar com o título */
-    font-size: 1.25rem;
+    font-size: 13.5px;
     font-weight: 400;
     margin: 0;
 }
 
-/* Total Final */
 .cart-bottom-total h3 {
-    color: #636b66;
-    font-size: 26px;
+    color: #4a4543;
+    font-size: 22px;
     font-weight: 700;
-    margin: 10px 0 0 0;
+    margin: 4px 0 0 0;
+    text-align: center;
 }
 
-.place-order-left {
-    width: 40%;
-    max-width: max(50%, 500px);
+.btn-cart-checkout:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
-.place-order-left .title {
-    font-size: max(2vw, 20px);
-    color: color-mix(in srgb, var(--bg-color) 30%, black);
-    margin-bottom: 35px;
-    font-weight: 600;
-}
-
-
-/* Evita que a seta nativa do dropdown fique estranha em alguns browsers */
-.place-order-left select {
-    cursor: pointer;
-    appearance: auto;
-}
-
-.place-order-left .multi-fields {
+.payment-warning {
     display: flex;
-    gap: 15px;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
+    background: color-mix(in srgb, var(--primary-color, #c0392b) 8%, white);
+    border: 1px solid color-mix(in srgb, var(--primary-color, #c0392b) 25%, transparent);
+    border-radius: 8px;
+    color: color-mix(in srgb, var(--primary-color, #c0392b) 85%, black);
+    font-size: 13.5px;
+    line-height: 1.4;
 }
 
-.multi-fields select {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
-    border-radius: 6px;
-    font-size: max(1.25vw, 12px);
-    outline-color: var(--button-color);
-    font-family: 'Poppins', sans-serif;
-    background-color: white;
+.payment-warning__message {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
 }
 
-.place-order-right {
-    width: 40%;
-    max-width: max(40%, 400px);
+.payment-warning__message svg {
+    flex-shrink: 0;
+    margin-top: 1px;
 }
 
-.place-order-right .title {
-    font-size: max(2vw, 20px);
-    color: color-mix(in srgb, var(--bg-color) 30%, black);
-    margin-bottom: 35px;
+.payment-warning__remove-btn {
+    align-self: flex-start;
+    background: white;
+    border: 1px solid color-mix(in srgb, var(--primary-color, #c0392b) 40%, transparent);
+    color: color-mix(in srgb, var(--primary-color, #c0392b) 85%, black);
+    font-size: 12.5px;
     font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease-out;
 }
 
-@media (max-width:1200px) {
+.payment-warning__remove-btn:hover {
+    background: color-mix(in srgb, var(--primary-color, #c0392b) 10%, white);
+}
+
+/* ── Responsivo ────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .po-top {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
     .place-order {
+        margin: 32px 0 60px;
+        padding: 0 16px;
+        gap: 16px;
+    }
+
+    .po-card {
+        padding: 20px;
+    }
+
+    .place-order .multi-fields {
         flex-direction: column;
-        margin-left: 40px;
-        margin-right: 40px;
-        gap: 30px;
+        gap: 4px;
     }
 
-    .place-order-left,
-    .place-order-right {
-        width: 100%;
-        margin-right: 40px;
+    .po-card--summary {
         max-width: none;
-    }
-}
-
-@media (max-width:768px) {
-    .place-order {
-        margin: 40px 20px 80px 20px;
     }
 }

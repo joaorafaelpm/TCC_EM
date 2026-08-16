@@ -34,6 +34,15 @@ export default function Input({
     onChange({ target: { name, value: format(e.target.value) } });
   };
 
+  const handleInput = (e) => {
+    if (type !== 'number' || !e.target.maxLength) return;
+
+    const max = Number(e.target.maxLength);
+    if (e.target.value.length > max) {
+      e.target.value = e.target.value.slice(0, max);
+    }
+  };
+
   const className = 'field-input' + (error ? ' is-invalid' : '') + (isPassword ? ' field-input--with-toggle' : '');
   const fieldProps = {
     id: name, name, placeholder, value,
@@ -51,6 +60,7 @@ export default function Input({
           <input
             {...fieldProps}
             type={isPassword ? (showPassword ? 'text' : 'password') : type}
+            onInput={handleInput}
             step={step}
             min={min}
           />

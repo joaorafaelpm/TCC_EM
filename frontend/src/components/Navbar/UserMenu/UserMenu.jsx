@@ -41,16 +41,16 @@ const UserMenu = () => {
 
       {showMenu && (
         <ul className="user-menu-dropdown">
-          <li>
-            <Link to="/my-account" onClick={() => setShowMenu(false)}>
-              <p>Minha Conta</p>
-            </Link>
-          </li>
-          <li>
-            <Link to="/register-restaurant" onClick={() => setShowMenu(false)}>
-              <p>Cadastre seu Restaurante</p>
-            </Link>
-          </li>
+          <Link to="/my-account" onClick={() => setShowMenu(false)}>
+            <li>
+                <p>Minha Conta</p>
+            </li>
+          </Link>
+          <Link to="/register-restaurant" onClick={() => setShowMenu(false)}>
+            <li>
+                <p>Cadastre seu Restaurante</p>
+            </li>
+          </Link>
           <hr />
           <li onClick={handleLogout}>
             <p className="logout-text">{loggingOut ? 'Saindo...' : 'Sair'}</p>

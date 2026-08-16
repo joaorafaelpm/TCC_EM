@@ -107,11 +107,10 @@ const AddProductModal = ({ restaurantId, onClose, onProductAdded }) => {
             name="price"
             label="Preço (R$)"
             type="number"
-            step="0.01"
-            min="0"
             placeholder="0,00"
             value={form.price}
             onChange={handleChange}
+            maxLength={6}
             error={errors.price}
           />
 

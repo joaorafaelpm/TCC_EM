@@ -118,7 +118,7 @@ const EditRestaurantModal = ({ restaurant, onClose, onSave }) => {
               onChange={handleChange}
               className={errors.name ? 'is-invalid' : ''}
               error={errors.name}
-              maxLength={255}
+              maxLength={100}
             />
             <Input
               name="description"
@@ -133,16 +133,16 @@ const EditRestaurantModal = ({ restaurant, onClose, onSave }) => {
             />
 
             <Input
-              label="Frete (R$)"
               name="shippingFee"
+              label="Taxa de Entrega"
               type="number"
-              min="0"
-              step="0.01"
+              placeholder="Taxa de Entrega"
               value={form.shippingFee}
               onChange={handleChange}
-              className={errors.shippingFee ? 'is-invalid' : ''}
+              maxLength={4}
               error={errors.shippingFee}
             />
+
             <Input
               label="Tempo médio (min)"
               name="averageDeliveryTimeMinutes"

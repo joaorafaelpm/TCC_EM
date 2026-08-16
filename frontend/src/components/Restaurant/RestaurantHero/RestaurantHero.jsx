@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RestaurantHero.css';
 import semImagemPng from '../../../assets/sem-foto.png';
 import PhotoUploadTrigger from '../../PhotoHandler/PhotoUploadTrigger/PhotoUploadTrigger';
+import api from '../../../services/api';
+import { useAuth } from '../../context/AuthProvider';
 
-const RestaurantHero = ({ restaurant, canEdit, onEditClick, authorities = null, user = null, authToken = null }) => {
+const RestaurantHero = ({ restaurant, canEdit, onEditClick, authorities = null, user, authToken = null }) => {
   const { name, open, address, shippingFee } = restaurant;
+  const { user: tokenData} = useAuth();
+  const [userId , setUserId] = useState(tokenData?.userId || null);
   const [photoKey, setPhotoKey] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [loadingAction, setLoadingAction] = useState(false);
@@ -14,7 +18,34 @@ const RestaurantHero = ({ restaurant, canEdit, onEditClick, authorities = null, 
   const [localOpenState, setLocalOpenState] = useState(open);
   const [localActiveState, setLocalActiveState] = useState(restaurant.active ?? true);
 
+  // Se o usuário logado é responsável por este restaurante — buscado
+  // do backend, e não deduzido no frontend, já que essa checagem
+  // define permissão real de edição da lógica do restaurante.
+  const [isResponsible, setIsResponsible] = useState(false);
+
   const navigate = useNavigate();
+
+
+  useEffect(() => {
+    let cancelled = false;
+    
+    if (!userId || !restaurant?.id) {
+      setIsResponsible(false);
+      return;
+    }
+    api.get(`/v1/restaurants/exists-responsible/${restaurant.id}/${userId}`, {
+      headers: { Authorization: `Bearer ${authToken}` }
+      })
+      .then(res => {
+        if (!cancelled) setIsResponsible(res.data === true);
+      })
+      .catch(err => {
+        console.error('Erro ao verificar responsabilidade pelo restaurante:', err);
+        if (!cancelled) setIsResponsible(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [restaurant?.id, userId, authToken]);
 
   const formattedShipping = shippingFee > 0
     ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(shippingFee)
@@ -41,8 +72,7 @@ const RestaurantHero = ({ restaurant, canEdit, onEditClick, authorities = null, 
   }, [authorities, user]);
 
   const hasAuthority = (auth) => normalizedAuthorities.includes(auth.trim().toUpperCase());
-
-  const canEditLogic = hasAuthority('EDITAR_LOGICA_RESTAURANTES');
+  const canEditLogic = hasAuthority('EDITAR_LOGICA_RESTAURANTES') && isResponsible;
   const canManage    = hasAuthority('GERENCIAR_RESTAURANTE');
 
   const canCloseAvailable      = canEditLogic && localOpenState && !loadingAction;

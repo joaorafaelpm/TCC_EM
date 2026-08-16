@@ -16,13 +16,22 @@
 
 /* Erro de validação */
 .put-error {
-    margin: 4px 0 0;
-    font-size: 0.75rem;
-    color: #a8222e;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.3;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background-color: #fdecea;
+    color: #d32f2f;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.2;
 }
 
+.put-error svg {
+    flex-shrink: 0;
+}
 /* ─── Variante: pencil-corner ─────────────────────────────────────────────── */
 /*
    Ícone circular pequeno no canto inferior direito do filho.

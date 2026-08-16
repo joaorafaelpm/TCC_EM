@@ -7,7 +7,7 @@ public class PhoneValidator implements ConstraintValidator<ValidPhone, String> {
 
     @Override
     public boolean isValid(String phone, ConstraintValidatorContext context) {
-        if (phone == null) return true;
+        if (phone == null || phone.trim().isEmpty()) return true;
 
         phone = phone.replaceAll("[^0-9]", "");
 

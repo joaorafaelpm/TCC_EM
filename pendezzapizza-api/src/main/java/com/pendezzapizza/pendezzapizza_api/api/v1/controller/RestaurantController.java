@@ -95,6 +95,13 @@ public class RestaurantController implements RestaurantControllerOpenApi {
                 .body(restaurantService.existsResponsible(restaurantId));
     }
 
+    @CheckSecurity.Restaurants.CanConsult
+    @GetMapping("/exists-responsible/{restaurantId}/{userId}")
+    public ResponseEntity<Boolean> checkIfResponsibleIsTheSame(@PathVariable UUID restaurantId , @PathVariable UUID userId) {
+        return ResponseEntity.ok()
+                .body(restaurantService.checkIfUserIsResponsible(restaurantId , userId));
+    }
+
     @CheckSecurity.Restaurants.CanRegister
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping

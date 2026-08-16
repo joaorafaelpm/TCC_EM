@@ -21,17 +21,6 @@ const Footer = () => {
           </div>
         </section>
 
-        {/* Centro: Navegação */}
-        <nav className="footer-nav">
-          <h3>Menu</h3>
-          <ul>
-            <li><Link to="/">Início</Link></li>
-            <li><Link to="#explore-menu">Cardápio</Link></li>
-            <li><Link to="#sobre">Sobre</Link></li>
-            <li><Link to="#depoimentos">Depoimentos</Link></li>
-          </ul>
-        </nav>
-
         <section className="footer-contact">
           <h3>Entre em Contato</h3>
           <address>
@@ -47,7 +36,7 @@ const Footer = () => {
         <p>© 2026 Pendezza Pizza. Todos os direitos reservados.</p>
         <p className="developer-info">
           Desenvolvido por 
-          <Link to="https://rule34.xxx/index.php?page=post&s=list&tags=pendezza+pizza" target="_blank" rel="noopener noreferrer">
+          <Link to="https://www.youtube.com/watch?v=uCgN4r1Bnug" target="_blank" rel="noopener noreferrer">
             Pendezza Pizza
           </Link>
         </p>
