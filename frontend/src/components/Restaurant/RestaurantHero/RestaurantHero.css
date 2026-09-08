@@ -41,9 +41,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* Alterado de flex-end para center para centralizar verticalmente */
     gap: 20px;
-    /* Adicionado um gap para garantir que os elementos não grudem se a tela diminuir */
 }
 
 .title-group {
@@ -51,6 +49,16 @@
     align-items: center;
     gap: 15px;
     margin-bottom: 10px;
+}
+
+.title-group h1 {
+    margin: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.img-wrapper {
+    flex-shrink: 0;
 }
 
 .status-badge {
@@ -204,6 +212,13 @@
 .error-message {
     color: #c62828;
     font-weight: 600;
+}
+
+.info-main {
+    min-width: 0;
+    /* permite este item flex encolher e o texto quebrar dentro dele */
+    flex: 1;
+    /* ocupa o espaço disponível entre a foto e o delivery-info */
 }
 
 .info-message {

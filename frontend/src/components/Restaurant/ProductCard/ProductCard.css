@@ -56,6 +56,9 @@
   margin: 0 0 8px 0;
   color: #a8222e;
   font-size: 1.1rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .product-info .description {
@@ -72,12 +75,13 @@
   color: #333;
 }
 
-/* Linha superior do info: título + botão editar */
 .product-info__top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
+  min-width: 0;
+  /* permite o h3 encolher e quebrar dentro do flex */
 }
 
 /* Botão de editar (ícone lápis) */

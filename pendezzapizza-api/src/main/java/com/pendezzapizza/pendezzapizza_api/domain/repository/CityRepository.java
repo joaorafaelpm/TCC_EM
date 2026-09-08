@@ -40,5 +40,4 @@ public interface CityRepository extends CustomJPARepository<City, UUID> {
     OffsetDateTime getLastUpdateDateByName(String cityName);
 
 
-
 }

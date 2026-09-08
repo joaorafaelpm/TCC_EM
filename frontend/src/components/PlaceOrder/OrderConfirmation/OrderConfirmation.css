@@ -181,6 +181,16 @@
     color: #1a1a1a;
 }
 
+.restaurant-name {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.restaurant-order-group__name {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
 .oc-status {
     font-size: 0.72rem;
     font-weight: 700;

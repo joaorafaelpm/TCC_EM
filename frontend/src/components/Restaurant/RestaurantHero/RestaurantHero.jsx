@@ -241,34 +241,6 @@ const RestaurantHero = ({ restaurant, canEdit, onEditClick, authorities = null, 
               </div>
             </div>
 
-            <div className="modal-section">
-              <h4>Ativar / Desativar</h4>
-              <div className="modal-actions">
-                <button
-                  className={`action-btn ${canActivateAvailable ? 'available-primary' : 'muted'}`}
-                  disabled={!canActivateAvailable}
-                  onClick={() => {
-                    if (!canManage) { setErrorMessage('Você não tem permissão necessária.'); return; }
-                    handleAction('activate');
-                  }}
-                  title={!canManage ? 'Permissão necessária: GERENCIAR_RESTAURANTE' : ''}
-                >
-                  Ativar
-                </button>
-                <button
-                  className={`action-btn ${canDeactivateAvailable ? 'available-danger' : 'muted'}`}
-                  disabled={!canDeactivateAvailable}
-                  onClick={() => {
-                    if (!canManage) { setErrorMessage('Você não tem permissão necessária.'); return; }
-                    handleAction('deactivate');
-                  }}
-                  title={!canManage ? 'Permissão necessária: GERENCIAR_RESTAURANTE' : ''}
-                >
-                  Desativar
-                </button>
-              </div>
-            </div>
-
             <div className="modal-footer">
               {loadingAction && <span className="muted">Processando...</span>}
               {infoMessage  && <span className="info-message">{infoMessage}</span>}

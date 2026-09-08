@@ -2,12 +2,20 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 const AuthContext = createContext(null)
 
+// Rotas que não exigem sessão ativa — mantenha alinhada com:
+//  - PUBLIC_ROUTES no App.jsx
+//  - permitAll() no ResourceServerConfig (backend)
+const PUBLIC_ROUTES = ['/cadastro', '/terms_of_user']
+
+const isPublicPath = (pathname) =>
+  PUBLIC_ROUTES.some(path => pathname.startsWith(path))
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined)
   const [redirecting, setRedirecting] = useState(false)
 
   const redirectToLogin = () => {
-    if (!globalThis.location.pathname.includes('/cadastro')) {
+    if (!isPublicPath(globalThis.location.pathname)) {
       setRedirecting(true)
       globalThis.location.href = '/oauth2/iniciar-login'
     }
@@ -30,9 +38,9 @@ export function AuthProvider({ children }) {
         if (cancelled) return
         setUser(data)
 
-        const noCadastro = globalThis.location.pathname.includes('/cadastro')
-        if (data && noCadastro) { globalThis.location.href = '/'; return }
-        if (!data && !noCadastro) redirectToLogin()
+        const publicRoute = isPublicPath(globalThis.location.pathname)
+        if (data && publicRoute) { globalThis.location.href = '/'; return }
+        if (!data && !publicRoute) redirectToLogin()
       })
       .catch(() => {
         if (cancelled) return

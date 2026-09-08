@@ -15,6 +15,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 
 import java.util.Collection;
@@ -43,6 +45,7 @@ public class ResourceServerConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v1/users/register",
+                                "/terms_of_user",
                                 "/oauth2/iniciar-login",
                                 "/redirect"
                         ).permitAll()
@@ -58,8 +61,9 @@ public class ResourceServerConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 // Habilita o login via formulário para o usuário se autenticar no Authorization Server
-                .formLogin(loginFormConfigurer ->
-                        loginFormConfigurer.loginPage("/login").permitAll())
+                .formLogin(loginFormConfigurer -> loginFormConfigurer.loginPage("/login")
+                                .successHandler(authSuccessHandler())
+                                .permitAll())
                 // Habilita a validação de tokens JWT para requisições de API
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtConfigurer ->
@@ -71,6 +75,8 @@ public class ResourceServerConfig {
         return http.build();
     }
 
+
+    
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder
@@ -85,7 +91,16 @@ public class ResourceServerConfig {
                 !request.getRequestURI().startsWith("/.well-known/")
         );
         return requestCache;
+    }   
+
+    @Bean
+    public AuthenticationSuccessHandler authSuccessHandler() {
+        var handler = new SavedRequestAwareAuthenticationSuccessHandler();
+        handler.setDefaultTargetUrl("/oauth2/iniciar-login"); // ou a URL do frontend
+        handler.setAlwaysUseDefaultTargetUrl(false); // respeita SavedRequest quando existir
+        return handler;
     }
+    
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();

@@ -119,8 +119,9 @@ const RestaurantForm = () => {
               placeholder="Taxa de Entrega"
               value={restaurantInfo.shippingFee}
               onChange={handleChange}
-              maxLength={4}
+              maxLength={6}
               error={errors.shippingFee}
+              step="0.01"
             />
             
         </div>

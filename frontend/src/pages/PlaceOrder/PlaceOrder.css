@@ -65,11 +65,13 @@
     gap: 10px;
 }
 
+.restaurant-name {
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
 .restaurant-order-group__name {
-    font-size: 16px;
-    font-weight: 600;
-    color: color-mix(in srgb, var(--bg-color) 45%, black);
-    margin: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 /* ── Campos ────────────────────────────────────────────── */
@@ -169,6 +171,8 @@
     border-bottom: none;
     padding-bottom: 0;
 }
+
+
 
 .order-group-summary .restaurant-name {
     color: #3b4e54;

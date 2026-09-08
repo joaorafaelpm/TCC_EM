@@ -9,7 +9,9 @@ package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.CitiesActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.CitiesSaveCacheEvict;
+import com.pendezzapizza.pendezzapizza_api.core.util.TextNormalizer;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.CityNotFoundException;
+import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.model.City;
 import com.pendezzapizza.pendezzapizza_api.domain.model.State;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.CityRepository;
@@ -137,6 +139,7 @@ public class CityService {
     @CitiesSaveCacheEvict
     @Transactional
     public City save(City city) {
+
         UUID stateId = city.getState().getId();
         // Garante que o estado vinculado à cidade é uma entidade gerenciada pelo JPA,
         // evitando erros de entidade desanexada ao persistir.

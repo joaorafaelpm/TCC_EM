@@ -111,11 +111,11 @@ WHERE name IN (
 
 -- 7. USUÁRIOS (com senha BCRYPT)
 INSERT INTO `user` (id, name, email, phone , password, update_date) VALUES
-(UUID_TO_BIN(UUID()), 'João da Silva', 'joao.ger@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'João da Silva', 'gerente@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'Maria Joaquina', 'maria.vnd@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'Roberto fazbear', 'guinas.sec@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'La ele da silva', 'alele.cad@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'José Souza', 'email.teste.pendezzapizza.tcc+hubert@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'José Souza', 'cliente@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'Sebastião Martins', 'email.teste.pendezzapizza.tcc+sebastiao@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'Ronaldo Pinto', 'cocoxixicocopinto@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
 (UUID_TO_BIN(UUID()), 'João Mohammed Pendezza', 'joaorafael@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP());
@@ -124,12 +124,12 @@ INSERT INTO `user` (id, name, email, phone , password, update_date) VALUES
 
 INSERT INTO user_group (user_id, group_id)
 VALUES (
-    (SELECT id FROM `user` WHERE email = 'joao.ger@pendezzapizza.com'),
+    (SELECT id FROM `user` WHERE email = 'gerente@pendezzapizza.com'),
     (SELECT id FROM `group` WHERE name = 'Admin')
 );
 INSERT INTO user_group (user_id, group_id)
 VALUES (
-    (SELECT id FROM `user` WHERE email = 'email.teste.pendezzapizza.tcc+hubert@gmail.com'),
+    (SELECT id FROM `user` WHERE email = 'cliente@pendezzapizza.com'),
     (SELECT id FROM `group` WHERE name = 'Dono_de_Restaurante')
 );
 INSERT INTO user_group (user_id, group_id)
@@ -239,14 +239,14 @@ FROM restaurant r WHERE r.name = 'Osteria del Porto' LIMIT 1;
 -- José Souza (ID 5) -> Trattoria da Mamma (Rest 1)
 INSERT INTO restaurant_user_responsible (user_id, restaurant_id)
 VALUES (
-    (SELECT id FROM `user` WHERE email = 'email.teste.pendezzapizza.tcc+hubert@gmail.com'),
+    (SELECT id FROM `user` WHERE email = 'cliente@pendezzapizza.com'),
     (SELECT id FROM restaurant WHERE name = 'Trattoria da Mamma')
 );
 
 -- José Souza (ID 5) -> Pizzeria Napoli Centrale (Rest 3)
 INSERT INTO restaurant_user_responsible (user_id, restaurant_id)
 VALUES (
-    (SELECT id FROM `user` WHERE email = 'email.teste.pendezzapizza.tcc+hubert@gmail.com'),
+    (SELECT id FROM `user` WHERE email = 'cliente@pendezzapizza.com'),
     (SELECT id FROM restaurant WHERE name = 'Pizzeria Napoli Centrale')
 );
 
@@ -350,7 +350,7 @@ SELECT
     DATE_SUB(NOW(), INTERVAL 1 DAY), 'DELIVERED',
     (SELECT id FROM payment_method WHERE description = 'Pix' LIMIT 1),
     (SELECT id FROM restaurant WHERE name = 'Trattoria da Mamma' LIMIT 1),
-    (SELECT id FROM `user` WHERE email = 'joao.ger@pendezzapizza.com' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'gerente@pendezzapizza.com' LIMIT 1),
     (SELECT id FROM city WHERE name = 'São Paulo' LIMIT 1),
     'Rua Augusta', '200', 'Consolação', '01305-000', UTC_TIMESTAMP();
 

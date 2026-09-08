@@ -7,6 +7,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.pendezzapizza.pendezzapizza_api.core.security.ResourceServerConfig;
+import com.pendezzapizza.pendezzapizza_api.core.security.ResourceServerConfig.*;
 import com.pendezzapizza.pendezzapizza_api.core.security.SecurityController;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Permission;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
@@ -40,6 +42,9 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.RequestCache;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,13 +62,9 @@ public class AuthorizationServerConfig {
 
     private final SecurityController securityController;
 
-    // REMOVIDO: @Value("${pendezzapizza.auth.rsa-key-size:2048}") private static int rsaKeySize
-    // Spring não injeta @Value em campos estáticos — o valor sempre seria 0.
-    // O método generateRsaKey() também foi removido pois não era chamado em lugar nenhum.
-
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain authFilterChain(HttpSecurity http, RequestCache requestCache , AuthenticationSuccessHandler authSuccessHandler) throws Exception {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
                 OAuth2AuthorizationServerConfigurer.authorizationServer();
         authorizationServerConfigurer.authorizationEndpoint(
@@ -73,9 +74,11 @@ public class AuthorizationServerConfig {
                 .with(authorizationServerConfigurer, authorizationServer ->
                         authorizationServer.oidc(Customizer.withDefaults())
                 )
+                .requestCache(cache -> cache.requestCache(requestCache))
                 .cors(Customizer.withDefaults())
-                .formLogin(loginFormConfigurer ->
-                        loginFormConfigurer.loginPage("/login").permitAll())
+                .formLogin(loginFormConfigurer -> loginFormConfigurer.loginPage("/login")
+                        .successHandler(authSuccessHandler)
+                        .permitAll())
                 .authorizeHttpRequests(authorize ->
                         authorize.anyRequest().authenticated()
                 );

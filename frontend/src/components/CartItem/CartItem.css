@@ -11,6 +11,12 @@
   border-radius: 5px;
 }
 
+.cart-item-name {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+}
+
 .close-icon-cart {
   width: 22px;
   height: 22px;

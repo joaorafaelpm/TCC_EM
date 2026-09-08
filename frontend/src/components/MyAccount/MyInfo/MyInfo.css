@@ -77,13 +77,6 @@
 }
 
 /* Avatar section */
-.my-info__avatar-section {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
 .my-info__avatar {
   width: 60px;
   height: 60px;
@@ -98,18 +91,33 @@
   flex-shrink: 0;
   letter-spacing: 1px;
 }
+.my-info__avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.my-info__avatar-section>div:last-child {
+  min-width: 0;
+  /* permite o texto encolher e quebrar dentro do flex item */
+}
 
 .my-info__avatar-name {
   font-size: 1rem;
   font-weight: 600;
   color: #1a1a1a;
   margin: 0 0 2px;
+  overflow-wrap: break-word;
+  /* quebra palavras longas sem espaço */
+  word-break: break-word;
 }
 
 .my-info__avatar-email {
   font-size: 0.85rem;
   color: #888;
   margin: 0;
+  overflow-wrap: break-word;
 }
 
 .my-info__divider {
@@ -122,12 +130,15 @@
 .my-info__fields {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  /* garante que os filhos possam encolher dentro do card */
 }
 
-.my-info__value-container{
+.my-info__value-container {
   margin-top: 5vh;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .my-info__value {
@@ -136,6 +147,8 @@
   margin: 0;
   padding: 10px 0;
   border-bottom: 1px solid #f0f0f0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Actions */

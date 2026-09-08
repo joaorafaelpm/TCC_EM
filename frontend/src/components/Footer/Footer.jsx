@@ -14,11 +14,6 @@ const Footer = () => {
             Escolha e desfrute de verdadeiras obras-primas, criadas com ingredientes 
             frescos e selecionados. Peça e receba diretamente em casa!
           </p>
-          <div className="footer-social">
-            <Link to="#" aria-label="Facebook"><img src={assets.facebook} alt="" /></Link>
-            <Link to="#" aria-label="Twitter/X"><img src={assets.x} alt="" /></Link>
-            <Link to="#" aria-label="Instagram"><img src={assets.instagram} alt="" /></Link>
-          </div>
         </section>
 
         <section className="footer-contact">
@@ -36,9 +31,7 @@ const Footer = () => {
         <p>© 2026 Pendezza Pizza. Todos os direitos reservados.</p>
         <p className="developer-info">
           Desenvolvido por 
-          <Link to="https://www.youtube.com/watch?v=uCgN4r1Bnug" target="_blank" rel="noopener noreferrer">
-            Pendezza Pizza
-          </Link>
+          Pendezza Pizza
         </p>
       </div>
     </footer>

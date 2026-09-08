@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { validDisplayName, validationEmail, validPhone, validPassword} from '../../../utils/validator';
+import {
+  validationName,
+  validationEmail,
+  validPhone,
+  validPassword,
+  notBlank,
+  matches,
+  validate as runValidationRules,
+} from '../../../utils/validator';
 import { collapseSpaces } from '../../../utils/formatter';
 import Input from '../../Input/Input';
 
@@ -10,6 +18,13 @@ function formatPhone(value) {
   if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
+
+// Telefone é opcional na tela, mas o validPhone do backend não sabe disso —
+// então só chamamos ele quando o usuário realmente digitou algum dígito.
+const optionalPhone = (value) => {
+  const digits = (value || '').replace(/\D/g, '');
+  return digits ? validPhone(value) : null;
+};
 
 function getPasswordStrength(password) {
   if (!password) return null;
@@ -62,39 +77,25 @@ export default function CadastroForm({ onSubmit, submitError }) {
   const [touched, setTouched] = useState(INITIAL_TOUCHED);
   const [agreed, setAgreed]   = useState(false);
 
+  // Mesmo padrão de "schema" sugerido no cabeçalho do validator.js:
+  // cada campo recebe uma lista de regras, aplicadas em sequência.
+  const buildSchema = (values) => ({
+    // Trocado de validDisplayName (aceita números) para validationName
+    // (só letras, espaço, hífen e apóstrofo) — mesma regra do @ValidationName do backend.
+    name:            [validationName()],
+    email:           [notBlank('E-mail'), validationEmail],
+    phone:           [optionalPhone],
+    password:        [notBlank('Senha'), validPassword],
+    confirmPassword: [notBlank('Confirme sua senha'), matches(values.password, 'As senhas')],
+  });
+
   const validate = (values) => {
+    const schema = buildSchema(values);
     const e = {};
-
-    const nameError = validDisplayName()(values.name);
-    if (nameError) e.name = nameError;
-
-    if (!values.email.trim()) {
-      e.email = 'E-mail é obrigatório.';
-    } else {
-      const emailError = validationEmail(values.email);
-      if (emailError) e.email = emailError;
-    }
-
-    // Telefone é opcional — só valida formato se algo foi digitado
-    const phoneDigits = values.phone.replace(/\D/g, '');
-    if (phoneDigits) {
-      const phoneError = validPhone(values.phone);
-      if (phoneError) e.phone = phoneError;
-    }
-
-    if (!values.password) {
-      e.password = 'Senha é obrigatória.';
-    } else {
-      const passwordError = validPassword(values.password);
-      if (passwordError) e.password = passwordError;
-    }
-
-    if (!values.confirmPassword) {
-      e.confirmPassword = 'Confirme sua senha.';
-    } else if (values.password !== values.confirmPassword) {
-      e.confirmPassword = 'As senhas não conferem.';
-    }
-
+    Object.entries(schema).forEach(([field, rules]) => {
+      const error = runValidationRules(values[field], rules);
+      if (error) e[field] = error;
+    });
     return e;
   };
 
@@ -114,7 +115,7 @@ export default function CadastroForm({ onSubmit, submitError }) {
     setTouched({ name: true, email: true, phone: true, password: true, confirmPassword: true });
     if (!isValid || !agreed) return;
     onSubmit({
-      name: form.name.trim(), // trim final só na submissão
+      name: form.name.trim(),
       email: form.email,
       phone: form.phone || null,
       password: form.password,
@@ -130,6 +131,12 @@ export default function CadastroForm({ onSubmit, submitError }) {
         </h2>
         <p className="cadastro-form__subtitle">Crie sua conta administrativa</p>
       </div>
+
+      {submitError && (
+        <div className="cadastro-form__submit-error" role="alert">
+          {submitError}
+        </div>
+      )}
 
       <div className="cadastro-form__fields">
         <Input
@@ -206,7 +213,7 @@ export default function CadastroForm({ onSubmit, submitError }) {
       </button>
 
       <p className="login-link">
-        <a href="/login">Já possui uma conta? Faça login</a>
+        <a href="/oauth2/iniciar-login">Já possui uma conta? Faça login</a>
       </p>
     </form>
   );

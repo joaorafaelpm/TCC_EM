@@ -20,7 +20,7 @@ const Testimonials = () => {
       userImg: assets.user2,
       date: "10/02/2026",
       stars: 5,
-      text: "Top dms, o João Rafael é um cara super gente boa, sempre disposto a ajudar e tirar dúvidas. Recomendo demais! Eu pediria só pelos entregadores que é um gatinho."
+      text: "Top dms, o João Rafael é um cara super gente boa, sempre disposto a ajudar e tirar dúvidas. Recomendo demais!"
     }
   ];
 

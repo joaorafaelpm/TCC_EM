@@ -16,6 +16,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import com.pendezzapizza.pendezzapizza_api.core.util.TextNormalizer;
+
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -65,4 +67,5 @@ public class City implements Serializable {
         /** Preenchida automaticamente pelo Hibernate sempre que o registro for atualizado no banco. */
         @UpdateTimestamp
         private OffsetDateTime updateDate;
+      
 }

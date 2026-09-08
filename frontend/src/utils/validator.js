@@ -231,6 +231,19 @@
   };
 
   /**
+ * matches
+ * Compara o valor atual com outro valor (ex: confirmação de senha).
+ * Não é um decorator do Bean Validation, mas segue o mesmo padrão dos demais.
+ *
+ * @param {*} otherValue — valor a ser comparado
+ * @param {string} label — rótulo usado na mensagem de erro
+ */
+export const matches =
+  (otherValue, label = "Campos") =>
+  (value) =>
+    value !== otherValue ? `${label} não conferem` : null;
+
+  /**
    * @ValidPassword
    * Porta de PasswordValidator.java:
    *   - mínimo 8 caracteres
