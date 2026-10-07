@@ -161,7 +161,7 @@ Para solicitar autorização ou contratar os autores:
 | João Victor Soteras | jvstrs1011@gmail.com | [LinkedIn](https://www.linkedin.com/in/jo%C3%A3o-victor-soteras-aa9907370/) | [GitHub](https://github.com/jvstrs10) |
 | Mateus Borges Nogueira | mateusborgesno@gmail.com | — | [GitHub](https://github.com/MateusMBN) |
 | Otavio Matias Medeiros | otaviomed2008@gmail.com | — | [GitHub](https://github.com/Kotaviozx1n) |
-| Rafael Johann Garrido | rafaelgarridov8@gmail.com | [LinkedIn](https://www.linkedin.com/in/rafael-johann-garrido-7619b8441/) | — |
+| Rafael Johann Garrido | rafaelgarridov8@gmail.com | [LinkedIn](https://www.linkedin.com/in/rafael-johann-garrido-7619b8441/) | [GitHub](https://github.com/RafaelGaJO) |
 
 ### ⚠️ Isenção de garantia
 
