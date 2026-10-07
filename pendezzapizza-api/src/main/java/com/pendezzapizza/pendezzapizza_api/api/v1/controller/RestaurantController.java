@@ -2,10 +2,11 @@ package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantModelAssembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.RestaurantSummaryModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.RestaurantDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.RestaurantDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.RestaurantSummaryModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantDTO;
+import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.RestaurantUpdateDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantControllerOpenApi;
 import com.pendezzapizza.pendezzapizza_api.core.security.CheckSecurity;
 import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
@@ -18,6 +19,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
@@ -36,10 +38,13 @@ public class RestaurantController implements RestaurantControllerOpenApi {
     private final RestaurantModelAssembler restaurantAssembler;
     private final RestaurantSummaryModelAssembler restaurantSummaryModelAssembler;
     private final RestaurantDisassembler restaurantDisassembler;
+    private final PasswordEncoder encoder ;
+
 
     @CheckSecurity.Restaurants.CanConsult
     @GetMapping
-    public ResponseEntity<Page<RestaurantSummaryModel>> list(Pageable pageable , ServletWebRequest request) {
+    public ResponseEntity<Page<RestaurantSummaryModel>> list(@RequestParam(required = false) String restaurantName , Pageable pageable , ServletWebRequest request) {
+        Page<Restaurant> restaurants;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = restaurantService.getLastUpdateDate();
@@ -51,7 +56,13 @@ public class RestaurantController implements RestaurantControllerOpenApi {
             return null;
         }
 
-        Page<Restaurant> restaurants = restaurantService.findAll(pageable);
+        if (restaurantName == null) {
+            restaurants = restaurantService.findAll(pageable);
+        }
+        else {
+            restaurants = restaurantService.findAllByName(restaurantName, pageable);
+        }
+
         Page<RestaurantSummaryModel> restaurantsModel = restaurants.map(restaurantSummaryModelAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
@@ -77,21 +88,35 @@ public class RestaurantController implements RestaurantControllerOpenApi {
                 .eTag(eTag)
                 .body(restaurantAssembler.toModel(restaurantService.findById(restaurantId)));
     }
+    @CheckSecurity.Restaurants.CanConsult
+    @GetMapping("/exists-responsible/{restaurantId}")
+    public ResponseEntity<Boolean> existsResponsible(@PathVariable UUID restaurantId) {
+        return ResponseEntity.ok()
+                .body(restaurantService.existsResponsible(restaurantId));
+    }
 
-    @CheckSecurity.Restaurants.CanManageRegistration
+    @CheckSecurity.Restaurants.CanConsult
+    @GetMapping("/exists-responsible/{restaurantId}/{userId}")
+    public ResponseEntity<Boolean> checkIfResponsibleIsTheSame(@PathVariable UUID restaurantId , @PathVariable UUID userId) {
+        return ResponseEntity.ok()
+                .body(restaurantService.checkIfUserIsResponsible(restaurantId , userId));
+    }
+
+    @CheckSecurity.Restaurants.CanRegister
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public RestaurantModel add(@RequestBody @Valid RestaurantDTO restaurantDTO) {
         Restaurant restaurant = restaurantDisassembler.restaurantDTOToRestaurant(restaurantDTO);
-        return restaurantAssembler.toModel(restaurantService.save(restaurant));
+        String encode = encoder.encode(restaurantDTO.getOwnerCpf());
+        return restaurantAssembler.toModel(restaurantService.save(restaurant,encode));
     }
 
-    @CheckSecurity.Restaurants.CanManageRegistration
+    @CheckSecurity.Restaurants.CanManageOperation
     @PutMapping("/{restaurantId}")
-    public RestaurantModel save(@PathVariable UUID restaurantId, @RequestBody @Valid RestaurantDTO restaurantDTO) {
+    public RestaurantModel save(@PathVariable UUID restaurantId, @RequestBody @Valid RestaurantUpdateDTO restaurantDTO) {
         Restaurant existingRestaurant = restaurantService.findById(restaurantId);
         restaurantDisassembler.updateRestaurantFromDto(restaurantDTO, existingRestaurant);
-        return restaurantAssembler.toModel(restaurantService.save(existingRestaurant));
+        return restaurantAssembler.toModel(restaurantService.update(existingRestaurant));
     }
 
     @CheckSecurity.Restaurants.CanManageRegistration
@@ -108,15 +133,15 @@ public class RestaurantController implements RestaurantControllerOpenApi {
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurants.CanManageOperation
+    @CheckSecurity.Restaurants.CanEditLogic
     @PutMapping("/{restaurantId}/opening")
     public ResponseEntity<Void> open(@PathVariable UUID restaurantId) {
         restaurantService.open(restaurantId);
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurants.CanManageOperation
-    @PutMapping("/{restaurantId}/closing")
+    @CheckSecurity.Restaurants.CanEditLogic
+    @DeleteMapping("/{restaurantId}/opening")
     public ResponseEntity<Void> close(@PathVariable UUID restaurantId) {
         restaurantService.close(restaurantId);
         return ResponseEntity.noContent().build();

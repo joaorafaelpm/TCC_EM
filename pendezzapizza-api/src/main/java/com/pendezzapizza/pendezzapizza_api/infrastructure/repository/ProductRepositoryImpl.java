@@ -7,24 +7,26 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Implementação das funções extras do repositório de <b>produto</b>
+ */
 @Repository
 public class ProductRepositoryImpl implements ProductRepositoryQueries {
 
     @PersistenceContext
     EntityManager manager ;
 
+//    Função para salvar a foto
     @Transactional
     @Override
     public ProductPhoto save (ProductPhoto foto) {
         return manager.merge(foto);
     }
 
+//    Função para remover a foto
     @Transactional
     @Override
     public void delete (ProductPhoto foto) {
         manager.remove(foto);
     }
-
-
-
 }

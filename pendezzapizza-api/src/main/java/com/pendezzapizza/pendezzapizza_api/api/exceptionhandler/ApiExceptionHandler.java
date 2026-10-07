@@ -3,7 +3,7 @@ package com.pendezzapizza.pendezzapizza_api.api.exceptionhandler;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
-import com.pendezzapizza.pendezzapizza_api.api.exceptionhandler.enuns.ProblemType;
+import com.pendezzapizza.pendezzapizza_api.api.exceptionhandler.enums.ProblemType;
 import com.pendezzapizza.pendezzapizza_api.core.validation.ValidationException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.*;
 

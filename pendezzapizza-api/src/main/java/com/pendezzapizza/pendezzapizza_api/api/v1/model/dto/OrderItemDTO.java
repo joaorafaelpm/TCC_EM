@@ -11,6 +11,9 @@ import lombok.Setter;
 
 import java.util.UUID;
 
+/**
+ * Classe de DTO para representação da entidade de <b>item de pedido</b>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

@@ -22,8 +22,8 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class ProductService {
 
-    RestaurantService restaurantService ;
-    ProductRepository productRepository;
+    private final RestaurantService restaurantService ;
+    private final ProductRepository productRepository;
 
     @Cacheable(value = "productsByRestaurant", key = "{#restaurant.id, #pageable.pageNumber, #pageable.pageSize}")
     public Page<Product> findByRestaurant(Restaurant restaurant, Pageable pageable) {
@@ -39,8 +39,8 @@ public class ProductService {
         return productRepository.findAllActives(pageable);
     }
 
-    @Cacheable(value = "productsName", key = "{#pageable.pageNumber, #pageable.pageSize, #productName}")
-    public Page<Product> findAllByName(String productName, Pageable pageable) {
+    @Cacheable(value = "productsName", key = "{#productName , #pageable.pageNumber, #pageable.pageSize}")
+    public Page<Product> findAllByNameAndActives(String productName, Pageable pageable) {
         return productRepository.findByName(productName, pageable);
     }
 
@@ -100,10 +100,6 @@ public class ProductService {
     @Cacheable(value = "productsLastUpdateDateActivesByRestaurantId" , key = "#restaurantId")
     public OffsetDateTime findLastUpdateDateAndActivesByRestaurantId (UUID restaurantId) {
         return productRepository.getLastUpdateDateById(restaurantId);
-    }
-    @Cacheable(value = "productsLastUpdateDateByRestaurantId" , key = "#restaurantId")
-    public OffsetDateTime findLastUpdateDateByRestaurantId (UUID restaurantId) {
-        return productRepository.getLastUpdateDateByIdGetAll(restaurantId);
     }
     @Cacheable(value = "productsLastUpdateDateById" , key = "#productId")
     public OffsetDateTime findLastUpdateDateById (UUID productId) {

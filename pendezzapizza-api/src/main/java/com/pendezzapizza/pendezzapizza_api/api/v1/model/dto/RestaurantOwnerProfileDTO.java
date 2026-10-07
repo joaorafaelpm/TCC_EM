@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Classe de DTO para representação da entidade de <b>perfil de dono de restaurante</b>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

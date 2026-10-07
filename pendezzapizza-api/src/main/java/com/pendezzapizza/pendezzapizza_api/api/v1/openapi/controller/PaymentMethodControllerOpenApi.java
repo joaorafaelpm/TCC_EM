@@ -21,7 +21,7 @@ public interface PaymentMethodControllerOpenApi {
 
     @Operation(description = "Lista formas de pagamento")
     ResponseEntity<Page<PaymentMethodModel>> all(
-            @Parameter(required = false) String paymentMethodName ,
+            @Parameter(required = false, description = "Filtra uma forma de pagamento pelo nome.") String paymentMethodName ,
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) ServletWebRequest request);
 

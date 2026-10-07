@@ -1,0 +1,100 @@
+/* Estrutura e Layout da Página de Pedido */
+
+.restaurant-info {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  margin-top: 60px;
+  gap: 50px;
+  margin-left: 160px;
+  margin-bottom: 100px;
+}
+
+
+.restaurant-info-left .title {
+  font-size: max(2vw, 20px);
+  color: color-mix(in srgb, var(--bg-color) 30%, black);
+  margin-bottom: 35px;
+  font-weight: 600;
+}
+
+
+.restaurant-info-left {
+  width: 40%;
+  max-width: max(50%, 500px);
+}
+
+.restaurant-info-right {
+  width: 40%;
+  max-width: max(40%, 400px);
+}
+
+/* Mantendo os estilos para a coluna da direita caso haja um formulário diferente lá */
+.restaurant-info-right .title {
+  font-size: max(2vw, 20px);
+  color: color-mix(in srgb, var(--bg-color) 30%, black);
+  margin-bottom: 35px;
+  font-weight: 600;
+}
+
+
+.restaurant-info-right select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.restaurant-info-right .multi-fields {
+  display: flex;
+  gap: 15px;
+}
+.resume-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+.resume-section h2 {
+  color: color-mix(in srgb, var(--bg-color) 30%, black);
+  font-size: max(1.5vw, 15px);
+}
+.resume-section p {
+  color: color-mix(in srgb, var(--bg-color) 60%, black);
+  font-size: max(1.2vw, 12px);
+  width: 80%;
+}
+
+/* Responsividade do Layout */
+@media (max-width: 1200px) {
+  .restaurant-info {
+    flex-direction: column;
+    margin-left: 40px;
+    margin-right: 40px;
+    gap: 30px;
+  }
+
+  .restaurant-info-left,
+  .restaurant-info-right {
+    width: 100%;
+    margin-right: 40px;
+    max-width: none;
+  }
+}
+
+.restaurant-info-left textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid color-mix(in srgb, var(--bg-color) 80%, black);
+  border-radius: 6px;
+  font-size: max(1vw, 12px);
+  margin-bottom: 15px;
+  outline-color: var(--button-color);
+  font-family: 'Poppins', sans-serif;
+  resize: vertical;
+  min-height: 80px;
+}
+
+@media (max-width: 768px) {
+  .restaurant-info {
+    margin: 40px 20px 80px 20px;
+  }
+}

@@ -28,7 +28,7 @@ public class RestaurantUserController implements RestaurantUserControllerOpenApi
     private final RestaurantService restaurantService;
     private final UserModelAssembler userModelAssembler;
 
-    @CheckSecurity.Restaurants.CanManageRegistration
+    @CheckSecurity.Restaurants.CanManageOperation
     @GetMapping
     public ResponseEntity<Page<UserModel>> list(
             @PathVariable UUID restaurantId,
@@ -54,14 +54,14 @@ public class RestaurantUserController implements RestaurantUserControllerOpenApi
                 .body(responsibleUsersModel);
     }
 
-    @CheckSecurity.Restaurants.CanManageRegistration
+    @CheckSecurity.Restaurants.CanManageOperation
     @PutMapping("/{userId}")
     public ResponseEntity<Void> associate(@PathVariable UUID restaurantId, @PathVariable UUID userId) {
         restaurantService.associateResponsibleUser(restaurantId, userId);
         return ResponseEntity.noContent().build();
     }
 
-    @CheckSecurity.Restaurants.CanManageRegistration
+    @CheckSecurity.Restaurants.CanManageOperation
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> disassociate(@PathVariable UUID restaurantId, @PathVariable UUID userId) {
         restaurantService.disassociateResponsibleUser(restaurantId, userId);

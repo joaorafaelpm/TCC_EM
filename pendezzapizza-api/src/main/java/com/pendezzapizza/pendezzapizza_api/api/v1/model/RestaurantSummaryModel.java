@@ -1,3 +1,9 @@
+/**
+ * @summary     Representa o modelo de resposta resumido de um restaurante, utilizado como DTO aninhado
+ *              em pedidos e outros contextos onde apenas dados essenciais do restaurante são necessários.
+ * @difficulty  Low
+ * @depends-on  None
+ */
 package com.pendezzapizza.pendezzapizza_api.api.v1.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -5,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -19,9 +24,12 @@ public class RestaurantSummaryModel {
     @Schema(example = "Thai Gourmet")
     private String name;
 
-    @Schema(example = "10.00")
-    private BigDecimal shippingFee;
+    @Schema(example = "Descrição de restaurante")
+    private String description;
 
+    @Schema(example = "true")
+    private Boolean active;
+
+    @Schema(example = "true")
+    private Boolean open;
 }
-
-

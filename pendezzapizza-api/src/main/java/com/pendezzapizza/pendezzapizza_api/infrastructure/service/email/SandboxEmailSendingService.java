@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-
+/**
+ * Serviço de envio de email de testes, com um modelo oficial enviado para um email da empresa
+ */
 public class SandboxEmailSendingService extends SmtpEmailSendingService {
 
     @Autowired
@@ -17,25 +19,29 @@ public class SandboxEmailSendingService extends SmtpEmailSendingService {
     @Autowired
     private Configuration freemarkerConfig;
 
+//    Função de envio de email
     @Override
     public void send(Message message) {
         try {
+//            Gera a mensagem e envia direto para o email de que vai receber
             MimeMessage mimeMessage = generateMimeMessage(message);
             mailSender.send(mimeMessage);
-
         } catch (Exception e) {
             throw new EmailException("Could not send email.", e);
         }
     }
 
+//    Função auxiliar para gerar a mensagem de email
     protected MimeMessage generateMimeMessage(Message message){
         try {
+//            Recebemos a mensagem em forma de texto
             String body = processTemplate(message);
+//            Criamos uma MimeMessage (que é um padrão de mensagem)
             MimeMessage mimeMessage = mailSender.createMimeMessage();
+//            A partir dessa MimeMessage a gente faz um helper que é tipo um construtor para facilitar a escrita dessa mensagem
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
 
-            // Note: In a Sandbox environment, the recipient is forced to the sender's address (or a specific test address).
-            // This is done by setting setTo to the value of emailProperties.getSender()
+//            Agora a gente preenche as informações da mensagem
             helper.setFrom(emailProperties.getSender());
             helper.setTo(emailProperties.getSender());
 
@@ -44,7 +50,7 @@ public class SandboxEmailSendingService extends SmtpEmailSendingService {
             return mimeMessage;
         }
         catch (Exception e) {
-            throw new EmailException("Could not create email message.", e);
+            throw new EmailException("Não foi possível criar a mensagem.", e);
         }
     }
 

@@ -9,7 +9,7 @@ package com.pendezzapizza.pendezzapizza_api.domain.model;
 import com.pendezzapizza.pendezzapizza_api.domain.event.ConfirmationOrderEvent;
 import com.pendezzapizza.pendezzapizza_api.domain.event.OrderCancellationEvent;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
-import com.pendezzapizza.pendezzapizza_api.domain.model.enuns.OrderStatus;
+import com.pendezzapizza.pendezzapizza_api.domain.model.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -42,106 +42,100 @@ INSERT INTO payment_method (id, description, update_date) VALUES
 (UUID_TO_BIN(UUID()), 'Pix',               UTC_TIMESTAMP()),
 (UUID_TO_BIN("3ee42ee7-3d35-4680-afe0-e01a24e649dc"), 'Dinheiro',          UTC_TIMESTAMP());
 
--- 4. PERMISSÕES
 
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_COZINHAS', 'Permite editar cozinhas', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_FORMAS_PAGAMENTO', 'Permite criar ou editar formas de pagamento', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_CIDADES', 'Permite criar ou editar cidades', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_ESTADOS', 'Permite criar ou editar estados', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'CONSULTAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite consultar usuários', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite criar ou editar usuários', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'EDITAR_RESTAURANTES', 'Permite criar, editar ou gerenciar restaurantes', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'CONSULTAR_PEDIDOS', 'Permite consultar pedidos', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'GERENCIAR_PEDIDOS', 'Permite gerenciar pedidos', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN(UUID()), 'GERAR_RELATORIOS', 'Permite gerar relatórios', UTC_TIMESTAMP());
-insert into permission (id, name, description, update_date) values (UUID_TO_BIN("1925eff2-a761-49ff-ab2a-fd471828cb9d"), 'GANHAR_AURA', 'Permite gerar aura', UTC_TIMESTAMP());
-
--- 5. GRUPOS
-
+-- 4. Grupos
 insert into `group` (id, name, update_date) values
-(UUID_TO_BIN(UUID()), 'Gerente', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Vendedor', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Secretária', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Cadastrador', UTC_TIMESTAMP()),
-(UUID_TO_BIN("4a3fdd17-542f-4f6c-b450-871ff0f21092"), 'Tester', UTC_TIMESTAMP());
+(UUID_TO_BIN(UUID()), 'Admin', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Dono_de_Restaurante', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Chefe_de_Restaurante', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Analista_de_Restaurante', UTC_TIMESTAMP());
 
--- 6. USUÁRIOS (com senha BCRYPT)
+-- 5. Permissões
+insert into permission (id, name, description, update_date) values
+(UUID_TO_BIN(UUID()), 'EDITAR_FORMAS_PAGAMENTO',           'Permite criar ou editar formas de pagamento',                        UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_CIDADES',                    'Permite criar ou editar cidades',                                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_ESTADOS',                    'Permite criar ou editar estados',                                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_PEDIDOS',                    'Permite controlar todos os pedidos de todo mundo',                                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_RESTAURANTES',               'Permite criar, editar ou gerenciar restaurantes',                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'CONSULTAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite consultar usuários, grupos e permissões',                 UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_USUARIOS_GRUPOS_PERMISSOES', 'Permite criar ou editar usuários',                                   UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'GERENCIAR_RESTAURANTE',             'Permite criar, editar ou gerenciar restaurantes',                    UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'EDITAR_LOGICA_RESTAURANTES',        'Permite adicionar produtos a um restaurante, abrir e fechar ele',   UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'GERAR_RELATORIOS',                  'Permite gerar relatórios',                                           UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'CONSULTAR_USUARIOS',                'Permite consultar usuários, somente',                                UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'CONSULTAR_PEDIDOS',                 'Permite consultar pedidos',                                          UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'GERENCIAR_PEDIDOS',                 'Permite alterar o status de fluxo do pedido',                       UTC_TIMESTAMP());
 
-INSERT INTO `user` (id, name, email, password, update_date) VALUES
-(UUID_TO_BIN(UUID()), 'João da Silva', 'joao.ger@pendezzapizza.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Maria Joaquina', 'maria.vnd@pendezzapizza.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Roberto fazbear', 'guinas.sec@pendezzapizza.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'La ele da silva', 'alele.cad@pendezzapizza.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'José Souza', 'email.teste.pendezzapizza.tcc+hubert@gmail.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Sebastião Martins', 'email.teste.pendezzapizza.tcc+sebastiao@gmail.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Ronaldo Pinto', 'cocoxixicocopinto@gmail.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
-(UUID_TO_BIN("a6162eb1-df44-471b-aef3-9feee0d9d267"), 'João Mohammed Pendezza', 'joaomohammed@gmail.com', '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP());
+-- 6. Grupos e permissoes
 
--- 7. RELAÇÃO GRUPO_PERMISSAO
-
--- Gerente (antigo ID 1) - Pode fazer tudo
+-- Admin → tudo
 INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Gerente'), id
+SELECT (SELECT id FROM `group` WHERE name = 'Admin'), id
 FROM permission;
 
--- Vendedor (antigo ID 2) - Permissões de CONSULTA + GERENCIAR_PEDIDOS
+-- Analista → base da hierarquia
 INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Vendedor'), id
-FROM permission WHERE name LIKE 'CONSULTAR_%';
-
--- Adicionando especificamente GERENCIAR_PEDIDOS para Vendedor
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Vendedor'), id
-FROM permission WHERE name = 'GERENCIAR_PEDIDOS';
-
--- Secretária (antigo ID 3) - Permissões de CONSULTA
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Secretária'), id
-FROM permission WHERE name LIKE 'CONSULTAR_%';
-
--- Cadastrador (antigo ID 4) - Permissões de RESTAURANTES
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Cadastrador'), id
-FROM permission WHERE name LIKE '%_RESTAURANTES';
-
-INSERT INTO group_permission (group_id, permission_id)
-SELECT (SELECT id FROM `group` WHERE name = 'Tester'), id
-FROM permission WHERE name = 'GANHAR_AURA';
-
--- 8. RELAÇÃO USUÁRIO_GRUPO
-
--- João da Silva -> Gerente
-INSERT INTO user_group (user_id, group_id)
-VALUES (
-    (SELECT id FROM `user` WHERE email = 'joao.ger@pendezzapizza.com'),
-    (SELECT id FROM `group` WHERE name = 'Gerente')
+SELECT (SELECT id FROM `group` WHERE name = 'Analista_de_Restaurante'), id
+FROM permission
+WHERE name IN (
+    'GERAR_RELATORIOS',
+    'CONSULTAR_PEDIDOS',
+    'GERENCIAR_PEDIDOS',
+    'CONSULTAR_USUARIOS'
 );
 
--- Maria Joaquina -> Vendedor
-INSERT INTO user_group (user_id, group_id)
-VALUES (
-    (SELECT id FROM `user` WHERE email = 'maria.vnd@pendezzapizza.com'),
-    (SELECT id FROM `group` WHERE name = 'Vendedor')
+-- Chefe → tudo do Analista + EDITAR_LOGICA_RESTAURANTES
+INSERT INTO group_permission (group_id, permission_id)
+SELECT (SELECT id FROM `group` WHERE name = 'Chefe_de_Restaurante'), id
+FROM permission
+WHERE name IN (
+    'EDITAR_LOGICA_RESTAURANTES',
+    'GERAR_RELATORIOS',
+    'CONSULTAR_PEDIDOS',
+    'GERENCIAR_PEDIDOS',
+    'CONSULTAR_USUARIOS'
 );
 
--- Roberto fazbear -> Secretária
-INSERT INTO user_group (user_id, group_id)
-VALUES (
-    (SELECT id FROM `user` WHERE email = 'guinas.sec@pendezzapizza.com'),
-    (SELECT id FROM `group` WHERE name = 'Secretária')
+-- Dono → tudo do Chefe + GERENCIAR_RESTAURANTE
+INSERT INTO group_permission (group_id, permission_id)
+SELECT (SELECT id FROM `group` WHERE name = 'Dono_de_Restaurante'), id
+FROM permission
+WHERE name IN (
+    'GERENCIAR_RESTAURANTE',
+    'EDITAR_LOGICA_RESTAURANTES',
+    'GERAR_RELATORIOS',
+    'CONSULTAR_PEDIDOS',
+    'GERENCIAR_PEDIDOS',
+    'CONSULTAR_USUARIOS'
 );
 
--- La ele da silva -> Cadastrador
-INSERT INTO user_group (user_id, group_id)
-VALUES (
-    (SELECT id FROM `user` WHERE email = 'alele.cad@pendezzapizza.com'),
-    (SELECT id FROM `group` WHERE name = 'Cadastrador')
-);
+-- 7. USUÁRIOS (com senha BCRYPT)
+INSERT INTO `user` (id, name, email, phone , password, update_date) VALUES
+(UUID_TO_BIN(UUID()), 'João da Silva', 'gerente@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Maria Joaquina', 'maria.vnd@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Roberto fazbear', 'guinas.sec@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'La ele da silva', 'alele.cad@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'José Souza', 'cliente@pendezzapizza.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Sebastião Martins', 'email.teste.pendezzapizza.tcc+sebastiao@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'Ronaldo Pinto', 'cocoxixicocopinto@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'João Mohammed Pendezza', 'joaorafael@gmail.com',"(19) 99999-9999", '$2a$12$xM3T9jhJ/qTbQ8yKkFyapOJeD.xzlaOB.CIgaKUBBsSfxw2dAbzM6', UTC_TIMESTAMP());
+
+-- 8. RELAÇÃO USUÁRIO_GRUPO (o resto é feito in-code)
 
 INSERT INTO user_group (user_id, group_id)
 VALUES (
-    (SELECT id FROM `user` WHERE email = 'joaomohammed@gmail.com'),
-    (SELECT id FROM `group` WHERE name = 'Tester')
+    (SELECT id FROM `user` WHERE email = 'gerente@pendezzapizza.com'),
+    (SELECT id FROM `group` WHERE name = 'Admin')
+);
+INSERT INTO user_group (user_id, group_id)
+VALUES (
+    (SELECT id FROM `user` WHERE email = 'cliente@pendezzapizza.com'),
+    (SELECT id FROM `group` WHERE name = 'Dono_de_Restaurante')
+);
+INSERT INTO user_group (user_id, group_id)
+VALUES (
+    (SELECT id FROM `user` WHERE email = 'email.teste.pendezzapizza.tcc+sebastiao@gmail.com'),
+    (SELECT id FROM `group` WHERE name = 'Dono_de_Restaurante')
 );
 
 -- 9. RESTAURANTES
@@ -245,14 +239,14 @@ FROM restaurant r WHERE r.name = 'Osteria del Porto' LIMIT 1;
 -- José Souza (ID 5) -> Trattoria da Mamma (Rest 1)
 INSERT INTO restaurant_user_responsible (user_id, restaurant_id)
 VALUES (
-    (SELECT id FROM `user` WHERE email = 'email.teste.pendezzapizza.tcc+hubert@gmail.com'),
+    (SELECT id FROM `user` WHERE email = 'cliente@pendezzapizza.com'),
     (SELECT id FROM restaurant WHERE name = 'Trattoria da Mamma')
 );
 
 -- José Souza (ID 5) -> Pizzeria Napoli Centrale (Rest 3)
 INSERT INTO restaurant_user_responsible (user_id, restaurant_id)
 VALUES (
-    (SELECT id FROM `user` WHERE email = 'email.teste.pendezzapizza.tcc+hubert@gmail.com'),
+    (SELECT id FROM `user` WHERE email = 'cliente@pendezzapizza.com'),
     (SELECT id FROM restaurant WHERE name = 'Pizzeria Napoli Centrale')
 );
 
@@ -311,6 +305,150 @@ SELECT
     (SELECT id FROM city WHERE name = 'Rio de Janeiro' LIMIT 1),
     'Rua Visconde de Pirajá', '120', 'Ipanema', '22410-003', UTC_TIMESTAMP();
 
+-- 15. ITENS DOS PEDIDOS DE EXEMPLO
+
+-- Item do Pedido 1: Lasagna alla Bolognese na Trattoria da Mamma
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT
+    UUID_TO_BIN(UUID()),
+    o.id,
+    p.id,
+    1,
+    58.00,
+    58.00,
+    NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Trattoria da Mamma'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Lasagna alla Bolognese'
+LIMIT 1;
+
+-- Item do Pedido 2: Pizza Diavola na Pizzeria Napoli Centrale
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT
+    UUID_TO_BIN(UUID()),
+    o.id,
+    p.id,
+    1,
+    54.00,
+    54.00,
+    NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Pizzeria Napoli Centrale'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Pizza Diavola'
+LIMIT 1;
+
+-- Item do Pedido 3: Fettuccine Alfredo na Trattoria da Mamma (ontem)
+INSERT INTO `order` (
+    id, subtotal, shipping_fee, total_cost, creation_date, order_status,
+    payment_method_id, restaurant_id, customer_user_id,
+    address_city_id, address_street, address_number,
+    address_neighborhood, address_zip_code, update_date
+)
+SELECT
+    UUID_TO_BIN(UUID()),
+    45.50, 12.50, 58.00,
+    DATE_SUB(NOW(), INTERVAL 1 DAY), 'DELIVERED',
+    (SELECT id FROM payment_method WHERE description = 'Pix' LIMIT 1),
+    (SELECT id FROM restaurant WHERE name = 'Trattoria da Mamma' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'gerente@pendezzapizza.com' LIMIT 1),
+    (SELECT id FROM city WHERE name = 'São Paulo' LIMIT 1),
+    'Rua Augusta', '200', 'Consolação', '01305-000', UTC_TIMESTAMP();
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 1, 45.50, 45.50, NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Trattoria da Mamma'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Fettuccine Alfredo'
+WHERE o.total_cost = 58.00
+ORDER BY o.creation_date DESC
+LIMIT 1;
+
+-- Pedido 4: Risotto ai Funghi na Pasta & Vino (2 dias atrás)
+INSERT INTO `order` (
+    id, subtotal, shipping_fee, total_cost, creation_date, order_status,
+    payment_method_id, restaurant_id, customer_user_id,
+    address_city_id, address_street, address_number,
+    address_neighborhood, address_zip_code, update_date
+)
+SELECT
+    UUID_TO_BIN(UUID()),
+    64.90, 9.00, 73.90,
+    DATE_SUB(NOW(), INTERVAL 2 DAY), 'CONFIRMED',
+    (SELECT id FROM payment_method WHERE description = 'Pix' LIMIT 1),
+    (SELECT id FROM restaurant WHERE name = 'Pasta & Vino' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'alele.cad@pendezzapizza.com' LIMIT 1),
+    (SELECT id FROM city WHERE name = 'São Paulo' LIMIT 1),
+    'Rua Haddock Lobo', '595', 'Cerqueira César', '01414-001', UTC_TIMESTAMP();
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 1, 64.90, 64.90, NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Pasta & Vino'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Risotto ai Funghi'
+WHERE o.total_cost = 73.90
+ORDER BY o.creation_date DESC
+LIMIT 1;
+
+-- Pedido 5: 2x Pizza Margherita Verace na Pizzeria Napoli Centrale (3 dias atrás)
+INSERT INTO `order` (
+    id, subtotal, shipping_fee, total_cost, creation_date, order_status,
+    payment_method_id, restaurant_id, customer_user_id,
+    address_city_id, address_street, address_number,
+    address_neighborhood, address_zip_code, update_date
+)
+SELECT
+    UUID_TO_BIN(UUID()),
+    96.00, 7.50, 103.50,
+    DATE_SUB(NOW(), INTERVAL 3 DAY), 'DELIVERED',
+    (SELECT id FROM payment_method WHERE description = 'Cartão de Débito' LIMIT 1),
+    (SELECT id FROM restaurant WHERE name = 'Pizzeria Napoli Centrale' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'maria.vnd@pendezzapizza.com' LIMIT 1),
+    (SELECT id FROM city WHERE name = 'Rio de Janeiro' LIMIT 1),
+    'Rua Farme de Amoedo', '34', 'Ipanema', '22420-020', UTC_TIMESTAMP();
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 2, 48.00, 96.00, 'Sem azeitona'
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Pizzeria Napoli Centrale'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Pizza Margherita Verace'
+WHERE o.total_cost = 103.50
+ORDER BY o.creation_date DESC
+LIMIT 1;
+
+-- Pedido 6: Spaghetti allo Scoglio + Tiramisù na Osteria del Porto (5 dias atrás)
+INSERT INTO `order` (
+    id, subtotal, shipping_fee, total_cost, creation_date, order_status,
+    payment_method_id, restaurant_id, customer_user_id,
+    address_city_id, address_street, address_number,
+    address_neighborhood, address_zip_code, update_date
+)
+SELECT
+    UUID_TO_BIN(UUID()),
+    106.00, 15.00, 121.00,
+    DATE_SUB(NOW(), INTERVAL 5 DAY), 'DELIVERED',
+    (SELECT id FROM payment_method WHERE description = 'Cartão de Crédito' LIMIT 1),
+    (SELECT id FROM restaurant WHERE name = 'Osteria del Porto' LIMIT 1),
+    (SELECT id FROM `user` WHERE email = 'cocoxixicocopinto@gmail.com' LIMIT 1),
+    (SELECT id FROM city WHERE name = 'Belo Horizonte' LIMIT 1),
+    'Rua da Bahia', '1148', 'Centro', '30160-011', UTC_TIMESTAMP();
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 1, 78.00, 78.00, NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Osteria del Porto'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Spaghetti allo Scoglio'
+WHERE o.total_cost = 121.00
+ORDER BY o.creation_date DESC
+LIMIT 1;
+
+INSERT INTO order_item (id, order_id, product_id, quantity, unit_price, total_price, note)
+SELECT UUID_TO_BIN(UUID()), o.id, p.id, 1, 28.00, 28.00, NULL
+FROM `order` o
+JOIN restaurant r ON r.id = o.restaurant_id AND r.name = 'Osteria del Porto'
+JOIN product p    ON p.restaurant_id = r.id AND p.name = 'Tiramisù Clássico'
+WHERE o.total_cost = 121.00
+ORDER BY o.creation_date DESC
+LIMIT 1;
 
 -- clients:
 

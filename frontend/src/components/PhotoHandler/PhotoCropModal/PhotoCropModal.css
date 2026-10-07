@@ -1,0 +1,212 @@
+/* ─── Overlay ─────────────────────────────────────────────────── */
+.crop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    /* acima do PhotoUploadModal (1100) */
+    animation: crop-overlay-in 0.15s ease;
+}
+
+@keyframes crop-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ─── Modal ───────────────────────────────────────────────────── */
+.crop-modal {
+    background: #1a1a1a;
+    /* fundo escuro para o canvas se destacar */
+    border-radius: 16px;
+    padding: 24px 24px 28px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    animation: crop-modal-in 0.2s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #f0f0f0;
+}
+
+@keyframes crop-modal-in {
+    from {
+        opacity: 0;
+        transform: scale(0.93) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ─── Header ──────────────────────────────────────────────────── */
+.crop-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.crop-modal__header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f0f0f0;
+}
+
+.crop-modal__close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    padding: 5px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s, background-color 0.15s;
+}
+
+.crop-modal__close:hover {
+    color: #f0f0f0;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ─── Hint ────────────────────────────────────────────────────── */
+.crop-modal__hint {
+    font-size: 0.75rem;
+    color: #888;
+    margin: 0 0 16px;
+}
+
+/* ─── Canvas wrapper ──────────────────────────────────────────── */
+.crop-modal__canvas-wrapper {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    margin: 0 auto 16px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #111;
+}
+
+.crop-canvas {
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    touch-action: none;
+    /* impede scroll da página ao arrastar no mobile */
+}
+
+.crop-canvas:active {
+    cursor: grabbing;
+}
+
+.crop-modal__loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* ─── Zoom slider ─────────────────────────────────────────────── */
+.crop-modal__zoom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: #888;
+}
+
+.crop-modal__zoom-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: #444;
+    outline: none;
+    cursor: pointer;
+}
+
+.crop-modal__zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #a8222e;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.crop-modal__zoom-slider::-webkit-slider-thumb:hover {
+    background: #c0392b;
+}
+
+.crop-modal__zoom-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #a8222e;
+    cursor: pointer;
+    border: none;
+}
+
+/* ─── Ações ───────────────────────────────────────────────────── */
+.crop-modal__actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.crop-modal__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.crop-modal__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.crop-modal__btn--cancel {
+    background: transparent;
+    border-color: #444;
+    color: #aaa;
+}
+
+.crop-modal__btn--cancel:hover:not(:disabled) {
+    border-color: #666;
+    color: #f0f0f0;
+}
+
+.crop-modal__btn--confirm {
+    background: #a8222e;
+    color: #fff;
+    border-color: #a8222e;
+}
+
+.crop-modal__btn--confirm:hover:not(:disabled) {
+    background: #8e1c26;
+    border-color: #8e1c26;
+}

@@ -1,6 +1,5 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
-import com.pendezzapizza.pendezzapizza_api.core.cache.CacheInvalidatorUtil;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.StatesActionCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.StatesSaveCacheEvict;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
@@ -27,6 +26,10 @@ public class StateService {
     @Cacheable("states")
     public Page<State> findAll(Pageable pageable) {
         return stateRepository.findAll(pageable);
+    }
+    @Cacheable("stateName")
+    public Page<State> findByName(String stateName , Pageable pageable) {
+        return stateRepository.findByName(stateName, pageable);
     }
     @Cacheable(value = "state", key = "#stateId")
     public State findById(UUID stateId) {

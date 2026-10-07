@@ -2,6 +2,9 @@ package com.pendezzapizza.pendezzapizza_api.infrastructure.storage;
 
 import java.io.Serial;
 
+/**
+ * Excessão específica para erro no armazenamento de fotos
+ */
 public class StorageException extends RuntimeException {
 
   @Serial

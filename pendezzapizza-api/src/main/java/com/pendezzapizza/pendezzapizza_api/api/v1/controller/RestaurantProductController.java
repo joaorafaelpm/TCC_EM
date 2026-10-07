@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.ProductModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.ProductDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.ProductDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.ProductModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.ProductDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.RestaurantProductControllerOpenApi;
@@ -50,6 +50,7 @@ public class RestaurantProductController implements RestaurantProductControllerO
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = productService.findLastUpdateDateAndActivesByRestaurantId(restaurantId);
+
         if (lastUpdateDate != null) {
             eTag = String.valueOf(lastUpdateDate.toEpochSecond());
         }
@@ -91,7 +92,7 @@ public class RestaurantProductController implements RestaurantProductControllerO
     @CheckSecurity.Restaurants.CanManageOperation
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProductModel add(@PathVariable UUID restaurantId, @RequestBody @Valid ProductDTO productDTO) {
+    public ProductModel add (@PathVariable UUID restaurantId, @RequestBody @Valid ProductDTO productDTO) {
         Product product = productDisassembler.productDTOToProduct(productDTO);
         return productAssembler.toModel(productService.save(restaurantId, product));
     }

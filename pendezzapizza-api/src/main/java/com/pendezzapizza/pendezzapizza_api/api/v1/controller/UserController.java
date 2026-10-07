@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.UserModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.UserDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.UserDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.UserModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.PasswordDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.UserDTO;
@@ -39,8 +39,8 @@ public class UserController implements UserControllerOpenApi {
 
     @CheckSecurity.UsersGroupsPermissions.CanConsult
     @GetMapping
-    public ResponseEntity<Page<UserModel>> findAll(Pageable pageable , ServletWebRequest request) {
-
+    public ResponseEntity<Page<UserModel>> findAll(@RequestParam(required = false) String userName , Pageable pageable , ServletWebRequest request) {
+        Page<User> users ;
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
         String eTag = "0";
         OffsetDateTime lastUpdateDate = userService.getLastUpdateDate();
@@ -52,7 +52,13 @@ public class UserController implements UserControllerOpenApi {
             return null;
         }
 
-        Page<User> users = userService.findAll(pageable);
+        if (userName == null) {
+            users = userService.findAll(pageable);
+        }
+        else {
+            users = userService.findAllByName(userName, pageable);
+        }
+
         Page<UserModel> usersModel = users.map(userModelAssembler::toModel);
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS).cachePublic())
@@ -60,7 +66,7 @@ public class UserController implements UserControllerOpenApi {
                 .body(usersModel);
     }
 
-    @CheckSecurity.UsersGroupsPermissions.CanConsult
+    @CheckSecurity.UsersGroupsPermissions.CanConsultOwnUser
     @GetMapping("/{userId}")
     public ResponseEntity<UserModel> findById(@PathVariable UUID userId , ServletWebRequest request) {
         ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
@@ -103,8 +109,8 @@ public class UserController implements UserControllerOpenApi {
     public UserModel save(@PathVariable UUID userId, @RequestBody @Valid UserDTO userDTO) {
         User existingUser = userService.findById(userId);
         userDisassembler.updateUserFromDto(userDTO, existingUser);
-        userService.save(existingUser);
-        return userModelAssembler.toModel(existingUser);
+        User updatedUser = userService.save(existingUser);
+        return userModelAssembler.toModel(updatedUser);
     }
 
     @CheckSecurity.UsersGroupsPermissions.CanChangeOwnPassword

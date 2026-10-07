@@ -1,0 +1,46 @@
+import React from 'react'
+import './Sobre.css'
+import { Link } from 'react-router-dom';
+
+const Sobre = () => {
+  return (
+    <section className="about-hero" id="sobre">
+      <div className="about-overlay">
+
+        {/* CONTAINER FLEX */}
+        <div className="about-container">
+
+          {/* TEXTO */}
+          <div className="about-text">
+
+            <h3>Sobre nós</h3>
+
+            <h1>Bem-vindo ao melhor marketplace de pizzarias do mundo!</h1>
+
+            <p>
+              A Pendezza Pizza nasceu com o propósito de levar até você
+              uma experiência única em sabor e qualidade.
+              Trabalhamos com as maiores marcas que abrengem desde o seu bairro até as mais conhecidas no ramo das pizzarias, massa artesanal
+              e receitas que unem tradição e inovação para tornar
+              cada pedido inesquecível.
+            </p>
+
+            <a href="#explore-menu" className="btn-s">
+              Ver Cardápio Geral
+            </a>
+
+          </div>
+
+          {/* IMAGEM */}
+          <div className="about-image">
+            <img src="/banner.png" alt="Sobre a pizzaria" />
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  )
+}
+
+export default Sobre

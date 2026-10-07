@@ -1,13 +1,12 @@
 import React from 'react'
 import './Home.css'
-import Header from '../../components/Header/Header'
+import Header from '../../components/Home/Header/Header'
 import ExploreMenu from '../../components/ExploreMenu/ExploreMenu'
 import FoodDisplay from '../../components/FoodDisplay/FoodDisplay'
-import Sobre from '../../components/Sobre/Sobre'
-import Banner from '../../components/Banner/Banner'
+import Sobre from '../../components/Home/Sobre/Sobre'
+import Banner from '../../components/Home/Banner/Banner'
 import Testimonials from '../../components/Testimonias/Testimonials'
-import Botao from '../../components/Botao/Botao'
-
+import Botao from '../../components/Home/Botao/Botao'
 
 
 
@@ -21,7 +20,7 @@ const Home = () => {
       <Banner />
       <Testimonials/>
       <Botao/>
-    </div>
+  </div>
   )
 }
 

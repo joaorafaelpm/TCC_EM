@@ -8,6 +8,26 @@ cypress/reports/
 **/results/
 **/reports/ 
 
+#Latex
+**/*.aux
+**/*.fdb_latexmk
+**/*.fls
+**/*.log
+**/*.synctex.gz
+**/*.toc
+**/*.out
+**/*.nav
+
+./*.aux
+./*.fdb_latexmk
+./*.fls
+./*.log
+./*.synctex.gz
+./*.toc
+./*.out
+./*.nav
+
+
 # act secrets
 .secrets
 

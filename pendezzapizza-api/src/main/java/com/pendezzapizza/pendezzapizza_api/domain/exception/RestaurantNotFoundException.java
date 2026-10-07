@@ -3,6 +3,9 @@ package com.pendezzapizza.pendezzapizza_api.domain.exception;
 import java.io.Serial;
 import java.util.UUID;
 
+/**
+ * Excessão específica para entidade <b>restaurante</b> não encontrada
+ */
 public class RestaurantNotFoundException extends EntityNotFoundException {
 
     @Serial

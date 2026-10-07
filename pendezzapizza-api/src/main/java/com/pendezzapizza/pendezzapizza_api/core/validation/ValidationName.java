@@ -23,6 +23,7 @@ public @interface ValidationName {
 
     boolean allowHyphen() default true;
     boolean allowApostrophe() default true;
+    boolean allowNull() default false ;
 
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};

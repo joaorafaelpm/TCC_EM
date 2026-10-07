@@ -5,7 +5,9 @@ import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.save.User
 import com.pendezzapizza.pendezzapizza_api.domain.exception.BusinessException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.EntityInUseException;
 import com.pendezzapizza.pendezzapizza_api.domain.exception.UserNotFoundException;
+import com.pendezzapizza.pendezzapizza_api.domain.model.Restaurant;
 import com.pendezzapizza.pendezzapizza_api.domain.model.User;
+import com.pendezzapizza.pendezzapizza_api.domain.repository.RestaurantRepository;
 import com.pendezzapizza.pendezzapizza_api.domain.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,12 +28,20 @@ import java.util.UUID;
 public class UserService  {
 
     private final UserRepository userRepository;
+    private final RestaurantRepository restaurantRepository;
     private PasswordEncoder passwordEncoder ;
 
     @Cacheable("users")
     public Page<User> findAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+
+
+    @Cacheable("usersName")
+    public Page<User> findAllByName(String userName , Pageable pageable) {
+        return userRepository.findByName(userName,pageable);
+    }
+
 
     @Cacheable(value = "user" , key = "#userId")
     public User findById(UUID userId) {
@@ -57,10 +67,10 @@ public class UserService  {
     @Transactional
     public User save(User user) {
 
-        userRepository.detach(user);
+        // Sem detach — compara pelo ID para checar email duplicado
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
 
-        if (existingUser.isPresent() && !existingUser.get().equals(user)) {
+        if (existingUser.isPresent() && !existingUser.get().getId().equals(user.getId())) {
             throw new BusinessException(String.format(
                     "The email '%s' is already in use", user.getEmail()
             ));
@@ -99,4 +109,11 @@ public class UserService  {
         // Cobre $2a$, $2b$, $2y$ e qualquer versão futura do bcrypt
         return password.startsWith("$2");
     }
+
+    @Cacheable("usersRestaurants")
+    public Page<Restaurant> findRestaurantByUserId(UUID userId , Pageable pageable) {
+        return userRepository.findUserRestaurantsByUserId(userId , pageable);
+    }
+
+
 }

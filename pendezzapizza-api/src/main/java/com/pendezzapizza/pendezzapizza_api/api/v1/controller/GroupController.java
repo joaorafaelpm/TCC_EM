@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.api.v1.controller;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.GroupModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.GroupDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.GroupDisassembler;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.GroupModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.dto.GroupDTO;
 import com.pendezzapizza.pendezzapizza_api.api.v1.openapi.controller.GroupControllerOpenApi;

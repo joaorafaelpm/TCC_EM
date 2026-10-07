@@ -1,80 +1,72 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './FoodDisplay.css';
-import ProductCardDisplay from '../ProductCardDisplay/ProductCardDisplay.jsx';
+import ProductCardDisplay from './ProductCardDisplay/ProductCardDisplay.jsx';
+import { StoreContext } from '../context/StoreContext.jsx';
+
+const PAGE_SIZE = 10;
 
 const FoodDisplay = ({ category }) => {
+  const { registerProducts } = useContext(StoreContext);
   const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false);
 
-  // Reseta o botão "Mostrar mais" quando a categoria muda
+  // Volta para página 0 quando muda de categoria
   useEffect(() => {
-    setShowAll(false);
+    setCurrentPage(0);
   }, [category]);
 
-  // Busca os produtos na API
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('http://localhost/v1/products', { credentials: 'include' });
-        const data = await response.json();
-        
-        // Verifica se a API retorna um array direto ou um objeto paginado (data.content)
-        setProducts(data.content || data || []);
-      } catch (error) {
-        console.error("Erro ao buscar produtos do cardápio:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
 
-    fetchProducts();
-  }, []);
+    const params = new URLSearchParams({ currentPage, size: PAGE_SIZE });
 
-  if (loading) {
-    return <div className="loading">Preparando o cardápio...</div>;
-  }
+    fetch(`/v1/products?${params}`, { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        const list = data.content || [];
+        setProducts(list);
+        setTotalPages(data.totalPage || 1);
+        registerProducts(list);
+      })
+      .catch(err => console.error("Erro ao buscar produtos:", err))
+      .finally(() => setLoading(false));
+  }, [currentPage]);
 
-  // Filtra por categoria E garante que só exibe produtos ativos
-  const filteredList = products.filter(product => {
-    const isCategoryMatch = category === 'all' || product.category === category;
-    return isCategoryMatch && product.active; 
-  });
+  if (loading) return <div className="loading">Preparando o cardápio...</div>;
 
-  // Controla a paginação no front-end (exibe 5 ou todos)
-  const visibleItems = showAll ? filteredList : filteredList.slice(0, 5);
-
-   return (
+  return (
     <div className="food-display" id="food-display">
-      
-      {category !== 'all' && (
-        <h2 className="food-display-title">
-          {category}
-        </h2>
-      )}
 
-      {/* Grid de Produtos */}
       <div className="food-display-list">
-        {visibleItems.length > 0 ? (
-          visibleItems.map(product => (
-            <ProductCardDisplay 
-              key={product.id} 
-              product={product} 
-            />
+        {products.length > 0 ? (
+          products.map(product => (
+            <ProductCardDisplay key={product.id} product={product} />
           ))
         ) : (
-          <p className="placeholder-text">Nenhum produto encontrado para esta categoria.</p>
+          <div className="food-display-error-container">
+            <p className="food-display-error">Nenhum produto encontrado para esta categoria.</p>
+          </div>
         )}
       </div>
 
-      {/* Botão Mostrar Mais */}
-      {filteredList.length > 5 && (
-        <div className="show-more-container">
+      {totalPages > 1 && (
+        <div className="food-pagination">
           <button
-            className="show-more-btn"
-            onClick={() => setShowAll(!showAll)}
+            className="page-btn"
+            disabled={currentPage === 0}
+            onClick={() => setCurrentPage(p => p - 1)}
           >
-            {showAll ? 'Mostrar menos' : 'Ver todo o cardápio'}
+            ← Anterior
+          </button>
+          <span className="page-info">{currentPage + 1} de {totalPages}</span>
+          <button
+            className="page-btn"
+            disabled={currentPage >= totalPages - 1}
+            onClick={() => setCurrentPage(p => p + 1)}
+          >
+            Próxima →
           </button>
         </div>
       )}

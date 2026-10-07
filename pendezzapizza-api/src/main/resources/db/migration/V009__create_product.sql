@@ -1,8 +1,8 @@
 create table IF NOT EXISTS product (
     id BINARY(16) DEFAULT (UUID_TO_BIN(UUID())) PRIMARY KEY,
 	restaurant_id BINARY(16) not null,
-	name varchar(200) not null,
-	description text not null,
+	name varchar(100) not null,
+	description VARCHAR(255),
 	price decimal(10,2) not null,
 	active tinyint(1) not null
 

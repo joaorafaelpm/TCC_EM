@@ -1,0 +1,807 @@
+:root {
+    --bg: #ffffff;
+    --bg2: #f5f5f3;
+    --bg3: #ececea;
+    --text: #1a1a1a;
+    --text2: #555550;
+    --text3: #888882;
+    --border: rgba(0, 0, 0, 0.11);
+    --border2: rgba(0, 0, 0, 0.2);
+    --radius: 8px;
+    --radius-lg: 12px;
+    --accent: #a8222e;
+    --accent-bg: #fdf0f0;
+    --accent-hover: #8a1a24;
+    --select-bg: rgba(168, 34, 46, 0.07);
+    --ok: #2e7d32;
+    --ok-bg: #f0faf0;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #1c1c1c;
+        --bg2: #252525;
+        --bg3: #2e2e2e;
+        --text: #f0f0ee;
+        --text2: #aaaaaa;
+        --text3: #666660;
+        --border: rgba(255, 255, 255, 0.09);
+        --border2: rgba(255, 255, 255, 0.18);
+        --accent: #e05560;
+        --accent-bg: #2a1517;
+        --accent-hover: #f06570;
+        --select-bg: rgba(224, 85, 96, 0.1);
+        --ok: #4caf50;
+        --ok-bg: #0f2010;
+    }
+}
+
+/* ==========================================================================
+   2. RESET E BASE
+   ========================================================================== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 15px;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg2);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    user-select: none;
+}
+
+/* ==========================================================================
+   3. LAYOUT PRINCIPAL
+   ========================================================================== */
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main {
+    flex: 1;
+    padding: 2rem 2.5rem;
+    max-width: 860px;
+}
+
+/* ==========================================================================
+   4. SIDEBAR (BARRA LATERAL)
+   ========================================================================== */
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: var(--bg);
+    border-right: 0.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sb-brand {
+    padding: 18px 16px 14px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sb-brand-icon {
+    font-size: 1.25rem;
+}
+
+.sb-brand-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.sb-section {
+    padding: 10px 10px 2px;
+}
+
+.sb-section-title {
+    font-size: 0.63rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.9px;
+    color: var(--text3);
+    padding: 0 6px;
+    margin-bottom: 3px;
+}
+
+.sb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.84rem;
+    color: var(--text2);
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: background 0.12s, color 0.12s;
+    font-family: inherit;
+}
+
+.sb-item:hover {
+    background: var(--bg2);
+    color: var(--text);
+}
+
+.sb-item.active {
+    background: var(--accent-bg);
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.sb-version-list {
+    padding: 2px 10px 10px;
+}
+
+.sb-ver-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.78rem;
+    color: var(--text2);
+    transition: background 0.12s;
+}
+
+.sb-ver-entry:hover {
+    background: var(--bg2);
+}
+
+.sb-ver-del {
+    opacity: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 0.72rem;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: inherit;
+}
+
+.sb-ver-entry:hover .sb-ver-del {
+    opacity: 1;
+}
+
+.sb-footer {
+    margin-top: auto;
+    padding: 10px;
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* ==========================================================================
+   5. COMPONENTES E ALERTAS
+   ========================================================================== */
+/* Dir status badge */
+.dir-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: var(--radius);
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    font-size: 0.73rem;
+    color: var(--text3);
+    min-height: 30px;
+    word-break: break-all;
+}
+
+.dir-badge.connected {
+    background: var(--ok-bg);
+    border-color: rgba(46, 125, 50, 0.25);
+    color: var(--ok);
+}
+
+.dir-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+/* Unsupported warning */
+.warn-box {
+    padding: 10px 14px;
+    background: #fff8e1;
+    border: 0.5px solid #f9a825;
+    border-radius: var(--radius);
+    font-size: 0.78rem;
+    color: #5d4037;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .warn-box {
+        background: #1a1500;
+        border-color: #b8860b;
+        color: #ffd54f;
+    }
+}
+
+/* ==========================================================================
+   6. FORMULÁRIOS E INPUTS
+   ========================================================================== */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.4rem;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.topbar h1 {
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: 110px 145px 1fr;
+    gap: 10px;
+    margin-bottom: 1.2rem;
+}
+
+.meta-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.field-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--text3);
+}
+
+input[type="text"],
+textarea,
+select {
+    width: 100%;
+    background: var(--bg);
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.86rem;
+    padding: 7px 10px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--accent);
+}
+
+/* ==========================================================================
+   7. BOTÕES E AÇÕES
+   ========================================================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    font-size: 0.82rem;
+    font-family: inherit;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    background: var(--bg2);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-accent {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+}
+
+.btn-accent:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 0.76rem;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   8. PICKERS E PILLS (TAGS/ÁREAS)
+   ========================================================================== */
+.pickers {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.picker-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.pill {
+    padding: 5px 13px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 0.5px solid transparent;
+    transition: all 0.12s;
+    white-space: nowrap;
+}
+
+.pill.unsel {
+    background: var(--bg3);
+    color: var(--text2);
+    border-color: var(--border);
+}
+
+.pill.unsel:hover {
+    border-color: var(--border2);
+    color: var(--text);
+}
+
+.pill.sel {
+    color: #fff;
+}
+
+/* Cores específicas das Pills */
+.pill[data-tag="Desenvolvimento Inicial"].sel {
+    background: #5a3e9e;
+    border-color: #5a3e9e;
+}
+
+.pill[data-tag="Adicionado"].sel {
+    background: #2e7d32;
+    border-color: #2e7d32;
+}
+
+.pill[data-tag="Alterado"].sel {
+    background: #1565c0;
+    border-color: #1565c0;
+}
+
+.pill[data-tag="Removido"].sel {
+    background: #b71c1c;
+    border-color: #b71c1c;
+}
+
+.pill[data-tag="Resolvido"].sel {
+    background: #e65100;
+    border-color: #e65100;
+}
+
+.pill[data-tag="custom"].sel,
+.pill[data-tag="custom-pill"].sel {
+    background: #555;
+    border-color: #555;
+}
+
+.pill[data-area="Backend"].sel {
+    background: #1565c0;
+}
+
+.pill[data-area="Frontend"].sel {
+    background: #6a1b9a;
+}
+
+.pill[data-area="App Mobile"].sel {
+    background: #00695c;
+}
+
+.pill[data-area="QA"].sel {
+    background: #e65100;
+}
+
+.pill[data-area="Infraestrutura"].sel {
+    background: #37474f;
+}
+
+.pill[data-area="Análise de Dados"].sel {
+    background: #4a148c;
+}
+
+.add-pill-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.add-pill-row input {
+    font-size: 0.8rem;
+    max-width: 180px;
+}
+
+/* ==========================================================================
+   9. PAINÉIS DE ITENS
+   ========================================================================== */
+.items-panel {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+}
+
+.items-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px 14px;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg2);
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.items-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.items-toolbar-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.items-list {
+    padding: 8px 0;
+}
+
+.item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 5px 16px;
+    transition: background 0.08s;
+    cursor: default;
+}
+
+.item-row.drag-over {
+    background: var(--select-bg);
+}
+
+.item-row input[type="checkbox"] {
+    margin-top: 3px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+    width: 15px;
+    height: 15px;
+}
+
+.item-row label {
+    font-size: 0.83rem;
+    color: var(--text);
+    line-height: 1.5;
+    cursor: pointer;
+    flex: 1;
+}
+
+.item-row .del-item {
+    opacity: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 0.8rem;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-family: inherit;
+    transition: opacity 0.1s, color 0.1s;
+}
+
+.item-row:hover .del-item {
+    opacity: 1;
+}
+
+.item-row:hover .del-item:hover {
+    color: var(--accent);
+}
+
+.custom-add-row {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px 10px;
+    border-top: 0.5px solid var(--border);
+}
+
+.custom-add-row input {
+    font-size: 0.83rem;
+}
+
+.empty-state {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--text3);
+    font-size: 0.82rem;
+}
+
+/* ==========================================================================
+   10. TABELA DE STACK TÉCNICA
+   ========================================================================== */
+.stack-panel {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+}
+
+.stack-header {
+    padding: 9px 14px;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stack-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.stack-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.stack-table th {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text3);
+    padding: 8px 16px;
+    text-align: left;
+    border-bottom: 0.5px solid var(--border);
+}
+
+.stack-table td {
+    padding: 6px 12px;
+    border-bottom: 0.5px solid var(--border);
+}
+
+.stack-table tr:last-child td {
+    border-bottom: none;
+}
+
+.stack-table input {
+    border: none;
+    background: none;
+    font-size: 0.84rem;
+    color: var(--text);
+    padding: 2px 4px;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.stack-table input:focus {
+    background: var(--bg2);
+    outline: none;
+}
+
+.stack-add-row {
+    display: flex;
+    gap: 8px;
+    padding: 8px 12px;
+    border-top: 0.5px solid var(--border);
+}
+
+/* ==========================================================================
+   11. SEÇÕES DE OUTPUT E HISTÓRICO
+   ========================================================================== */
+.output-section {
+    margin-top: 1.4rem;
+}
+
+.output-box {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.output-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg2);
+}
+
+.output-toolbar span {
+    font-size: 0.78rem;
+    color: var(--text3);
+}
+
+textarea.out {
+    border: none;
+    border-radius: 0;
+    background: var(--bg);
+    font-family: 'Consolas', 'SF Mono', monospace;
+    font-size: 0.77rem;
+    min-height: 200px;
+    resize: vertical;
+    padding: 14px;
+    line-height: 1.65;
+    color: var(--text);
+    width: 100%;
+}
+
+textarea.out:focus {
+    outline: none;
+}
+
+.history-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.history-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+}
+
+.history-card-header:hover {
+    background: var(--bg2);
+}
+
+.hv-title {
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+
+.hv-meta {
+    font-size: 0.73rem;
+    color: var(--text3);
+}
+
+.history-card-body {
+    border-top: 0.5px solid var(--border);
+    padding: 14px 16px;
+    display: none;
+}
+
+.history-card-body pre {
+    font-family: 'Consolas', 'SF Mono', monospace;
+    font-size: 0.76rem;
+    white-space: pre-wrap;
+    color: var(--text2);
+    line-height: 1.65;
+}
+
+/* ==========================================================================
+   12. UTILITÁRIOS E ANIMAÇÕES
+   ========================================================================== */
+#dragOverlay {
+    position: fixed;
+    pointer-events: none;
+    border: 1.5px dashed var(--accent);
+    background: var(--select-bg);
+    border-radius: 4px;
+    z-index: 9999;
+    display: none;
+}
+
+.divider {
+    height: 0.5px;
+    background: var(--border);
+    margin: 1rem 0;
+}
+
+.spinner {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   13. MEDIA QUERIES (RESPONSIVIDADE)
+   ========================================================================== */
+@media (max-width: 720px) {
+    .app {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+    }
+
+    .main {
+        padding: 1.2rem;
+    }
+
+    .meta-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .pickers {
+        flex-direction: column;
+    }
+}

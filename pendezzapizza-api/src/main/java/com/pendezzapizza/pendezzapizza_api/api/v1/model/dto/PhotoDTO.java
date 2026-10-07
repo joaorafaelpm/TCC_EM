@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Classe de DTO para representação da entidade de <b>foto</b>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

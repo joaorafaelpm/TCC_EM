@@ -24,6 +24,9 @@ import java.util.List;
 import static com.pendezzapizza.pendezzapizza_api.infrastructure.repository.spec.RestaurantSpecs.withFreeShippingFee;
 import static com.pendezzapizza.pendezzapizza_api.infrastructure.repository.spec.RestaurantSpecs.withSimilarName;
 
+/**
+ * Implementação das funções extras do repositório de <b>restaurante</b>
+ */
 @Repository
 public class RestaurantRepositoryImpl implements RestaurantRepositoryQueries {
 
@@ -35,18 +38,21 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryQueries {
     private RestaurantRepository restaurantRepository;
 
 //    Antes do find eu já resolvo os problemas da foto
+//    Serviço de adicionar foto
     @Transactional
     @Override
     public RestaurantPhoto savePhoto(RestaurantPhoto foto) {
         return manager.merge(foto);
     }
 
+//    Serviço de deletar foto
     @Transactional
     @Override
     public void deletePhoto(RestaurantPhoto foto) {
         manager.remove(foto);
     }
 
+//    Encontre por nome e taxa de frete
     @Override
     public List<Restaurant> find(String nome , BigDecimal taxaInicial , BigDecimal taxaFinal) {
 
@@ -84,6 +90,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepositoryQueries {
 
     }
 
+//    Encontrar restaurante por nome com frete gratis
     @Override
     public List<Restaurant> findFreeShippingFeeByName (String nome) {
         return restaurantRepository.

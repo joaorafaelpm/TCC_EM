@@ -8,6 +8,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+/**
+ * Objeto de filtro de vendas
+ *
+ * <p>Usado para servir de filtro e para gerar o relatório em pdf</p>
+ */
 @Getter
 @Setter
 public class DailySalesFilter {

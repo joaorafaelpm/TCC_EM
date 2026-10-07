@@ -22,7 +22,6 @@ const CartItem = ({ item, quantity, onRemove }) => {
         <p className='cart-item-quantity'>{quantity}</p>
         <p className='cart-item-total'>R$ {(item.price * quantity).toFixed(2)}</p>
         
-        {/* O SVG gigante agora fica escondido aqui dentro! */}
         <svg
           onClick={() => onRemove(item.id)}
           className="close-icon-cart"

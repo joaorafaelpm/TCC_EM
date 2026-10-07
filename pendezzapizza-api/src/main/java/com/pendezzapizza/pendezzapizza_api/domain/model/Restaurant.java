@@ -77,7 +77,7 @@ public class Restaurant implements Serializable {
      * Independente do status de ativação — um restaurante pode estar ativo mas fechado.
      * Inicializado como {@code FALSE} pois um restaurante recém-cadastrado não deve receber pedidos automaticamente.
      */
-    private Boolean open = Boolean.FALSE;
+    private Boolean open = Boolean.TRUE;
 
     /** Preenchida automaticamente pelo Hibernate no momento em que o registro é inserido no banco. */
     @CreationTimestamp
@@ -98,7 +98,7 @@ public class Restaurant implements Serializable {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products = new ArrayList<>();
 
-    // =========== Campos adicionais para exibição na interface do cliente ===========
+//  =========== Campos adicionais para exibição na interface do cliente ===========
     /** Texto de apresentação do restaurante exibido ao cliente na listagem e página de detalhes. */
     @Column(name = "description", length = 500)
     private String description;
@@ -110,7 +110,7 @@ public class Restaurant implements Serializable {
     /** Valor mínimo exigido para que um pedido seja aceito por este restaurante. */
     @Column(name = "minimum_order_value")
     private BigDecimal minimumOrderValue;
-//    =================================================================================
+//  =================================================================================
 
     /**
      * Formas de pagamento aceitas por este restaurante.
@@ -190,7 +190,11 @@ public class Restaurant implements Serializable {
      * @return {@code true} se foi adicionado; {@code false} se já era responsável
      */
     public boolean associateResponsibleUser(User user) {
-        return this.responsibleUsers.add(user);
+        boolean added = this.responsibleUsers.add(user);
+        if (added) {
+            user.getUserRestaurants().add(this); // sincroniza o lado inverso
+        }
+        return added;
     }
 
     /**
@@ -200,9 +204,12 @@ public class Restaurant implements Serializable {
      * @return {@code true} se foi removido; {@code false} se não era responsável
      */
     public boolean disassociateResponsibleUser(User user) {
-        return this.responsibleUsers.remove(user);
+        boolean removed = this.responsibleUsers.remove(user);
+        if (removed) {
+            user.getUserRestaurants().remove(this); // sincroniza o lado inverso
+        }
+        return removed;
     }
-
     /**
      * Adiciona um produto ao cardápio deste restaurante.
      *

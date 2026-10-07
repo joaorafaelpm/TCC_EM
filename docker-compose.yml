@@ -27,7 +27,6 @@ services:
 
   pendezzapizza-api:
     # image: jrfifipi/pendezzapizza:v1
-
     image: pendezzapizza-api
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://pendezzapizza-mysql/${DATABASE_NAME}?createDatabaseIfNotExists=true&serverTimeZone=UTC

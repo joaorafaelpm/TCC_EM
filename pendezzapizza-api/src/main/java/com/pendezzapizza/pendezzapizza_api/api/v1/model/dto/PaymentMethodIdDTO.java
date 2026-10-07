@@ -9,6 +9,9 @@ import lombok.Setter;
 
 import java.util.UUID;
 
+/**
+ * Classe de DTO para representação da entidade de <b>id de forma de pagamento</b>
+ */
 @Getter
 @Setter
 @AllArgsConstructor

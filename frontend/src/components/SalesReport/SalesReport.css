@@ -1,0 +1,431 @@
+/* ── layout ────────────────────────────────────────────────────────────────── */
+
+.sr-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 2rem;
+}
+
+.sr-empty,
+.sr-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 3rem 1rem;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.sr-loading__spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e5e7eb;
+    border-top-color: #c0392b;
+    border-radius: 50%;
+    animation: sr-spin 0.7s linear infinite;
+}
+
+@keyframes sr-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sr-muted-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 3rem 1rem;
+}
+.sr-muted {
+    font-size: 2rem;
+    color: #9ca3af;
+    margin: 0;
+}
+.sr-muted-span {
+    font-size: 1.25rem;
+    color: #5a5e66;
+    margin: 0;
+    font-weight: 700;
+}
+.sr-error-container {
+    padding: 1rem;
+    background: #ff000015;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: 1px solid #a8222e25;
+    border-radius: 8px;
+}
+.sr-error {
+    font-size: 13px;
+    color: #a8222e;
+    margin: 0;
+}
+
+/* ── header ────────────────────────────────────────────────────────────────── */
+
+.sr-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.sr-header__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111;
+    margin: 0;
+}
+
+.sr-header__sub {
+    font-size: 13px;
+    color: #9ca3af;
+    margin: 4px 0 0;
+}
+
+/* ── buttons ───────────────────────────────────────────────────────────────── */
+.sr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    /* Ajuste leve para ficar da mesma altura dos inputs */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* Transição mais suave para todas as props */
+}
+
+.sr-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.sr-btn--export {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.sr-btn--export:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.sr-btn--apply {
+    background: #111;
+    border: 1px solid #111;
+    color: #fff;
+    align-self: flex-end;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.sr-btn--apply:hover:not(:disabled) {
+    background: #374151;
+    border-color: #374151;
+    transform: translateY(-1px);
+    /* Efeito tátil de elevação */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.sr-btn--apply:active:not(:disabled) {
+    transform: translateY(0);
+    /* Efeito de "clique" */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+/* ── filters ───────────────────────────────────────────────────────────────── */
+.sr-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+    /* Aumentado um pouquinho para respiro */
+    padding: 1.25rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    /* Arredondamento um pouco mais moderno */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    /* Sombra super sutil */
+}
+
+.sr-filters__group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sr-filters__label {
+    font-size: 11px;
+    font-weight: 600;
+    /* Mais peso para leitura rápida */
+    color: #4b5563;
+    /* Levemente mais escuro que o anterior */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sr-filters__select,
+.sr-filters__input {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 8px 12px;
+    /* Área de clique melhorada */
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #111;
+    outline: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) inset;
+}
+
+.sr-filters__select {
+    min-width: 180px;
+    /* Um pouco mais largo para nomes de restaurantes */
+    cursor: pointer;
+}
+
+.sr-filters__input {
+    color: #374151;
+}
+
+/* Focus Ring moderno estilo Stripe/Tailwind */
+.sr-filters__select:focus,
+.sr-filters__input:focus {
+    border-color: #111;
+    box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+}
+
+/* ── checkboxes (Adicionados!) ── */
+.sr-filters__checkboxes {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 35px;
+    /* Mantém alinhado verticalmente com os inputs (padding + border) */
+}
+
+.sr-filters__checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s;
+}
+
+.sr-filters__checkbox-label:hover {
+    color: #111;
+}
+
+.sr-filters__checkbox-label input[type="checkbox"] {
+    appearance: auto;
+    accent-color: #111;
+    /* Cor da caixinha (suportado nos navegadores modernos) */
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    margin: 0;
+    /* Remove margens nativas esquisitas do Safari/Chrome */
+    border-radius: 4px;
+}
+/* ── metrics ───────────────────────────────────────────────────────────────── */
+
+.sr-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+}
+
+.sr-metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 14px 16px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.sr-metric-card__label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sr-metric-card__value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111;
+    line-height: 1.2;
+}
+
+/* ── card ──────────────────────────────────────────────────────────────────── */
+
+.sr-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+
+.sr-card__title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 14px;
+}
+
+/* ── highlights ────────────────────────────────────────────────────────────── */
+
+.sr-highlights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.sr-highlight-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.sr-highlight-card__icon {
+    font-size: 22px;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.sr-highlight-card__label {
+    font-size: 11px;
+    font-weight: 500;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.sr-highlight-card__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    margin: 4px 0 2px;
+}
+
+.sr-highlight-card__name--mono {
+    font-family: monospace;
+    font-size: 12px;
+    word-break: break-all;
+}
+
+.sr-highlight-card__sub {
+    font-size: 12px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* ── table ─────────────────────────────────────────────────────────────────── */
+
+.sr-table-wrapper {
+    overflow-x: auto;
+}
+
+.sr-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.sr-table__th {
+    text-align: left;
+    padding: 8px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.sr-table__td {
+    padding: 9px 10px;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.sr-table__row:last-child .sr-table__td {
+    border-bottom: none;
+}
+
+/* ── tooltip ───────────────────────────────────────────────────────────────── */
+
+.sr-tooltip {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sr-tooltip__label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0 0 4px;
+}
+
+.sr-tooltip__item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    margin: 2px 0;
+    color: #374151;
+}
+
+.sr-tooltip__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+/* ── report body (PDF capture area) ───────────────────────────────────────── */
+
+.sr-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: #fff;
+}

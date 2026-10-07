@@ -13,14 +13,13 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/v1/orders/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
-
 @AllArgsConstructor
 public class OrderFlowController implements OrderFlowControllerOpenApi {
 
     private final OrderFlowService orderFlowService;
 
     @CheckSecurity.Orders.CanManage
-    @PutMapping("/confirmation")
+    @PutMapping("/confirm")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> confirm(@PathVariable UUID orderId) {
         orderFlowService.confirm(orderId);
@@ -28,7 +27,7 @@ public class OrderFlowController implements OrderFlowControllerOpenApi {
     }
 
     @CheckSecurity.Orders.CanManage
-    @PutMapping("/delivery")
+    @PutMapping("/deliver")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> deliver(@PathVariable UUID orderId) {
         orderFlowService.deliver(orderId);
@@ -36,7 +35,7 @@ public class OrderFlowController implements OrderFlowControllerOpenApi {
     }
 
     @CheckSecurity.Orders.CanManage
-    @PutMapping("/cancellation")
+    @PutMapping("/cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> cancel(@PathVariable UUID orderId) {
         orderFlowService.cancel(orderId);

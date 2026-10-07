@@ -3,6 +3,9 @@ package com.pendezzapizza.pendezzapizza_api.domain.exception;
 import java.io.Serial;
 import java.util.UUID;
 
+/**
+ * Excessão específica para entidade <b>cidade</b> não encontrada
+ */
 public class CityNotFoundException extends EntityNotFoundException {
 
     @Serial

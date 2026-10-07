@@ -21,7 +21,7 @@ public interface GroupControllerOpenApi {
 
     @Operation(summary = "Lista  de  Grupos")
     ResponseEntity<Page<GroupModel>> all(
-            @Parameter(required = false) String groupName ,
+            @Parameter(required = false, description = "Filtra um grupo pelo nome.") String groupName ,
             @Parameter(hidden = true) Pageable pageable,
             @Parameter(hidden = true) ServletWebRequest request);
 

@@ -11,6 +11,9 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
+/**
+ * Classe de DTO para representação da entidade de <b>produto</b>
+ */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,7 +25,6 @@ public class ProductDTO {
     private String name;
 
     @Schema(example = "Deliciosa carne suína ao molho especial")
-    @NotBlank
     private String description;
 
     @Schema(example = "78.90", requiredMode = Schema.RequiredMode.REQUIRED)

@@ -1,198 +1,182 @@
-  import React, { useState, useEffect, useContext } from 'react';
-  import './PlaceOrder.css';
-  import { StoreContext } from '../../components/context/StoreContext';
-  import DeliveryAddressForm from '../../components/DeliveryAddressForm/DeliveryAddressForm';
-  import RestaurantPaymentGroup from '../../components/RestaurantPaymentGroup/RestaurantPaymentGroup';
-  import OrderSummary from '../../components/OrderSummary/OrderSummary';
+import React, { useState, useCallback, useRef } from 'react';
+import './PlaceOrder.css';
+import { useContext } from 'react';
+import { StoreContext } from '../../components/context/StoreContext';
+import DeliveryAddressForm from '../../components/DeliveryAddressForm/DeliveryAddressForm';
+import RestaurantPaymentGroup from '../../components/PlaceOrder/RestaurantPaymentGroup/RestaurantPaymentGroup';
+import OrderSummary from '../../components/PlaceOrder/OrderSummary/OrderSummary';
+import OrderConfirmation from '../../components/PlaceOrder/OrderConfirmation/OrderConfirmation';
+import { useCartGroups } from '../../hooks/useCartGroups';
+import api from '../../services/api';
 
+const PlaceOrder = () => {
+  const { cartItems, food_list, clearCart, removeProducts } = useContext(StoreContext);
 
-  const PlaceOrder = () => {
-    const { cartItems, food_list, clearCart } = useContext(StoreContext);
+  const [address, setAddress]           = useState({});
+  const [orderResult, setOrderResult]   = useState(null);
+  const [isLoading, setIsLoading]       = useState(false);
 
-    const [address, setAddress] = useState({
-      zipCode: '', street: '', number: '',
-      complement: '', neighborhood: '', cityId: '', cityName: ''
-    });
-    const [cities, setCities] = useState([]);
-    const [restaurantGroups, setRestaurantGroups] = useState({});
-    const [orderResult, setOrderResult] = useState(null);
+  const addressRef                      = useRef(null);
+  const [paymentErrors, setPaymentErrors] = useState({});
+  const [cartError, setCartError]       = useState(null);
+  const [generalError, setGeneralError] = useState(null);
 
-    useEffect(() => {
-      fetch('/v1/cities')
-        .then(r => r.json())
-        .then(data => setCities(data['content'] || []))
-        .catch(console.error);
-    }, []);
+  const { restaurantGroups, isLoadingGroups, setPaymentMethod, grandTotal } =
+    useCartGroups(cartItems, food_list);
 
-    useEffect(() => {
-      const itemsInCart = food_list.filter(item => cartItems[item.id] > 0);
-      if (itemsInCart.length === 0) return;
+  const hasUnavailablePayment = Object.values(restaurantGroups).some(
+    (group) => group.paymentMethods.length === 0
+  );
 
-      const grouped = itemsInCart.reduce((acc, item) => {
-        const rId = item.restaurantId;
-        if (!acc[rId]) acc[rId] = { products: [], subtotal: 0, shippingFee: 0, paymentMethods: [], selectedPaymentMethod: '' };
-        acc[rId].products.push({ ...item, quantity: cartItems[item.id] });
-        acc[rId].subtotal += item.price * cartItems[item.id];
-        return acc;
-      }, {});
+  const handleAddressUpdate = useCallback((newAddress) => {
+    setAddress(newAddress);
+  }, []);
 
-      const fetchRestaurantData = async () => {
-    const enriched = { ...grouped };
-    await Promise.all(
-      Object.keys(grouped).map(async (rId) => {
-        const [restaurantRes, paymentRes] = await Promise.all([
-          fetch(`/v1/restaurants/${rId}`),
-          fetch(`/v1/restaurants/${rId}/payment-methods`)
-        ]);
-
-        const restaurant = await restaurantRes.json();
-        const paymentMethods = await paymentRes.json().then(data => data['content'] || []);
-
-        enriched[rId].shippingFee = restaurant.shippingFee || 0;
-        enriched[rId].restaurantName = restaurant.name;
-        enriched[rId].paymentMethods = paymentMethods || [];
-      })
-    );
-    setRestaurantGroups(enriched);
+  const handlePaymentChange = (restaurantId, value) => {
+    setPaymentMethod(restaurantId, value);
+    if (value) setPaymentErrors(prev => ({ ...prev, [restaurantId]: null }));
   };
 
-      fetchRestaurantData();
-    }, [cartItems, food_list]);
-
-  const ufToStateName = {
-    AC: 'Acre', AL: 'Alagoas', AP: 'Amapa', AM: 'Amazonas',
-    BA: 'Bahia', CE: 'Ceara', DF: 'Distrito Federal', ES: 'Espirito Santo',
-    GO: 'Goias', MA: 'Maranhao', MT: 'Mato Grosso', MS: 'Mato Grosso do Sul',
-    MG: 'Minas Gerais', PA: 'Para', PB: 'Paraiba', PR: 'Parana',
-    PE: 'Pernambuco', PI: 'Piaui', RJ: 'Rio de Janeiro', RN: 'Rio Grande do Norte',
-    RS: 'Rio Grande do Sul', RO: 'Rondonia', RR: 'Roraima', SC: 'Santa Catarina',
-    SP: 'Sao Paulo', SE: 'Sergipe', TO: 'Tocantins'
+  const handleRemoveRestaurantItems = (restaurantId) => {
+    const group = restaurantGroups[restaurantId];
+    if (!group) return;
+    removeProducts(group.products.map(p => p.id));
+  };
+  
+  const validateCart = () => {
+    const empty = Object.keys(restaurantGroups).length === 0;
+    setCartError(empty ? 'Adicione pelo menos um item ao carrinho para continuar.' : null);
+    return !empty;
   };
 
-  const handleCepBlur = async (e) => {
-    const cep = e.target.value.replace(/\D/g, '');
-    if (cep.length !== 8) return;
-    try {
-      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const data = await res.json();
-      if (!data.erro) {
-        const stateName = ufToStateName[data.uf];
-        const cityRes = await fetch(`/v1/cities/${data.localidade}/state/${stateName}`);
-        const cityData = await cityRes.json();
+  const validatePaymentMethods = () => {
+    const errors = {};
+    let allValid = true;
 
-        setAddress(prev => ({
-          ...prev,
-          street: data.logradouro,
-          neighborhood: data.bairro,
-          cityName: data.localidade, 
-          cityId: cityData.id
-        }));
-      } else alert("CEP não encontrado.");
-    } catch (e) { console.error(e); }
-  };
-
-    const handleAddressChange = (e) => {
-      const { name, value } = e.target;
-      setAddress(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleCitySelect = (e) => {
-      handleAddressChange(e);
-      const found = cities.find(c => c.name === e.target.value);
-      if (found) setAddress(prev => ({ ...prev, cityId: found.id }));
-    };
-
-    const handlePaymentChange = (restaurantId, value) => {
-      setRestaurantGroups(prev => ({
-        ...prev,
-        [restaurantId]: { ...prev[restaurantId], selectedPaymentMethod: value }
-      }));
-    };
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      const orders = Object.entries(restaurantGroups).map(([restaurantId, group]) => ({
-        restaurantId: { id: restaurantId },
-        paymentMethodId: { id: group.selectedPaymentMethod },
-        deliveryAddress: {
-          zipCode: address.zipCode,
-          street: address.street,
-          number: address.number,
-          complement: address.complement,
-          neighborhood: address.neighborhood,
-          city: { id: address.cityId }
-        },
-        items: group.products.map(p => ({
-          productId: p.id,
-          quantity: p.quantity,
-          note: p.note || null
-        }))
-      }));
-
-      try {
-        const response = await fetch('/v1/orders/batch', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ orders })
-        });
-          const resp = await response.json();
-          setOrderResult(resp);
-          clearCart();
-      } catch (err) {
-        console.error('Erro ao finalizar pedidos:', err);
+    Object.entries(restaurantGroups).forEach(([id, group]) => {
+      if (group.paymentMethods.length === 0) {
+        allValid = false;
+        return;
       }
-    };
+      if (!group.selectedPaymentMethod) {
+        errors[id] = 'Selecione uma forma de pagamento para continuar.';
+        allValid = false;
+      }
+    });
 
-    const grandTotal = Object.values(restaurantGroups)
-      .reduce((sum, g) => sum + g.subtotal + g.shippingFee, 0);
-    if (orderResult) {
-      return (
-        <div className="order-result">
-          {orderResult.created.length > 0 && (
-            <div className="order-result-success">
-              <h2>✅ {orderResult.created.length} pedido(s) realizado(s) com sucesso!</h2>
-              {orderResult.created.map(order => (
-                <p key={order.id}>{order.restaurant.name} — R$ {order.totalValue.toFixed(2)} — {order.status}</p>
-              ))}
-            </div>
-          )}
-          {orderResult.errors.length > 0 && (
-            <div className="order-result-errors">
-              <h2>⚠️ {orderResult.errors.length} pedido(s) com problema:</h2>
-              {orderResult.errors.map(err => (
-                <p key={err.index}>Pedido {err.index + 1}: {err.message}</p>
-              ))}
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    return (
-      <form className='place-order' onSubmit={handleSubmit}>
-        <div className="place-order-left">
-          <DeliveryAddressForm
-            address={address}
-            cities={cities}
-            onAddressChange={handleAddressChange}
-            onCepBlur={handleCepBlur}
-            onCitySelect={handleCitySelect}
-          />
-          {Object.entries(restaurantGroups).map(([restaurantId, group]) => (
-            <RestaurantPaymentGroup
-              key={restaurantId}
-              restaurantId={restaurantId}
-              group={group}
-              onPaymentChange={handlePaymentChange}
-            />
-          ))}
-        </div>
-        <div className="place-order-right">
-          <OrderSummary restaurantGroups={restaurantGroups} grandTotal={grandTotal} />
-          <button type="submit" className='btn-cart-checkout'>Finalizar Pedido</button>
-        </div>
-      </form>
-    );
+    setPaymentErrors(errors);
+    return allValid;
   };
 
-  export default PlaceOrder;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setGeneralError(null);
+
+    const cartValid    = validateCart();
+    const addressValid = addressRef.current?.validate();
+    const paymentValid = validatePaymentMethods();
+
+    if (!cartValid || !addressValid || !paymentValid) return;
+    
+    const orders = Object.entries(restaurantGroups).map(([restaurantId, group]) => ({
+      restaurantId:    { id: restaurantId },
+      paymentMethodId: { id: group.selectedPaymentMethod },
+      deliveryAddress: {
+        zipCode:      address.zipCode,
+        street:       address.street,
+        number:       address.number,
+        complement:   address.complement || null,
+        neighborhood: address.neighborhood,
+        city:         { id: address.cityId },
+      },
+      items: group.products.map(p => ({
+        productId: p.id,
+        quantity:  p.quantity,
+        note:      p.note || null,
+      })),
+    }));
+
+    setIsLoading(true);
+    try {
+      const { data } = await api.post('/v1/orders/batch', { orders });
+      clearCart();
+      setOrderResult(data);
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Erro ao finalizar pedido. Tente novamente.';
+      setGeneralError(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (orderResult) {
+    return <OrderConfirmation result={orderResult} />;
+  }
+
+  return (
+    <form className='place-order' onSubmit={handleSubmit} noValidate>
+
+      <div className="po-top">
+        {/* ── Canto superior esquerdo: Endereço ─────────────── */}
+        <div className="po-card po-address">
+          {cartError && (
+            <span className="global-field-error">{cartError}</span>
+          )}
+          <DeliveryAddressForm ref={addressRef} onAddressUpdate={handleAddressUpdate} />
+        </div>
+
+        {/* ── Canto superior direito: Pagamento ─────────────── */}
+        <div className="po-card po-payments">
+          <p className="title">Pagamento</p>
+
+          {isLoadingGroups && (
+            <p className="loading-text">Carregando restaurantes...</p>
+          )}
+          {!isLoadingGroups && Object.keys(restaurantGroups).length === 0 && (
+            <p className="loading-text">Seu carrinho está vazio.</p>
+          )}
+          {!isLoadingGroups && Object.keys(restaurantGroups).length > 0 && (
+            <div className="po-payments__list">
+              {Object.entries(restaurantGroups).map(([restaurantId, group]) => (
+                <RestaurantPaymentGroup
+                  key={restaurantId}
+                  restaurantId={restaurantId}
+                  group={group}
+                  onPaymentChange={handlePaymentChange}
+                  onRemoveItems={handleRemoveRestaurantItems}
+                  error={paymentErrors[restaurantId]}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Embaixo, ocupando a largura toda: Resumo ────────── */}
+      <div className="po-card po-card--summary">
+        <OrderSummary restaurantGroups={restaurantGroups} grandTotal={grandTotal} />
+
+        {hasUnavailablePayment && (
+          <p className="po-block-note">
+            Remova os itens do restaurante sem forma de pagamento cadastrada
+            para poder finalizar o pedido.
+          </p>
+        )}
+
+        {generalError && (
+          <span className="global-field-error">{generalError}</span>
+        )}
+
+        <button
+          type="submit"
+          className="btn-cart-checkout"
+          disabled={isLoading || hasUnavailablePayment}
+        >
+          {isLoading ? 'Finalizando...' : 'Finalizar Pedido'}
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default PlaceOrder;

@@ -1,63 +1,55 @@
-import React from 'react'
-import './Navbar.css'
-import { useState, useEffect } from 'react'
-import { assets } from '../../assets/assets'
-import { Link } from "react-router-dom"
-
+import React, { useState, useEffect, useContext } from 'react';
+import './Navbar.css';
+import { assets } from '../../assets/assets';
+import { Link } from "react-router-dom";
+import UserMenu from './UserMenu/UserMenu';
+import { useSearch } from '../context/SearchContext.jsx';
+import SearchOverlay from './SearchOverlay/SearchOverlay.jsx';
+import { StoreContext } from '../context/StoreContext';
 
 const Navbar = () => {
-    
-  const [menu, setMenu] = useState("inicio")
-  const [scrolled, setScrolled] = useState(false)
+  const [scrolled, setScrolled] = useState(false);
+  const { openSearch } = useSearch();
+  const { cartItems } = useContext(StoreContext);
+
+  const hasItemsInCart = Object.values(cartItems).some(qty => qty > 0);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true)
-      } else {
-        setScrolled(false)
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className={`navbar ${scrolled ? 'scrolled' : ''}`}>
-      <Link to="/"><img src={assets.logo2} alt="" className="logo"/></Link> 
+    <>
+      <div className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+        <Link to="/"><img src={assets.logo2} alt="" className="logo"/></Link>
 
-      <ul className="navbar-menu">
-        <li>
-          <Link to="/#inicio" className={menu === "inicio" ? "active" : ""} onClick={() => setMenu('inicio')}>Início</Link>
-        </li>
+        <div className="navbar-right">
+          <img
+            src={assets.search2}
+            alt="Buscar"
+            className='icon'
+            onClick={openSearch}
+            style={{ cursor: 'pointer' }}
+          />
 
-        <li>
-          <Link to="/#explore-menu" className={menu === "cardapio" ? "active" : ""} onClick={() => setMenu('cardapio')}>Cardápio</Link>
-        </li>
+          <div className="navbar-search-icon">
+            <Link to="/cart">
+              <img src={assets.carrinho2} alt="" className='icon' />
+            </Link>
+            {hasItemsInCart && <div className="dot"></div>}
+          </div>
 
-        <li>
-          <Link to="/#sobre" className={menu === "sobre" ? "active" : ""} onClick={() => setMenu('sobre')}>Sobre</Link>
-        </li>
-
-        <li>
-          <Link to="/#depoimentos" className={menu === "depoimentos" ? "active" : ""} onClick={() => setMenu('depoimentos')}>Depoimentos</Link>
-        </li>
-      </ul>
-
-      <div className="navbar-right">
-        <img src={assets.search2} alt="" className='icon'/>
-
-        <div className="navbar-search-icon">
-          <Link to="/cart"> 
-            <img src={assets.carrinho2} alt="" className='icon' />
-          </Link>
-          <div className="dot"></div>
+          <UserMenu />
         </div>
-
       </div>
-    </div>
-  )
-}
 
-export default Navbar
+      <SearchOverlay />
+    </>
+  );
+};
+
+export default Navbar;

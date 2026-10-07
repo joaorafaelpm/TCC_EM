@@ -1,7 +1,7 @@
 package com.pendezzapizza.pendezzapizza_api.domain.service;
 
 import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.OrderModelAssembler;
-import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassambler.OrderDisassembler;
+import com.pendezzapizza.pendezzapizza_api.api.v1.assembler.disassembler.OrderDisassembler;
 import com.pendezzapizza.pendezzapizza_api.domain.model.OrderBatchErrorModel;
 import com.pendezzapizza.pendezzapizza_api.domain.model.OrderBatchModel;
 import com.pendezzapizza.pendezzapizza_api.api.v1.model.OrderModel;
