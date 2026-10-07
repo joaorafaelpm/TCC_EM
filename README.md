@@ -157,7 +157,7 @@ Para solicitar autorização ou contratar os autores:
 | João Rafael Pendezza Medeiros | joaorafaelpmed@gmail.com | [LinkedIn](https://www.linkedin.com/in/joaorafaelpmed) | [GitHub](https://github.com/joaorafaelpm) |
 | João Ricardo Frazão Romano Rocha | joaorfrrocha@gmail.com | [LinkedIn](https://www.linkedin.com/in/joaorromano/) | [GitHub](https://github.com/joaorromano19) |
 | João Victor Soteras | jvstrs1011@gmail.com | [LinkedIn](https://www.linkedin.com/in/jo%C3%A3o-victor-soteras-aa9907370/) | [GitHub](https://github.com/jvstrs10) |
-| Mateus Borges Nogueira | — | — | [GitHub](https://github.com/MateusMBN) |
+| Mateus Borges Nogueira | mateusborgesno@gmail.com | — | [GitHub](https://github.com/MateusMBN) |
 | Otavio Matias Medeiros | otaviomed2008@gmail.com | — | [GitHub](https://github.com/Kotaviozx1n) |
 | Rafael Johann Garrido | rafaelgarridov8@gmail.com | [LinkedIn](https://www.linkedin.com/in/rafael-johann-garrido-7619b8441/) | — |
 
