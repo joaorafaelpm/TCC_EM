@@ -1,3 +1,5 @@
+<div align="center">
+
 # 🍕 Pendezza Pizza (PEPI) 🍕
 
 ### *La gestione della pizzeria, semplice come una Margherita*
@@ -5,6 +7,8 @@
 🇮🇹 🍅 🧀 🌿 🍕 🌿 🧀 🍅 🇮🇹
 
 > Documentação Técnica de Desenvolvimento — plataforma de gestão para pizzarias de pequeno e médio porte.
+
+</div>
 
 ---
 
@@ -148,14 +152,14 @@ npx cypress run
 
 Para solicitar autorização ou contratar os autores:
 
-| Autor | Contato |
-|---|---|
-| João Rafael Pendezza Medeiros | [e-mail / LinkedIn / GitHub] |
-| João Ricardo Frazão Romano Rocha | [e-mail / LinkedIn / GitHub] |
-| João Victor Soteras | [e-mail / LinkedIn / GitHub] |
-| Mateus Borges Nogueira | [e-mail / LinkedIn / GitHub] |
-| Otavio Matias Medeiros | [e-mail / LinkedIn / GitHub] |
-| Rafael Johann Garrido | [e-mail / LinkedIn / GitHub] |
+| Autor | E-mail | LinkedIn | GitHub |
+|---|---|---|---|
+| João Rafael Pendezza Medeiros | joaorafaelpmed@gmail.com | [LinkedIn](https://www.linkedin.com/in/joaorafaelpmed) | [GitHub](https://github.com/joaorafaelpm) |
+| João Ricardo Frazão Romano Rocha | joaorfrrocha@gmail.com | [LinkedIn](https://www.linkedin.com/in/joaorromano/) | [GitHub](https://github.com/joaorromano19) |
+| João Victor Soteras | jvstrs1011@gmail.com | [LinkedIn](https://www.linkedin.com/in/jo%C3%A3o-victor-soteras-aa9907370/) | [GitHub](https://github.com/jvstrs10) |
+| Mateus Borges Nogueira | — | — | [GitHub](https://github.com/MateusMBN) |
+| Otavio Matias Medeiros | otaviomed2008@gmail.com | — | [GitHub](https://github.com/Kotaviozx1n) |
+| Rafael Johann Garrido | rafaelgarridov8@gmail.com | [LinkedIn](https://www.linkedin.com/in/rafael-johann-garrido-7619b8441/) | — |
 
 ### ⚠️ Isenção de garantia
 
