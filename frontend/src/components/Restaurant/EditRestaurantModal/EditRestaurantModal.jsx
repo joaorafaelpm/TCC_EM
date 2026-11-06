@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import './EditRestaurantModal.css';
-import { useFormValidation } from '../../../hooks/userFormValidation';
+import { useFormValidation } from '../../../hooks/UserFormValidation';
 import { notBlank, validationName, positiveOrZero, positive, optional } from '../../../utils/validator';
 import api from '../../../services/api';
 import DeliveryAddressForm from '../../DeliveryAddressForm/DeliveryAddressForm.jsx';
