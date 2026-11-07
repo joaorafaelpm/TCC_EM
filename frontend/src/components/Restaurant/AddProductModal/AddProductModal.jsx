@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import './AddProductModal.css';
-import { useFormValidation } from '../../../hooks/userFormValidation';
+import { useFormValidation } from '../../../hooks/UserFormValidation';
 import { notBlank, positiveOrZero } from '../../../utils/validator';
 import api from '../../../services/api';
 import Input from '../../Input/Input';
