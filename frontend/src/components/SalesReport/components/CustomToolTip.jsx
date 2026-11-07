@@ -1,7 +1,7 @@
 import React from 'react';
 import { fmt } from '../utils/formatter';
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomToolTip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
     <div className="sr-tooltip">
@@ -19,4 +19,4 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-export default CustomTooltip;
+export default CustomToolTip;
