@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import addToCartIcon from '../../../assets/add_icon_white.png';
 import menos from '../../../assets/menos.png';
 import { StoreContext } from '../../context/StoreContext';
+import { API_URL } from '../../../config/api';
 
 const ProductCardDisplay = ({ product }) => {
 
@@ -17,7 +18,7 @@ const ProductCardDisplay = ({ product }) => {
       <Link to={`/restaurant/${product.restaurantId}`} className="product-link">
       <div className="product-image-container">
         <img 
-          src={`http://localhost/v1/restaurants/${product.restaurantId}/products/${product.id}/photo`} 
+          src={`${API_URL}/v1/restaurants/${product.restaurantId}/products/${product.id}/photo`} 
           alt={`Foto de ${product.name}`}
           className="product-image"
           loading="lazy"
