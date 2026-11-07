@@ -91,7 +91,9 @@ Isso inicia o MySQL e o Redis usados pela API.
 
 ```bash
 cd pendezzapizza-api
-./mvnw spring-boot:run
+mvn clean install -DskipTests
+mvn compile -Pdocker jib:dockerBuild
+docker compose up --scale pendezzapizza-api=2 --build -d
 ```
 
 Configure as variáveis de ambiente (conexão com MySQL, Redis, credenciais OAuth2) conforme o arquivo de configuração da API.
@@ -100,7 +102,7 @@ Em produção, o nginx balanceia as requisições entre duas instâncias da API.
 ### 4️⃣ Executar o front end
 
 ```bash
-cd FrontEnd
+cd frontend
 npm install
 npm run dev
 ```
@@ -110,7 +112,7 @@ Acesse a URL exibida no terminal (normalmente `http://localhost:[PORTA]`).
 ### 5️⃣ Executar os testes
 
 ```bash
-cd Testes
+cd tests
 npm install
 npx cypress run
 ```
@@ -159,7 +161,7 @@ Para solicitar autorização ou contratar os autores:
 | João Victor Soteras | jvstrs1011@gmail.com | [LinkedIn](https://www.linkedin.com/in/jo%C3%A3o-victor-soteras-aa9907370/) | [GitHub](https://github.com/jvstrs10) |
 | Mateus Borges Nogueira | mateusborgesno@gmail.com | — | [GitHub](https://github.com/MateusMBN) |
 | Otavio Matias Medeiros | otaviomed2008@gmail.com | — | [GitHub](https://github.com/Kotaviozx1n) |
-| Rafael Johann Garrido | rafaelgarridov8@gmail.com | [LinkedIn](https://www.linkedin.com/in/rafael-johann-garrido-7619b8441/) | — |
+| Rafael Johann Garrido | rafaelgarridov8@gmail.com | [LinkedIn](https://www.linkedin.com/in/rafael-johann-garrido-7619b8441/) | [GitHub](https://github.com/RafaelGaJO) |
 
 ### ⚠️ Isenção de garantia
 
