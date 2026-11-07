@@ -5,6 +5,7 @@ import semImagemPng from '../../../assets/sem-foto.png';
 import PhotoUploadTrigger from '../../PhotoHandler/PhotoUploadTrigger/PhotoUploadTrigger';
 import api from '../../../services/api';
 import { useAuth } from '../../context/AuthProvider';
+import { API_URL } from '../../../config/api';
 
 const RestaurantHero = ({ restaurant, canEdit, onEditClick, authorities = null, user, authToken = null }) => {
   const { name, open, address, shippingFee } = restaurant;
@@ -136,8 +137,8 @@ const RestaurantHero = ({ restaurant, canEdit, onEditClick, authorities = null, 
         <div className="img-wrapper">
           {canEdit ? (
             <PhotoUploadTrigger
-              uploadUrl={`http://localhost/v1/restaurants/${restaurant.id}/photo`}
-              deleteUrl={`http://localhost/v1/restaurants/${restaurant.id}/photo`}
+              uploadUrl={`${API_URL}/v1/restaurants/${restaurant.id}/photo`}
+              deleteUrl={`${API_URL}/v1/restaurants/${restaurant.id}/photo`}
               triggerVariant="pencil-overlay"
               cropShape="circle"
               label="Alterar foto do restaurante"

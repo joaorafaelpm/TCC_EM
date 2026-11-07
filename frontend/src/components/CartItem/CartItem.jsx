@@ -1,9 +1,10 @@
 import React from 'react';
 import semImagemPng from '../../assets/sem-foto.png';
 import './CartItem.css';
+import { API_URL } from '../../config/api';
 
 const CartItem = ({ item, quantity, onRemove }) => {
-  const imageUrl = `http://localhost/v1/restaurants/${item.restaurantId}/products/${item.id}/photo`;
+  const imageUrl = `${API_URL}/v1/restaurants/${item.restaurantId}/products/${item.id}/photo`;
   return (
     <div className='item-cart-container'>
       <div className="cart-itens-item cart-itens-title">

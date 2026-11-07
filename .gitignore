@@ -40,8 +40,8 @@ node_modules/
 
 # Env
 .env
-.env.test
 .env.*
+!.env.example
 
 # Maven
 target/
@@ -79,3 +79,11 @@ build/
 .vscode/
 HELP.md
 .env.test
+
+# Segredos e chaves
+*.pem
+*.key
+*.p12
+*.jks
+application-local.properties
+application-local.yml
