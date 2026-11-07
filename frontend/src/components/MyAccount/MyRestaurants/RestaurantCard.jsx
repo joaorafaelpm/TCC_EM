@@ -2,10 +2,10 @@ import React from 'react';
 
 const RestaurantCard = ({ restaurant }) => {
   const { id, name, description, active, open } = restaurant;
-
+  const REDIRECT_URL = `${window.location.origin}/callback`;
   return (
     <a
-      href={`http://localhost:5173/restaurant/${id}`}
+      href={`${REDIRECT_URL}/restaurant/${id}`}
       className="restaurant-card"
     >
       <div className="restaurant-card__header">
