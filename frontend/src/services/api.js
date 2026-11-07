@@ -1,13 +1,14 @@
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_URL,
   timeout: 10000,
-  withCredentials: true, // ← equivalente a credentials:'include' no fetch
+  withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
-// Controle de refresh — evita disparar múltiplos /auth/refresh simultâneos
 let isRefreshing = false;
 let queuedRequests = [];
 
@@ -18,6 +19,12 @@ const processQueue = (error) => {
   queuedRequests = [];
 };
 
+// Redireciona só uma vez e nunca se já estiver numa página de saída
+const redirectOnce = (url, internalPath) => {
+  if (window.location.pathname === internalPath) return;
+  window.location.href = url;
+};
+
 api.interceptors.response.use(
   (response) => response,
 
@@ -25,14 +32,12 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const original = error.config;
 
-    if (status === 401 && !original._retry) {
+    if (status === 401 && original && !original._retry) {
       const url = original.url ?? "";
       const isAuthEndpoint = url.includes("/auth/") || url.includes("/oauth2/");
 
-      // Não tenta refresh em endpoints de auth — evita loop
       if (isAuthEndpoint) return Promise.reject(error);
 
-      // Se já tem um refresh em andamento, enfileira a request
       if (isRefreshing) {
         return new Promise((resolve, reject) =>
           queuedRequests.push({ resolve, reject }),
@@ -45,7 +50,8 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshRes = await fetch("/auth/refresh", {
+        // Agora vai para o BACKEND, não para o front
+        const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
           method: "POST",
           credentials: "include",
         });
@@ -53,17 +59,21 @@ api.interceptors.response.use(
         if (!refreshRes.ok) throw new Error("refresh_failed");
 
         processQueue(null);
-        return api(original); // repete a request original com a sessão renovada
+        return api(original);
       } catch (refreshError) {
         processQueue(refreshError);
-        window.location.href = "/oauth2/iniciar-login";
+        // Login do Spring fica no BACKEND
+        redirectOnce(
+          `${API_URL}/oauth2/iniciar-login`,
+          "/oauth2/iniciar-login",
+        );
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
-    if (status === 403) window.location.href = "/403";
+    if (status === 403) redirectOnce("/403", "/403");
 
     return Promise.reject(error);
   },
