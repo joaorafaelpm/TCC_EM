@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../components/context/AuthProvider.jsx';
 import './OrderHandler.css';
@@ -13,6 +13,25 @@ const STATUS_CONFIG = {
 
 const COLUMNS = ['CREATED', 'CONFIRMED', 'DELIVERED', 'CANCELED'];
 
+const ACTION_LABELS = {
+  confirm: { success: 'Pedido confirmado', error: 'Falha ao confirmar pedido' },
+  deliver: { success: 'Pedido entregue',   error: 'Falha ao marcar como entregue' },
+  cancel:  { success: 'Pedido cancelado',  error: 'Falha ao cancelar pedido' },
+};
+
+// ── Toast de feedback (estilos em OrderHandler.css) ──
+function Toast({ toast, onDismiss }) {
+  if (!toast) return null;
+  const isError = toast.type === 'error';
+  return (
+    <div role="status" className={`oh-toast ${isError ? 'oh-toast--error' : 'oh-toast--success'}`}>
+      <span className="oh-toast__icon">{isError ? '✕' : '✓'}</span>
+      <span className="oh-toast__message">{toast.message}</span>
+      <button className="oh-toast__close" onClick={onDismiss} aria-label="Fechar">✕</button>
+    </div>
+  );
+}
+
 export default function OrderHandler() {
   const { id: restaurantId } = useParams();
   const { user: tokenData } = useAuth();
@@ -23,8 +42,22 @@ export default function OrderHandler() {
   const [error, setError]       = useState(null);
   const [acting, setActing]     = useState(null); // orderId em ação
   const [expanded, setExpanded] = useState(null); // orderId expandido
+  const [toast, setToast]       = useState(null);  // { type: 'success' | 'error', message }
+  const toastTimerRef = useRef(null);
 
   const hasAuthority = tokenData?.authorities?.includes('EDITAR_LOGICA_RESTAURANTES');
+
+  const showToast = useCallback((type, message) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ type, message });
+    toastTimerRef.current = setTimeout(() => setToast(null), 3500);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -56,6 +89,7 @@ export default function OrderHandler() {
   const doAction = async (orderId, action) => {
     // action: 'confirm' | 'deliver' | 'cancel'
     setActing(orderId);
+    const labels = ACTION_LABELS[action] ?? { success: 'Pedido atualizado', error: 'Falha ao atualizar pedido' };
     try {
       const res = await fetch(`/v1/orders/${orderId}/${action}`, {
         method: 'PUT',
@@ -63,6 +97,9 @@ export default function OrderHandler() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       await fetchOrders();
+      showToast('success', labels.success);
+    } catch (e) {
+      showToast('error', labels.error);
     } finally {
       setActing(null);
     }
@@ -152,6 +189,8 @@ export default function OrderHandler() {
           );
         })}
       </div>
+
+      <Toast toast={toast} onDismiss={() => setToast(null)} />
     </div>
   );
 }

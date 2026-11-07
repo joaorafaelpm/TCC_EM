@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
-import { useFormValidation } from '../../hooks/UserFormValidation';
+import { useFormValidation } from '../../hooks/userFormValidation';
 import { notBlank, notNull } from '../../utils/validator';
 import Input from '../Input/Input';
 
@@ -47,7 +47,12 @@ const DeliveryAddressForm = forwardRef(({ onAddressUpdate , initialAddress}, ref
   }, []);
 
   useEffect(() => {
-    onAddressUpdate(address);
+    // O nome da cidade é mostrado normalmente no campo (ex.: "Campinas"),
+    // mas enviado ao pai/backend em minúsculo (ex.: "campinas").
+    onAddressUpdate({
+      ...address,
+      cityName: address.cityName ? address.cityName.toLowerCase() : address.cityName,
+    });
   }, [address, onAddressUpdate]);
 
   const handleAddressChange = (e) => {

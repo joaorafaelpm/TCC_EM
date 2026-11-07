@@ -25,13 +25,13 @@ INSERT INTO state (id, name, update_date) VALUES
 -- 2. CIDADES
 
 INSERT INTO city (id, name, state_id, update_date) VALUES
-(UUID_TO_BIN(UUID()), 'São Paulo',      (SELECT id FROM state WHERE name = 'São Paulo' LIMIT 1), UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Campinas',       (SELECT id FROM state WHERE name = 'São Paulo' LIMIT 1), UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Rio de Janeiro', (SELECT id FROM state WHERE name = 'Rio de Janeiro' LIMIT 1), UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Niterói',        (SELECT id FROM state WHERE name = 'Rio de Janeiro' LIMIT 1), UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Belo Horizonte', (SELECT id FROM state WHERE name = 'Minas Gerais' LIMIT 1), UTC_TIMESTAMP()),
-(UUID_TO_BIN(UUID()), 'Uberlândia',     (SELECT id FROM state WHERE name = 'Minas Gerais' LIMIT 1), UTC_TIMESTAMP()),
-(UUID_TO_BIN('0e0362cc-db84-4484-9909-d6977b96b619'), 'Monte Verde', (SELECT id FROM state WHERE name = 'Minas Gerais' LIMIT 1), UTC_TIMESTAMP());
+(UUID_TO_BIN(UUID()), 'são paulo',      (SELECT id FROM state WHERE name = 'São Paulo' LIMIT 1), UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'campinas',       (SELECT id FROM state WHERE name = 'São Paulo' LIMIT 1), UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'rio de janeiro', (SELECT id FROM state WHERE name = 'Rio de Janeiro' LIMIT 1), UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'niterói',        (SELECT id FROM state WHERE name = 'Rio de Janeiro' LIMIT 1), UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'belo horizonte', (SELECT id FROM state WHERE name = 'Minas Gerais' LIMIT 1), UTC_TIMESTAMP()),
+(UUID_TO_BIN(UUID()), 'uberlândia',     (SELECT id FROM state WHERE name = 'Minas Gerais' LIMIT 1), UTC_TIMESTAMP()),
+(UUID_TO_BIN('0e0362cc-db84-4484-9909-d6977b96b619'), 'monte verde', (SELECT id FROM state WHERE name = 'Minas Gerais' LIMIT 1), UTC_TIMESTAMP());
 
 
 -- 3. FORMAS DE PAGAMENTO
