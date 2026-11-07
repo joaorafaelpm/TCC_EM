@@ -1,3 +1,21 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/auth/:path*",
+      "destination": "https://mass-often-diesel-ann.trycloudflare.com/auth/:path*"
+    },
+    {
+      "source": "/oauth2/:path*",
+      "destination": "https://mass-often-diesel-ann.trycloudflare.com/oauth2/:path*"
+    },
+    {
+      "source": "/v1/:path*",
+      "destination": "https://mass-often-diesel-ann.trycloudflare.com/v1/:path*"
+    },
+    {
+      "source": "/.well-known/:path*",
+      "destination": "https://mass-often-diesel-ann.trycloudflare.com/.well-known/:path*"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

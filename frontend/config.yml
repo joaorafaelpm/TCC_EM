@@ -1,0 +1,6 @@
+   tunnel: pendezza
+   credentials-file: C:\Users\GAMER\.cloudflared\<ID>.json
+   ingress:
+     - hostname: api.pendezzapizza.com
+       service: http://localhost:80
+     - service: http_status:404
