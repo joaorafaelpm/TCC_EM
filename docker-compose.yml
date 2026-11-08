@@ -32,6 +32,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://pendezzapizza-mysql/${DATABASE_NAME}?createDatabaseIfNotExists=true&serverTimeZone=UTC
       SPRING_SESSION_STORE_TYPE: redis
       SPRING_DATA_REDIS_HOST: pendezzapizza-redis
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
     networks:
       - pendezzapizza-network
     env_file:
@@ -41,6 +42,7 @@ services:
         condition: service_healthy
     volumes:
       - ${CONTAINER_VOLUME}
+      
     
 
   pendezzapizza-proxy:
