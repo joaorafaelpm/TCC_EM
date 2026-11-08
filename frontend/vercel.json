@@ -32,6 +32,10 @@
       "source": "/images/background.png",
       "destination": "https://engines-luxury-flood-sites.trycloudflare.com/images/background.png"
     },
+    {
+      "source": "/redirect",
+      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/redirect"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
