@@ -2,14 +2,13 @@ import React from 'react';
 
 const RestaurantCard = ({ restaurant }) => {
   const { id, name, description, active, open } = restaurant;
-  const REDIRECT_URL = `${window.location.origin}/callback`;
+  const REDIRECT_URL = `${window.location.origin}`;
   return (
     <a
       href={`${REDIRECT_URL}/restaurant/${id}`}
       className="restaurant-card"
     >
       <div className="restaurant-card__header">
-        <div className="restaurant-card__icon">🍴</div>
         <div className="restaurant-card__badges">
           <span className={`restaurant-card__badge restaurant-card__badge--${active ? 'active' : 'inactive'}`}>
             {active ? 'Ativo' : 'Inativo'}

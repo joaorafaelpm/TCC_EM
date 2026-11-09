@@ -39,6 +39,8 @@ public class OrderFlowController implements OrderFlowControllerOpenApi {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> cancel(@PathVariable UUID orderId) {
         orderFlowService.cancel(orderId);
+
         return ResponseEntity.noContent().build();
     }
+    
 }
