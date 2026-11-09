@@ -121,7 +121,7 @@ public class AuthorizationServerConfig {
                 String clientId = context.getRegisteredClient().getClientId();
 
                 if ("pendezzapizza-tests".equals(clientId)) {
-                    String gerenteEmail = "joao.ger@pendezzapizza.com";
+                    String gerenteEmail = "gerente@pendezzapizza.com";
 
                     var user = userRepository.findByEmail(gerenteEmail)
                             .orElseThrow(() -> new RuntimeException("Usuário gerente não encontrado"));

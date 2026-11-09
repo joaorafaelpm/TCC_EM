@@ -36,26 +36,6 @@
       "source": "/redirect",
       "destination": "https://yours-locked-observed-dial.trycloudflare.com/redirect"
     },
-    {
-      "source": "/login",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/login"
-    },
-    {
-      "source": "/logout",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/logout"
-    },
-    {
-      "source": "/images/logo.svg",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/images/logo.svg"
-    },
-    {
-      "source": "/images/background.png",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/images/background.png"
-    },
-    {
-      "source": "/redirect",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/redirect"
-    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

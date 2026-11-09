@@ -13,7 +13,8 @@ import java.util.UUID;
 public class OrderFlowService {
 
     private final OrderService orderService;
-
+    private final StockService stockService;
+    
     @OrdersActionCacheEvict
     @Transactional
     public void confirm(UUID orderId) {
@@ -28,14 +29,25 @@ public class OrderFlowService {
     public void deliver(UUID orderId) {
         Order order = orderService.findById(orderId);
         order.deliver();
+        orderService.save(order);
     }
+
+    // @OrdersActionCacheEvict
+    // @Transactional
+    // public void cancel(UUID orderId) {
+    //     Order order = orderService.findById(orderId);
+    //     order.cancel();
+
+    //     orderService.save(order);
+    // }
+    // private final StockService stockService;
 
     @OrdersActionCacheEvict
     @Transactional
     public void cancel(UUID orderId) {
         Order order = orderService.findById(orderId);
         order.cancel();
-
         orderService.save(order);
+        stockService.restoreForOrder(order);
     }
 }

@@ -22,21 +22,37 @@ public class OrderIssuanceService {
     private final UserService userService;
     private final PendezzaPizzaSecurity pendezzaPizzaSecurity;
 
+    private final StockService stockService;
+    
     @OrdersSaveCacheEvict
     @Transactional
     public Order issueOrder(Order order) {
-
-        // Atribuímos o restaurante, cliente e forma de pagamento ao Pedido
         assignRelationalObjectsToOrder(order);
-
-        // Atribuímos o preço unitário, o produto e o pedido ao itemPedido
         assignUnitPriceAndProductToOrderItem(order);
 
         order.setShippingFee(order.getRestaurant().getShippingFee());
         order.calculateTotalOrderCost();
 
-        return orderService.save(order);
+        Order saved = orderService.save(order);
+        stockService.consumeForOrder(order); // depois do save (precisa do id), na mesma transação
+        return saved;
     }
+    // @OrdersSaveCacheEvict
+    // @Transactional
+    // public Order issueOrder(Order order) {
+
+    //     // Atribuímos o restaurante, cliente e forma de pagamento ao Pedido
+    //     assignRelationalObjectsToOrder(order);
+
+    //     // Atribuímos o preço unitário, o produto e o pedido ao itemPedido
+    //     assignUnitPriceAndProductToOrderItem(order);
+
+    //     order.setShippingFee(order.getRestaurant().getShippingFee());
+    //     order.calculateTotalOrderCost();
+
+    //     return orderService.save(order);
+    // }
+    
 
     public void assignRelationalObjectsToOrder(Order order) {
         UUID restaurantId = order.getRestaurant().getId();
