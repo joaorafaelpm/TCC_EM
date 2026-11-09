@@ -2,19 +2,39 @@
   "rewrites": [
     {
       "source": "/auth/:path*",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/auth/:path*"
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/auth/:path*"
     },
     {
       "source": "/oauth2/:path*",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/oauth2/:path*"
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/oauth2/:path*"
     },
     {
       "source": "/v1/:path*",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/v1/:path*"
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/v1/:path*"
     },
     {
       "source": "/.well-known/:path*",
-      "destination": "https://engines-luxury-flood-sites.trycloudflare.com/.well-known/:path*"
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/.well-known/:path*"
+    },
+    {
+      "source": "/login",
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/login"
+    },
+    {
+      "source": "/logout",
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/logout"
+    },
+    {
+      "source": "/images/logo.svg",
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/images/logo.svg"
+    },
+    {
+      "source": "/images/background.png",
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/images/background.png"
+    },
+    {
+      "source": "/redirect",
+      "destination": "https://yours-locked-observed-dial.trycloudflare.com/redirect"
     },
     {
       "source": "/login",
