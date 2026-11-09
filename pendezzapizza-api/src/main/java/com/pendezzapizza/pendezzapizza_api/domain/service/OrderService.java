@@ -25,6 +25,7 @@ import java.util.UUID;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final StockService stockService;
 
     @Cacheable("orders")
     public Page<Order> findAll (Specification<Order> specification , Pageable pageable) {
@@ -65,19 +66,34 @@ public class OrderService {
     public Order save(Order order) {
         orderRepository.saveAndFlush(order);
         return findByIdMapperSolver(order.getId()) ;
-    }
+    }   
 
+//  Depois:
     @OrdersActionCacheEvict
     @Transactional
-    public void remove (UUID orderId) {
+    public void remove(UUID orderId) {
         try {
-            orderRepository.delete(findById(orderId));
+            Order order = findById(orderId);
+            stockService.releaseOrder(order);
+            orderRepository.delete(order);
             orderRepository.flush();
-        }
-        catch (DataIntegrityViolationException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new EntityInUseException(orderId);
         }
     }
+
+//  Antes:
+    // @OrdersActionCacheEvict
+    // @Transactional
+    // public void remove (UUID orderId) {
+    //     try {
+    //         orderRepository.delete(findById(orderId));
+    //         orderRepository.flush();
+    //     }
+    //     catch (DataIntegrityViolationException e) {
+    //         throw new EntityInUseException(orderId);
+    //     }
+    // }
 
 
 }
