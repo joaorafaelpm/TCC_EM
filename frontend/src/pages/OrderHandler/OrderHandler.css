@@ -94,17 +94,12 @@
 
 /* ── Erro ───────────────────────────────────────────────────── */
 .oh-error {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 16px 24px 0;
-    padding: 12px 16px;
-    background: var(--oh-red-light);
-    border: 1px solid #fca5a5;
-    border-radius: var(--oh-radius);
-    font-size: 0.875rem;
-    color: var(--oh-red);
+    margin: 8px 16px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #fdf0f0;
+    color: #a8222e;
+    font-size: 14px;
 }
 
 .oh-error button {
@@ -244,11 +239,19 @@
 
 /* ── Card ───────────────────────────────────────────────────── */
 .oh-card {
-    background: var(--oh-surface);
-    border: 1.5px solid var(--oh-border);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: box-shadow 0.15s, border-color 0.15s;
+    animation: oh-pop .25s ease-out;
+}
+
+@keyframes oh-pop {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 
 .oh-card:hover {
@@ -500,9 +503,40 @@
     width: 14px;
     height: 14px;
     border: 2px solid currentColor;
-    border-top-color: transparent;
+    border-right-color: transparent;
     border-radius: 50%;
-    animation: oh-rotate 0.7s linear infinite;
+    animation: oh-rot .6s linear infinite;
+}
+
+@keyframes oh-rot {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.oh-error {
+    margin: 8px 16px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: #fdf0f0;
+    color: #a8222e;
+    font-size: 14px;
+}
+
+.oh-card {
+    animation: oh-pop .25s ease-out;
+}
+
+@keyframes oh-pop {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 
 /* ── Gate (sem permissão) ───────────────────────────────────── */
