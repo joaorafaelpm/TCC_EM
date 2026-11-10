@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import api from '../../services/api';
+import api from '../../../services/api';
 import QuantityField from './QuantityField';
 import { UNIT_OPTIONS, formatQty, getErrorMessage } from './stockUtils';
 
