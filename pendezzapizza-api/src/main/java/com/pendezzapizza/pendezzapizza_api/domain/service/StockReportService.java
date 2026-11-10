@@ -88,4 +88,47 @@ public class StockReportService {
                 .sorted(Comparator.comparing(ProductCapacity::productName))
                 .toList();
     }
+
+    /**
+     * Linha do resumo "antes e depois" (tudo na unidade base do ingrediente).
+     * closingBalance = openingBalance + entries - consumed + adjustments
+     * consumed = saídas de pedido - estornos (pode ficar negativo se estornos > saídas no período)
+     */
+    public record StockSummaryLine(UUID ingredientId, String name, UnitType unit,
+                                   long openingBalance, long entries, long consumed, long adjustments,
+                                   long closingBalance, long currentStock, long lowStockThreshold, long suggestedPurchase) {
+    }
+
+    public List<StockSummaryLine> summary(UUID restaurantId, Instant start, Instant end) {
+        Map<UUID, IngredientMovementRepository.MovementSummaryRow> rows = movementRepository
+                .movementSummary(restaurantId, start, end).stream()
+                .collect(Collectors.toMap(
+                        IngredientMovementRepository.MovementSummaryRow::getIngredientId,
+                        row -> row));
+
+        return ingredientRepository.findByRestaurantIdOrderByNameAsc(restaurantId).stream()
+                .map(ingredient -> {
+                    IngredientMovementRepository.MovementSummaryRow row = rows.get(ingredient.getId());
+                    long current = ingredient.getStockQuantity();
+
+                    long netSinceStart = row == null ? 0L : nz(row.getNetSinceStart());
+                    long netSinceEnd = row == null ? 0L : nz(row.getNetSinceEnd());
+                    long entries = row == null ? 0L : nz(row.getEntries());
+                    long consumed = row == null ? 0L : nz(row.getOutputs()) - nz(row.getReversals());
+                    long adjustments = row == null ? 0L : nz(row.getAdjustments());
+
+                    // mesma fórmula do relatório de reposição
+                    long suggested = Math.max(0L,
+                            Math.max(0L, consumed) + ingredient.getLowStockThreshold() - current);
+
+                    return new StockSummaryLine(ingredient.getId(), ingredient.getName(), ingredient.getUnit(),
+                            current - netSinceStart, entries, consumed, adjustments,
+                            current - netSinceEnd, current, ingredient.getLowStockThreshold(), suggested);
+                })
+                .toList();
+    }
+
+    private static long nz(Long value) {
+        return value == null ? 0L : value;
+    }
 }

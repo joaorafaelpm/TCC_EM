@@ -1,0 +1,180 @@
+/* ============================================================
+   Relatório completo (prévia na tela + base do PDF)
+   Largura fixa para o PDF sair igual em qualquer tela.
+   ============================================================ */
+
+.fr-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fr-scroll {
+  margin-top: 16px;
+  padding: 12px;
+  background: #f1f1f1;
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.fr-root {
+  width: 760px;
+  margin: 0 auto;
+  background: #fff;
+  color: #222;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.fr-block {
+  padding: 14px 22px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.fr-block h2 {
+  margin: 0 0 10px;
+  padding-bottom: 6px;
+  font-size: 15px;
+  color: #a8222e;
+  border-bottom: 2px solid #f0d4d7;
+}
+
+/* ---------- Cabeçalho ---------- */
+.fr-header {
+  background: #a8222e;
+  color: #fff;
+  padding: 22px;
+}
+
+.fr-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.fr-header__sub {
+  margin: 2px 0 12px;
+  opacity: 0.85;
+  font-size: 13px;
+}
+
+.fr-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  font-size: 12px;
+}
+
+/* ---------- Cartões de resumo ---------- */
+.fr-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fr-card {
+  flex: 1 1 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1.5px solid #eee;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.fr-card span {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.fr-card strong {
+  font-size: 16px;
+  color: #222;
+}
+
+/* ---------- Tabelas ---------- */
+.fr-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fr-table th {
+  text-align: left;
+  padding: 8px 8px;
+  background: #fafafa;
+  color: #777;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border-bottom: 1.5px solid #e6e6e6;
+}
+
+.fr-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.fr-table tfoot td {
+  font-weight: 700;
+  border-top: 1.5px solid #e6e6e6;
+  border-bottom: none;
+  background: #fafafa;
+}
+
+.fr-table--compact th,
+.fr-table--compact td {
+  padding: 6px 5px;
+  font-size: 11.5px;
+}
+
+.fr-num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.fr-strong {
+  font-weight: 700;
+}
+
+.fr-low td {
+  background: #fff5f5;
+}
+
+/* Célula em branco para anotação à mão (contagem física) */
+.fr-blank {
+  min-width: 86px;
+  border-bottom: 1px dashed #aaa !important;
+}
+
+/* ---------- Textos ---------- */
+.fr-muted {
+  margin: 8px 0 0;
+  color: #777;
+  font-size: 11.5px;
+}
+
+.fr-warn {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  background: #fff8e1;
+  border-left: 3px solid #f9a825;
+  color: #7a5b00;
+  font-size: 12px;
+}
+
+.fr-notes {
+  margin: 0;
+  padding-left: 18px;
+  color: #555;
+  font-size: 12px;
+}
+
+.fr-notes li {
+  margin-bottom: 4px;
+}
