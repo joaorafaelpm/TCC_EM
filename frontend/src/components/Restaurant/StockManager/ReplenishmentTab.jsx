@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import api from '../../services/api';
+import api from '../../../services/api';
 import { formatQty, getErrorMessage, toInputDate } from './stockUtils';
 
 const DAY_MS = 24 * 60 * 60 * 1000;

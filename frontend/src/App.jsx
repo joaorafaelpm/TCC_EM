@@ -15,6 +15,7 @@ import OrderHandler from './pages/OrderHandler/OrderHandler.jsx'
 import { SearchProvider } from './components/context/SearchContext.jsx'
 import NotFound from "./pages/NotFound/NotFound.jsx"
 
+import RestaurantStock from './pages/RestaurantStock/RestaurantStock.jsx'
 // Rotas que não exigem sessão ativa — mantenha essa lista alinhada
 // com o que o backend libera em permitAll() no ResourceServerConfig.
 const PUBLIC_ROUTES = ['/cadastro', '/terms_of_user'];
@@ -50,6 +51,9 @@ function AppContent() {
             <Route path='/restaurant/:id/orders' element={<OrderHandler />} />
             <Route path='/my-account' element={<MyAccount />} />
             <Route path='*' element={<NotFound />} />
+
+
+            <Route path='/restaurant/:id/stock' element={<RestaurantStock />} />
           </Routes>
         </div>
         <Footer />

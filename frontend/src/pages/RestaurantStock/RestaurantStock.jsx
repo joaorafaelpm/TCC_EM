@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuth } from '../../components/context/AuthProvider';
-import IngredientsTab from '../../components/Stock/IngredientsTab';
-import RecipesTab from '../../components/Stock/RecipesTab';
-import ReplenishmentTab from '../../components/Stock/ReplenishmentTab';
-import '../../components/Stock/Stock.css';
+import IngredientsTab from '../../components/Restaurant/StockManager/IngredientsTab.jsx';
+import RecipesTab from '../../components/Restaurant/StockManager/RecipesTab.jsx';
+import ReplenishmentTab from '../../components/Restaurant/StockManager/ReplenishmentTab.jsx';
+import '../../components/Restaurant/StockManager/Stock.css';
 
 const TABS = [
   { key: 'ingredients', label: 'Ingredientes' },

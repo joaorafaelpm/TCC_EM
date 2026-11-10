@@ -1,0 +1,525 @@
+/* ============================================================
+   Módulo de Estoque
+   Segue a identidade do projeto: vinho #a8222e, bordas claras,
+   Segoe UI, cantos arredondados de 8px a 14px.
+   ============================================================ */
+
+.stock-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+    color: #222;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stock-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.stock-page__header h1 {
+    margin: 0;
+    font-size: 1.6rem;
+    color: var(--primary-color, #a8222e);
+}
+
+/* ---------- Abas ---------- */
+.stock-tabs {
+    display: flex;
+    gap: 6px;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 22px;
+    overflow-x: auto;
+}
+
+.stock-tabs__btn {
+    padding: 10px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #888;
+    font-family: inherit;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.stock-tabs__btn:hover {
+    color: #333;
+}
+
+.stock-tabs__btn.is-active {
+    color: var(--primary-color, #a8222e);
+    border-bottom-color: var(--primary-color, #a8222e);
+}
+
+/* ---------- Textos e avisos ---------- */
+.stock-hint {
+    margin: 0 0 14px;
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.stock-muted {
+    color: #777;
+    font-size: 0.85rem;
+    margin: 6px 0;
+}
+
+.stock-strong {
+    font-weight: 700;
+}
+
+.stock-banner {
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+}
+
+.stock-banner--error {
+    background: #fff5f5;
+    border: 1px solid #fecaca;
+    color: #a8222e;
+}
+
+.stock-empty {
+    padding: 28px 16px;
+    text-align: center;
+    color: #777;
+    background: #fafafa;
+    border: 1.5px dashed #ddd;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+/* ---------- Barra de ferramentas ---------- */
+.stock-toolbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.stock-toolbar .stock-hint {
+    margin: 0;
+    flex: 1;
+}
+
+/* ---------- Botões ---------- */
+.stock-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1.5px solid transparent;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.stock-btn--primary {
+    background: var(--primary-color, #a8222e);
+    border-color: var(--primary-color, #a8222e);
+    color: #fff;
+}
+
+.stock-btn--primary:hover:not(:disabled) {
+    background: #8e1c26;
+    border-color: #8e1c26;
+}
+
+.stock-btn--ghost {
+    background: #fff;
+    border-color: #ddd;
+    color: #555;
+}
+
+.stock-btn--ghost:hover:not(:disabled) {
+    border-color: #bbb;
+    color: #222;
+}
+
+.stock-btn--danger {
+    background: #fff;
+    border-color: #f0b4b4;
+    color: #c62828;
+}
+
+.stock-btn--danger:hover:not(:disabled) {
+    background: #c62828;
+    border-color: #c62828;
+    color: #fff;
+}
+
+.stock-btn--small {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+.stock-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ---------- Campos de formulário ---------- */
+.stock-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 14px;
+}
+
+.stock-field--narrow {
+    max-width: 360px;
+}
+
+.stock-field label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stock-field input,
+.stock-field select {
+    font-size: 0.9rem;
+    padding: 9px 12px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 7px;
+    font-family: inherit;
+    color: #333;
+    background: #fff;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+}
+
+.stock-field input:focus,
+.stock-field select:focus {
+    border-color: var(--primary-color, #a8222e);
+}
+
+.stock-field select:disabled,
+.stock-field input:disabled {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.stock-field__error {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    background-color: var(--tertiary-color, #fff5f5);
+    border-left: 3px solid var(--primary-color, #a8222e);
+    color: var(--primary-color, #a8222e);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 0 6px 6px 0;
+}
+
+/* Campo de quantidade: número + seletor de unidade (g/kg, ml/L) */
+.stock-qty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stock-qty input {
+    flex: 1;
+    min-width: 0;
+}
+
+.stock-qty select {
+    width: auto;
+    min-width: 80px;
+}
+
+.stock-qty__unit {
+    min-width: 80px;
+    padding: 9px 12px;
+    font-size: 0.9rem;
+    color: #555;
+    background: #f5f5f5;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 7px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* ---------- Cartões e filtros ---------- */
+.stock-card {
+    background: #fff;
+    border: 1.5px solid #eee;
+    border-radius: 10px;
+    padding: 16px 18px 18px;
+    margin: 18px 0;
+}
+
+.stock-card h3 {
+    margin: 0 0 12px;
+    font-size: 0.95rem;
+    color: var(--primary-color, #a8222e);
+}
+
+.stock-filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.stock-filters .stock-field {
+    margin-bottom: 0;
+}
+
+.stock-presets {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.stock-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    font-size: 0.85rem;
+    color: #555;
+    cursor: pointer;
+}
+
+/* ---------- Tabelas ---------- */
+.stock-table-wrap {
+    overflow-x: auto;
+    border: 1.5px solid #eee;
+    border-radius: 10px;
+    margin-bottom: 16px;
+}
+
+.stock-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.stock-table th {
+    text-align: left;
+    padding: 12px 14px;
+    background: #fafafa;
+    color: #888;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1.5px solid #eee;
+    white-space: nowrap;
+}
+
+.stock-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #f2f2f2;
+    vertical-align: middle;
+}
+
+.stock-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.stock-table tr.is-low td {
+    background: #fff7f7;
+}
+
+.stock-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* ---------- Selos de situação ---------- */
+.stock-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.stock-badge--ok {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.stock-badge--low {
+    background: #fdecea;
+    color: #c62828;
+}
+
+/* ---------- Modais ---------- */
+.stock-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(3px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: stock-overlay-in 0.15s ease;
+}
+
+@keyframes stock-overlay-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.stock-modal {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+    animation: stock-modal-in 0.2s ease;
+}
+
+@keyframes stock-modal-in {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.stock-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 26px 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.stock-modal__header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.stock-modal__close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #999;
+    font-size: 1.5rem;
+    line-height: 1;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+}
+
+.stock-modal__close:hover {
+    background: #f5f5f5;
+    color: #333;
+}
+
+.stock-modal__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 26px;
+}
+
+.stock-modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 26px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* ---------- Mobile: tabelas viram cartões ---------- */
+@media (max-width: 700px) {
+    .stock-toolbar {
+        flex-direction: column;
+    }
+
+    .stock-check {
+        margin-left: 0;
+    }
+
+    .stock-table-wrap {
+        border: none;
+    }
+
+    .stock-table thead {
+        display: none;
+    }
+
+    .stock-table,
+    .stock-table tbody,
+    .stock-table tr,
+    .stock-table td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .stock-table tr {
+        border: 1.5px solid #eee;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        padding: 6px 0;
+        background: #fff;
+    }
+
+    .stock-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        border-bottom: none;
+        padding: 8px 14px;
+        text-align: right;
+    }
+
+    .stock-table td::before {
+        content: attr(data-label);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        text-align: left;
+    }
+}
