@@ -111,7 +111,14 @@ public class StockController {
             @PathVariable UUID ingredientId) {
         recipeService.remove(restaurantId, productId, ingredientId);
     }
-
+    @GetMapping("/report/summary")
+    public List<StockReportService.StockSummaryLine> summary(@PathVariable UUID restaurantId,
+                                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime start,
+                                                             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime end) {
+        Instant to = end != null ? end.toInstant() : Instant.now();
+        Instant from = start != null ? start.toInstant() : to.minus(7, ChronoUnit.DAYS);
+        return stockReportService.summary(restaurantId, from, to);
+    }
     // ---------- Relatórios ----------
 
     @GetMapping("/report/replenishment")
