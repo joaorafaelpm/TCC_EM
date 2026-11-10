@@ -5,9 +5,9 @@ import './OrderHandler.css';
 import OrderCard from '../../components/OrderCard/OrderCard.jsx';
 
 const STATUS_CONFIG = {
-  CREATED:     { label: 'Criado',     color: 'status--created',     order: 0 },
+  CREATED:   { label: 'Criado',     color: 'status--created',   order: 0 },
   CONFIRMED: { label: 'Confirmado', color: 'status--confirmed', order: 1 },
-  DELIVERED:   { label: 'Entregue',   color: 'status--delivered',   order: 2 },
+  DELIVERED: { label: 'Entregue',   color: 'status--delivered', order: 2 },
   CANCELED:  { label: 'Cancelado',  color: 'status--canceled',  order: 3 },
 };
 
@@ -18,6 +18,8 @@ const ACTION_LABELS = {
   deliver: { success: 'Pedido entregue',   error: 'Falha ao marcar como entregue' },
   cancel:  { success: 'Pedido cancelado',  error: 'Falha ao cancelar pedido' },
 };
+
+const NEXT_STATUS = { confirm: 'CONFIRMED', deliver: 'DELIVERED', cancel: 'CANCELED' };
 
 // ── Toast de feedback (estilos em OrderHandler.css) ──
 function Toast({ toast, onDismiss }) {
@@ -42,7 +44,7 @@ export default function OrderHandler() {
   const [error, setError]       = useState(null);
   const [acting, setActing]     = useState(null); // orderId em ação
   const [expanded, setExpanded] = useState(null); // orderId expandido
-  const [toast, setToast]       = useState(null);  // { type: 'success' | 'error', message }
+  const [toast, setToast]       = useState(null); // { type: 'success' | 'error', message }
   const toastTimerRef = useRef(null);
 
   const hasAuthority = tokenData?.authorities?.includes('EDITAR_LOGICA_RESTAURANTES');
@@ -59,21 +61,18 @@ export default function OrderHandler() {
     };
   }, []);
 
-  const fetchOrders = useCallback(async () => {
-    setLoading(true);
+  const fetchOrders = useCallback(async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
     setError(null);
     try {
-      const now   = new Date();
-      const start = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-        .toISOString()
-        .replace(/\.\d{3}Z$/, 'Z'); 
-        
-      const end   = new Date(now.getTime() + 24 * 60 * 60 * 1000)
-        .toISOString()
-        .replace(/\.\d{3}Z$/, 'Z');
-
-        
-      const res = await fetch(`/v1/orders/restaurant?restaurantId=${restaurantId}&startCreationDate=${start}&endCreationDate=${end}`, { credentials: 'include' });
+      const now = new Date();
+      const fmt = (d) => d.toISOString().replace(/\.\d{3}Z$/, 'Z');
+      const params = new URLSearchParams({
+        restaurantId,
+        startCreationDate: fmt(new Date(now.getTime() - 24 * 60 * 60 * 1000)),
+        endCreationDate:   fmt(new Date(now.getTime() + 24 * 60 * 60 * 1000)),
+      });
+      const res = await fetch(`/v1/orders/restaurant?${params}`, { credentials: 'include' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setOrders(data.content ?? data ?? []);
@@ -95,13 +94,23 @@ export default function OrderHandler() {
         method: 'PUT',
         credentials: 'include',
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      await fetchOrders();
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        console.error(`[${action}] HTTP ${res.status}`, body);
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      // move o card de coluna imediatamente
+      setOrders(prev => prev.map(o =>
+        o.id === orderId ? { ...o, status: NEXT_STATUS[action] ?? o.status } : o
+      ));
+      setExpanded(null);
       showToast('success', labels.success);
     } catch (e) {
-      showToast('error', labels.error);
+      showToast('error', `${labels.error} (${e.message})`);
     } finally {
       setActing(null);
+      fetchOrders({ silent: true }); // sempre re-sincroniza com o servidor
     }
   };
 
@@ -139,7 +148,7 @@ export default function OrderHandler() {
           <h1>Pedidos</h1>
           <span className="oh-header__sub">Últimas 24 horas</span>
         </div>
-        <button className="oh-refresh" onClick={fetchOrders} disabled={loading} aria-label="Atualizar">
+        <button className="oh-refresh" onClick={() => fetchOrders()} disabled={loading} aria-label="Atualizar">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
             className={loading ? 'oh-spin' : ''}>
@@ -149,6 +158,7 @@ export default function OrderHandler() {
         </button>
       </header>
 
+      {error && <div className="oh-error">Erro ao carregar pedidos ({error})</div>}
 
       {/* ── Kanban ── */}
       <div className="oh-board">
@@ -166,7 +176,7 @@ export default function OrderHandler() {
               <div className="oh-column__body">
                 {loading && list.length === 0 && (
                   <div className="oh-skeleton">
-                    {[1,2].map(i => <div key={i} className="oh-skeleton__card" />)}
+                    {[1, 2].map(i => <div key={i} className="oh-skeleton__card" />)}
                   </div>
                 )}
 

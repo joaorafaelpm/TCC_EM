@@ -4,6 +4,7 @@ import com.pendezzapizza.pendezzapizza_api.core.cache.cacheannotations.action.Or
 import com.pendezzapizza.pendezzapizza_api.domain.model.Order;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class OrderFlowService {
     
     @OrdersActionCacheEvict
     @Transactional
+    @CacheEvict(cacheNames = "ordersRestaurant", allEntries = true)
     public void confirm(UUID orderId) {
         Order order = orderService.findById(orderId);
         order.confirm();
@@ -26,6 +28,7 @@ public class OrderFlowService {
 
     @OrdersActionCacheEvict
     @Transactional
+    @CacheEvict(cacheNames = "ordersRestaurant", allEntries = true)
     public void deliver(UUID orderId) {
         Order order = orderService.findById(orderId);
         order.deliver();
@@ -44,6 +47,7 @@ public class OrderFlowService {
 
     @OrdersActionCacheEvict
     @Transactional
+    @CacheEvict(cacheNames = "ordersRestaurant", allEntries = true)
     public void cancel(UUID orderId) {
         Order order = orderService.findById(orderId);
         order.cancel();
