@@ -184,6 +184,22 @@ const RestaurantHero = ({ restaurant, canEdit, onEditClick, authorities = null, 
                 <button className="hero-edit-btn" onClick={() => setModalOpen(true)}>
                   Gerenciar status
                 </button>
+                <button className="hero-orders-btn" onClick={() => navigate(`/restaurant/${restaurant.id}/stock`)}>
+
+
+                  {/* 
+                    ================================TESTE       =======================================
+                  */}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/>
+                  </svg>
+                  Estoque
+                </button>
+                
+                  {/* 
+                    ===================================================================================
+                  */}
               </div>
             )}
 
