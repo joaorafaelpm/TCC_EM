@@ -14,6 +14,7 @@ DELETE FROM permission;
 DELETE FROM payment_method;
 DELETE FROM city;
 DELETE FROM state;
+
 -- 1. ESTADOS
 
 INSERT INTO state (id, name, update_date) VALUES
