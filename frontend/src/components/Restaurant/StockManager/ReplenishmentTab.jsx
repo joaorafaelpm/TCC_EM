@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import api from '../../../services/api';
 import { formatQty, getErrorMessage, toInputDate } from './stockUtils';
-
+import FullReportPanel from './StockAndSalesReport/FullReportPanel';
+import { periodParams } from './StockAndSalesReport/fullReportUtils';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const ReplenishmentTab = ({ restaurantId }) => {
@@ -23,11 +24,7 @@ const ReplenishmentTab = ({ restaurantId }) => {
     setLoading(true);
     setError('');
     try {
-      const startIso = new Date(`${s}T00:00:00`).toISOString();
-      const endIso = new Date(`${e}T23:59:59.999`).toISOString();
-      const { data } = await api.get(`${base}/report/replenishment`, {
-        params: { start: startIso, end: endIso },
-      });
+      const { data } = await api.get(`${base}/report/replenishment`, { params: periodParams(s, e) });
       setLines(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(getErrorMessage(err, 'Não foi possível gerar o relatório.'));
@@ -84,7 +81,7 @@ const ReplenishmentTab = ({ restaurantId }) => {
             {loading ? 'Gerando...' : 'Gerar relatório'}
           </button>
         </div>
-
+        <FullReportPanel restaurantId={restaurantId} start={start} end={end} />
         <div className="stock-presets">
           <button className="stock-btn stock-btn--small stock-btn--ghost" onClick={() => applyPreset(0)}>Hoje</button>
           <button className="stock-btn stock-btn--small stock-btn--ghost" onClick={() => applyPreset(7)}>7 dias</button>
