@@ -2,39 +2,39 @@
   "rewrites": [
     {
       "source": "/auth/:path*",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/auth/:path*"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/auth/:path*"
     },
     {
       "source": "/oauth2/:path*",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/oauth2/:path*"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/oauth2/:path*"
     },
     {
       "source": "/v1/:path*",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/v1/:path*"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/v1/:path*"
     },
     {
       "source": "/.well-known/:path*",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/.well-known/:path*"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/.well-known/:path*"
     },
     {
       "source": "/login",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/login"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/login"
     },
     {
       "source": "/logout",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/logout"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/logout"
     },
     {
       "source": "/images/logo.svg",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/images/logo.svg"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/images/logo.svg"
     },
     {
       "source": "/images/background.png",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/images/background.png"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/images/background.png"
     },
     {
       "source": "/redirect",
-      "destination": "https://ooo-believed-deny-event.trycloudflare.com/redirect"
+      "destination": "https://draw-gold-chubby-namely.trycloudflare.com/redirect"
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
