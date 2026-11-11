@@ -2,39 +2,39 @@
   "rewrites": [
     {
       "source": "/auth/:path*",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/auth/:path*"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/auth/:path*"
     },
     {
       "source": "/oauth2/:path*",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/oauth2/:path*"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/oauth2/:path*"
     },
     {
       "source": "/v1/:path*",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/v1/:path*"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/v1/:path*"
     },
     {
       "source": "/.well-known/:path*",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/.well-known/:path*"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/.well-known/:path*"
     },
     {
       "source": "/login",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/login"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/login"
     },
     {
       "source": "/logout",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/logout"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/logout"
     },
     {
       "source": "/images/logo.svg",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/images/logo.svg"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/images/logo.svg"
     },
     {
       "source": "/images/background.png",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/images/background.png"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/images/background.png"
     },
     {
       "source": "/redirect",
-      "destination": "https://basketball-fishing-november-locator.trycloudflare.com/redirect"
+      "destination": "https://ooo-believed-deny-event.trycloudflare.com/redirect"
     },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
